@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="jQuery" Version="3.7.1" />
+    <PackageReference Include="jQuery.Validation" Version="1.21.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
@@ -16,26 +20,18 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.74.1" />
+    <PackageReference Include="Microsoft.jQuery.Unobtrusive.Validation" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\ViewModels\" />
     <Folder Include="Areas\Admin\Views\" />
     <Folder Include="Areas\Assets\Controllers\" />
     <Folder Include="Areas\Assets\Models\" />
     <Folder Include="Areas\Assets\ViewModels\" />
     <Folder Include="Areas\Assets\Views\" />
-    <Folder Include="Areas\User\Controllers\" />
     <Folder Include="Areas\User\Models\" />
     <Folder Include="Areas\User\ViewModels\" />
     <Folder Include="Areas\User\Views\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Data\Entities\" />
-    <Folder Include="Data\Interfaces\" />
-    <Folder Include="Data\Repositories\" />
-    <Folder Include="Models\" />
     <Folder Include="Services\Auth\" />
     <Folder Include="Services\Assets\" />
     <Folder Include="Services\Property\" />
