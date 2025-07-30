@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Views\" />
     <Folder Include="Areas\Assets\Controllers\" />
     <Folder Include="Areas\Assets\Models\" />
     <Folder Include="Areas\Assets\ViewModels\" />
@@ -32,9 +31,7 @@
     <Folder Include="Areas\User\Models\" />
     <Folder Include="Areas\User\ViewModels\" />
     <Folder Include="Areas\User\Views\" />
-    <Folder Include="Services\Auth\" />
     <Folder Include="Services\Assets\" />
-    <Folder Include="Services\Property\" />
     <Folder Include="Services\Storage\" />
     <Folder Include="Services\Notification\" />
   </ItemGroup>

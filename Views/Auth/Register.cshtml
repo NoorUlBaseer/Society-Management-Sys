@@ -31,21 +31,45 @@
 
             <div class="form-group mb-3">
                 <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" type="password" class="form-control" />
+                <div class="input-group">
+                    <input asp-for="Password" type="@(Model.ShowPassword ? "text" : "password")" class="form-control" id="passwordInput" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+                        <i class="bi bi-eye@(Model.ShowPassword ? "-slash" : "")"></i>
+                    </button>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
                 <label asp-for="ConfirmPassword" class="form-label"></label>
-                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                <div class="input-group">
+                    <input asp-for="ConfirmPassword" type="@(Model.ShowPassword ? "text" : "password")" class="form-control" id="confirmPasswordInput" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="toggleConfirmPassword()">
+                        <i class="bi bi-eye@(Model.ShowPassword ? "-slash" : "")"></i>
+                    </button>
+                </div>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
+
             <div class="form-group mb-3">
-                <label asp-for="SelectedRole" class="form-label">Account Type</label>
+                <label asp-for="Gender" class="form-label"></label>
+                <select asp-for="Gender" asp-items="Model.GenderOptions" class="form-control">
+                    <option value="">-- Select Gender --</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="SelectedRole" class="form-label"></label>
                 <select asp-for="SelectedRole" asp-items="Model.GetRoleOptions()" class="form-control">
                     <option value="">-- Select Role --</option>
                 </select>
                 <span asp-validation-for="SelectedRole" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="ShowPassword" class="form-check-input" id="showPasswordCheckbox" />
+                <label asp-for="ShowPassword" class="form-check-label"></label>
             </div>
 
             <div class="d-grid gap-2">
@@ -63,4 +87,28 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            showPasswordCheckbox.checked = type === 'text';
+        }
+
+        function toggleConfirmPassword() {
+            const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+            const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+            const type = confirmPasswordInput.type === 'password' ? 'text' : 'password';
+            confirmPasswordInput.type = type;
+            showPasswordCheckbox.checked = type === 'text';
+        }
+
+        document.getElementById('showPasswordCheckbox').addEventListener('change', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+            passwordInput.type = this.checked ? 'text' : 'password';
+            confirmPasswordInput.type = this.checked ? 'text' : 'password';
+        });
+    </script>
 }

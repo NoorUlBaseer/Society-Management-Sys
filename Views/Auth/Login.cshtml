@@ -19,13 +19,18 @@
 
             <div class="form-group mb-3">
                 <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" type="password" class="form-control" />
+                <div class="input-group">
+                    <input asp-for="Password" type="@(Model?.ShowPassword ?? false ? "text" : "password")" class="form-control" id="passwordInput" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+                        <i class="bi bi-eye@(Model?.ShowPassword ?? false ? "-slash" : "")"></i>
+                    </button>
+                </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-check mb-3">
-                <input asp-for="RememberMe" class="form-check-input" />
-                <label asp-for="RememberMe" class="form-check-label"></label>
+                <input asp-for="ShowPassword" class="form-check-input" id="showPasswordCheckbox" />
+                <label asp-for="ShowPassword" class="form-check-label">Show password</label>
             </div>
 
             <div class="d-grid gap-2">
@@ -43,4 +48,18 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            showPasswordCheckbox.checked = type === 'text';
+        }
+
+        document.getElementById('showPasswordCheckbox').addEventListener('change', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            passwordInput.type = this.checked ? 'text' : 'password';
+        });
+    </script>
 }

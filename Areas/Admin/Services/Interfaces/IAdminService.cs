@@ -1,13 +1,23 @@
-﻿using SocietyMng.Data.Entities;
+﻿using SocietyMng.Areas.Admin.DTOs;
+using SocietyMng.Data.Entities;
 
 public interface IAdminService
 {
+    // User Management
     Task<List<User>> GetAllUsersAsync();
     Task BlockUserAsync(int userId);
     Task DeleteUserAsync(int userId);
-    Task<string> GeneratePropertyDocument(string documentType, int propertyId);
-    Task UpdateStaffSalary(int staffId, decimal newSalary);
-    Task CreateAnnouncement(Announcement announcement);
-    Task ResolveComplaint(int complaintId, string resolution);
-    //Task<SystemReport> GenerateSystemReport(DateTime startDate, DateTime endDate);
+
+    // Staff Management
+    Task<List<Staff>> GetAllStaffAsync();
+    Task AddStaffAsync(StaffView model);
+    Task UpdateStaffSalaryAsync(SalaryUpdate model);
+    Task ToggleStaffStatusAsync(int staffId);
+
+    // Complaint Management
+    Task<List<Complaint>> GetAllComplaintsAsync();
+    Task ResolveComplaintAsync(int complaintId, string resolution);
+
+    // Asset Management
+    Task<List<Asset>> GetAllAssetsAsync();
 }
