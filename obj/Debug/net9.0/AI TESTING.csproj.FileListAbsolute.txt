@@ -1,0 +1,97 @@
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\appsettings.Development.json
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\appsettings.json
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\AI TESTING.staticwebassets.runtime.json
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\AI TESTING.staticwebassets.endpoints.json
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\AI TESTING.exe
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\AI TESTING.deps.json
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\AI TESTING.runtimeconfig.json
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\AI TESTING.dll
+D:\DATA\WEB DEV\AI TESTING\bin\Debug\net9.0\AI TESTING.pdb
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\rpswa.dswa.cache.json
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.GeneratedMSBuildEditorConfig.editorconfig
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.AssemblyInfoInputs.cache
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.AssemblyInfo.cs
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.csproj.CoreCompileInputs.cache
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.MvcApplicationPartsAssemblyInfo.cache
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.RazorAssemblyInfo.cache
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.RazorAssemblyInfo.cs
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\rjimswa.dswa.cache.json
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\scopedcss\bundle\AI TESTING.styles.css
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\scopedcss\projectbundle\AI TESTING.bundle.scp.css
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\nyz9y0jars-b9sayid5wm.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\ih2dh0xk6a-61n19gt1b8.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\9ff20fubqx-xtxxf3hu2r.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\fw8xllhek9-bqjiyaj88i.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\yehds8ooct-c2jlpeoesf.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\j1lbi667zi-erw9l3u2r3.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\rz976i3m3l-aexeepp0ev.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\f4e8hkiudh-d7shbmvgxk.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\wzs21n3irc-ausgxo2sd3.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\16t5woyk7a-k8d9w2qqmf.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\9wzi8du6ol-cosvhxvwiu.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\vob21d49ck-ub07r2b239.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\tn755osbyg-fvhpjtyr6v.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\21cd6jp2fj-b7pk76d08c.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\zdg0e3owjt-fsbi9cje9m.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\vmjyg6wpj3-rzd6atqjts.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\e60buuycqf-ee0r1s7dh0.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\ixh5zu0gx0-dxx9fxp4il.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\i3ogzjmvl4-jd9uben2k1.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\kjhy7kkyks-khv3u5hwcm.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\lc4gagh2q7-r4e9w2rdcm.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\0ihchkf3nh-lcd1t2u6c8.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\5eyemjbqp7-c2oey78nd0.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\30lanb3v9u-tdbxkamptv.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\o361elpnqi-j5mq2jizvt.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\rxxvikhpcd-06098lyss8.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\rr13b705dn-nvvlpmu67g.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\w5xgvze6o6-s35ty4nyc5.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\wsw9vqg0cm-pj5nd1wqec.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\kzksx8xubp-46ein0sx1k.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\b6bww51awz-v0zj4ognzu.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\sb11x59g3e-37tfw0ft22.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\kpsndweo1q-hrwsygsryq.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\bek2dlf7zh-pk9g2wxc8p.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\fynwgwn5c7-ft3s53vfgj.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\x4ezjr60vf-6cfz1n2cew.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\47cewp3w0b-6pdc2jztkx.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\8hnjokqaox-493y06b0oq.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\uoryz9rc1k-iovd86k7lj.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\2ipljf9daf-vr1egmr9el.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\z83c5e8hun-kbrnm935zg.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\2655hyzrba-jj8uyg4cgr.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\4eo9arzl8e-y7v9cxd14o.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\f3d4vxf8en-notf2xhcfb.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\8dc63mouz7-h1s4sie4z3.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\4vgqh2gvcp-63fj8s7r0e.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\g46af6uetf-0j3bgjxly4.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\vrs093v0at-47otxtyo56.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\4n58rsi8kc-4v8eqarkd7.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\5q5ehyn0kv-356vix0kms.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\w6812ielzm-83jwlth58m.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\ts5yek6ef5-mrlpezrjn3.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\h75qg72y0p-lzl9nlhx6b.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\zl25coja33-ag7o75518u.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\gdqlshnwfs-x0q3zqp4vz.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\uuhmm1lx17-0i3buxo5is.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\ciwgbq61mk-o1o13a6vjx.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\ejgxixzc5j-ttgo8qnofa.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\6okghyznaw-2z0ns9nrw6.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\8ggayx7y9n-muycvpuwrr.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\u1h9totauc-87fc7y1x7t.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\c1dpft6ffj-mlv21k5csn.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\j19l0qssl4-8d88enog1j.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\compressed\9678uklhft-8d88enog1j.gz
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\staticwebassets.build.json
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\staticwebassets.build.json.cache
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\staticwebassets.development.json
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\staticwebassets.build.endpoints.json
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.dll
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\refint\AI TESTING.dll
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.pdb
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\AI TESTING.genruntimeconfig.cache
+D:\DATA\WEB DEV\AI TESTING\obj\Debug\net9.0\ref\AI TESTING.dll
