@@ -1,165 +1,155 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// AdminService.cs
+using Microsoft.EntityFrameworkCore;
 using SocietyMng.Areas.Admin.DTOs;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;
+using Microsoft.Extensions.Logging;
 
-public class AdminService : IAdminService
+namespace SocietyMng.Services
 {
-    private readonly AppDbContext _context;
-    private readonly ILogger<AdminService> _logger;
-
-    public AdminService(AppDbContext context, ILogger<AdminService> logger)
+    public class AdminService : IAdminService
     {
-        _context = context;
-        _logger = logger;
-    }
+        private readonly AppDbContext _context;
+        private readonly ILogger<AdminService> _logger;
 
-    // User Management
-    public async Task<List<User>> GetAllUsersAsync()
-    {
-        return await _context.Users
-            .Include(u => u.Role)
-            .Where(u => u.Role.Code != "Admin")
-            .OrderBy(u => u.FullName)
-            .ToListAsync();
-    }
-
-    public async Task BlockUserAsync(int userId)
-    {
-        try
+        public AdminService(AppDbContext context, ILogger<AdminService> logger)
         {
-            var user = await _context.Users .FindAsync(userId);
-            if (user != null)
-            {
-                user.IsActive = !user.IsActive; // Toggle instead of just setting to false
-                var changes = await _context.SaveChangesAsync();
-                _logger.LogInformation($"Toggled user {userId} status to {user.IsActive}. Changes saved: {changes}");
-            }
+            _context = context;
+            _logger = logger;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error toggling user {userId} status");
-            throw;
-        }
-    }
 
-    public async Task DeleteUserAsync(int userId)
-    {
-        try
+        // User Management
+        public async Task<List<User>> GetAllUsersAsync()
         {
+            _logger.LogDebug("Fetching all non-admin users from database");
+            var users = await _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.Role.Code != "Admin")
+                .ToListAsync();
+            _logger.LogInformation("Retrieved {UserCount} non-admin users", users.Count);
+            return users;
+        }
+
+        public async Task BlockUserAsync(int userId)
+        {
+            _logger.LogDebug("Attempting to block/unblock user ID: {UserId}", userId);
             var user = await _context.Users.FindAsync(userId);
             if (user != null)
             {
-                _logger.LogInformation($"[DeleteUser] Deleting user {user.FullName} (ID: {user.Id})");
-
-                _context.Users.Remove(user);
-                var result = await _context.SaveChangesAsync();
-
-                _logger.LogInformation($"[DeleteUser] User deleted. SaveChanges result: {result}");
+                user.IsActive = !user.IsActive;
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("User ID: {UserId} status changed to {Status}", userId, user.IsActive ? "Active" : "Inactive");
             }
             else
             {
-                _logger.LogWarning($"[DeleteUser] User with ID {userId} not found.");
+                _logger.LogWarning("User ID: {UserId} not found for blocking/unblocking", userId);
             }
         }
-        catch (Exception ex)
+
+        public async Task DeleteUserAsync(int userId)
         {
-            _logger.LogError(ex, $"[DeleteUser] Error deleting user {userId}");
-            throw;
+            _logger.LogDebug("Attempting to delete user ID: {UserId}", userId);
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Successfully deleted user ID: {UserId}", userId);
+            }
+            else
+            {
+                _logger.LogWarning("User ID: {UserId} not found for deletion", userId);
+            }
         }
-    }
 
-
-    // Staff Management
-    public async Task<List<Staff>> GetAllStaffAsync()
-    {
-        return await _context.Staff
-            .OrderBy(s => s.FullName)
-            .ToListAsync();
-    }
-
-    public async Task AddStaffAsync(StaffView model)
-    {
-        var staff = new Staff
+        // Staff Management
+        public async Task<List<Staff>> GetAllStaffAsync()
         {
-            FullName = model.FullName,
-            Email = model.Email,
-            Position = model.Position,
-            Salary = model.Salary,
-            HireDate = model.HireDate,
-            IsActive = model.IsActive,
-            BankAccount = model.BankAccount,
-            ContactNumber = model.ContactNumber
-        };
+            _logger.LogDebug("Fetching all staff members from database");
+            var staff = await _context.Staff.ToListAsync();
+            _logger.LogInformation("Retrieved {StaffCount} staff members", staff.Count);
+            return staff;
+        }
 
-        _context.Staff.Add(staff);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task UpdateStaffSalaryAsync(SalaryUpdate model)
-    {
-        var staff = await _context.Staff.FindAsync(model.StaffId);
-        if (staff != null)
+        public async Task AddStaffAsync(StaffView model)
         {
+            _logger.LogDebug("Adding new staff member: {StaffName}", model.FullName);
+            var staff = new Staff
+            {
+                FullName = model.FullName,
+                Email = model.Email,
+                ContactNumber = model.ContactNumber,
+                Position = model.Position,
+                Salary = model.Salary,
+                HireDate = model.HireDate,
+                IsActive = model.IsActive,
+                BankAccount = model.BankAccount
+            };
+
+            await _context.Staff.AddAsync(staff);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Successfully added new staff member ID: {StaffId}, Name: {StaffName}", staff.Id, staff.FullName);
+        }
+
+        public async Task UpdateStaffSalaryAsync(SalaryUpdate model)
+        {
+            if (model == null || model.StaffId <= 0 || model.NewSalary <= 0)
+            {
+                _logger.LogWarning("Invalid salary update model received");
+                throw new ArgumentException("Invalid salary update parameters");
+            }
+
+            var staff = await _context.Staff.FindAsync(model.StaffId);
+            if (staff == null)
+            {
+                _logger.LogWarning("Staff ID: {StaffId} not found for salary update", model.StaffId);
+                throw new KeyNotFoundException($"Staff with ID {model.StaffId} not found");
+            }
+
             staff.Salary = model.NewSalary;
             await _context.SaveChangesAsync();
+            _logger.LogInformation("Salary updated for {StaffName} to {NewSalary}",
+                staff.FullName, model.NewSalary);
         }
-    }
 
-    public async Task ToggleStaffStatusAsync(int staffId)
-    {
-        try
+        public async Task ToggleStaffStatusAsync(int staffId)
         {
+            _logger.LogDebug("Attempting to toggle status for staff ID: {StaffId}", staffId);
             var staff = await _context.Staff.FindAsync(staffId);
             if (staff != null)
             {
-                _logger.LogInformation($"[ToggleStaff] Staff {staff.FullName} (ID: {staff.Id}) IsActive before: {staff.IsActive}");
-
                 staff.IsActive = !staff.IsActive;
-                var result = await _context.SaveChangesAsync();
-
-                _logger.LogInformation($"[ToggleStaff] Staff {staff.FullName} IsActive after: {staff.IsActive}, SaveChanges result: {result}");
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Staff ID: {StaffId} status changed to {Status}", staffId, staff.IsActive ? "Active" : "Inactive");
             }
             else
             {
-                _logger.LogWarning($"[ToggleStaff] Staff with ID {staffId} not found.");
+                _logger.LogWarning("Staff ID: {StaffId} not found for status toggle", staffId);
             }
         }
-        catch (Exception ex)
+
+        // Complaint Management
+        public async Task<List<Complaint>> GetAllComplaintsAsync()
         {
-            _logger.LogError(ex, $"[ToggleStaff] Error toggling staff status for ID {staffId}");
-            throw;
+            _logger.LogDebug("Fetching all complaints from database");
+            var complaints = await _context.Complaints
+                .Include(c => c.User)
+                .ToListAsync();
+            _logger.LogInformation("Retrieved {ComplaintCount} complaints", complaints.Count);
+            return complaints;
         }
-    }
 
-
-    // Complaint Management
-    public async Task<List<Complaint>> GetAllComplaintsAsync()
-    {
-        return await _context.Complaints
-            .Include(c => c.User)
-            .OrderByDescending(c => c.CreatedAt)
-            .ToListAsync();
-    }
-
-    public async Task ResolveComplaintAsync(int complaintId, string resolution)
-    {
-        var complaint = await _context.Complaints.FindAsync(complaintId);
-        if (complaint != null)
+        // Asset Management
+        public async Task<List<Asset>> GetAllAssetsAsync()
         {
-            complaint.Status = ComplaintStatus.Resolved;
-            await _context.SaveChangesAsync();
+            _logger.LogDebug("Fetching all assets from database");
+            var assets = await _context.Assets
+                .Include(a => a.Status)
+                .Include(a => a.RoomCount)
+                .Include(a => a.UploadedByUser)
+                .ToListAsync();
+            _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
+            return assets;
         }
-    }
-
-    // Asset Management
-    public async Task<List<Asset>> GetAllAssetsAsync()
-    {
-        return await _context.Assets
-            .Include(a => a.RoomCount)
-            .Include(a => a.Status)
-            .Include(a => a.UploadedByUser)
-            .OrderByDescending(a => a.DateUploaded)
-            .ToListAsync();
     }
 }

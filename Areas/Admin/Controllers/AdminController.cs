@@ -1,124 +1,150 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿// AdminController.cs
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocietyMng.Areas.Admin.DTOs;
+using SocietyMng.Data.Entities;
+using Microsoft.Extensions.Logging;
 
-[Area("Admin")]
-[Authorize(Roles = "Admin")]
-
-public class AdminController : Controller
+namespace SocietyMng.Areas.Admin.Controllers
 {
-    private readonly IAdminService _adminService;
-    private readonly ILogger<AdminController> _logger;
-
-    public AdminController(IAdminService adminService, ILogger<AdminController> logger)
+    [Area("Admin")]
+    [Authorize(Policy = "AdminOnly")]
+    public class AdminController : Controller
     {
-        _adminService = adminService;
-        _logger = logger;
-    }
+        private readonly IAdminService _adminService;
+        private readonly ILogger<AdminController> _logger;
 
-    public IActionResult Dashboard()
-    {
-        return View();
-    }
-
-    // User Management
-    public async Task<IActionResult> ManageUsers()
-    {
-        var users = await _adminService.GetAllUsersAsync();
-        return View(users);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> BlockUser(int userId)
-    {
-        try
+        public AdminController(IAdminService adminService, ILogger<AdminController> logger)
         {
+            _adminService = adminService;
+            _logger = logger;
+        }
+
+        public IActionResult Dashboard()
+        {
+            _logger.LogInformation("Admin dashboard accessed");
+            return View();
+        }
+
+        #region User Management
+
+        public async Task<IActionResult> ManageUsers()
+        {
+            _logger.LogDebug("Fetching all users for management");
+            var users = await _adminService.GetAllUsersAsync();
+            _logger.LogInformation("Retrieved {UserCount} users for management", users.Count);
+            return View(users);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleUserStatus(int userId)
+        {
+            _logger.LogInformation("Attempting to toggle status for user ID: {UserId}", userId);
             await _adminService.BlockUserAsync(userId);
-            TempData["Message"] = "User blocked successfully";
+            _logger.LogInformation("Successfully toggled status for user ID: {UserId}", userId);
+            return RedirectToAction(nameof(ManageUsers));
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error blocking user");
-            TempData["Error"] = "Failed to block user";
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(int userId)
+         {
+            _logger.LogWarning("Attempting to delete user ID: {UserId}", userId);
+            await _adminService.DeleteUserAsync(userId);
+            _logger.LogWarning("Successfully deleted user ID: {UserId}", userId);
+            return RedirectToAction(nameof(ManageUsers));
         }
-        return RedirectToAction(nameof(ManageUsers));
-    }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken] 
-    public async Task<IActionResult> DeleteUser(int userId)
-    {
-        await _adminService.DeleteUserAsync(userId);
-        TempData["Message"] = "User deleted successfully";
-        return RedirectToAction(nameof(ManageUsers));
-    }
+        #endregion
 
-    // Staff Management
-    public async Task<IActionResult> ManageStaff()
-    {
-        var staff = await _adminService.GetAllStaffAsync();
-        return View(staff);
-    }
+        #region Staff Management
 
-    [HttpGet]
-    public IActionResult AddStaff()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> AddStaff(StaffView model)
-    {
-        if (!ModelState.IsValid) return View(model);
-
-        await _adminService.AddStaffAsync(model);
-        TempData["Message"] = "Staff added successfully";
-        return RedirectToAction(nameof(ManageStaff));
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> UpdateSalary(SalaryUpdate model)
-    {
-        if (!ModelState.IsValid)
+        public async Task<IActionResult> ManageStaff()
         {
-            TempData["Error"] = "Invalid salary update request";
+            _logger.LogDebug("Fetching all staff members for management");
+            var staff = await _adminService.GetAllStaffAsync();
+            _logger.LogInformation("Retrieved {StaffCount} staff members", staff.Count);
+            return View(staff);
+        }
+
+        [HttpGet]
+        public IActionResult AddStaff()
+        {
+            _logger.LogDebug("AddStaff form requested");
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddStaff(StaffView model)
+        {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("AddStaff form submitted with invalid model state");
+                return View(model);
+            }
+
+            _logger.LogInformation("Attempting to add new staff member: {StaffName}", model.FullName);
+            await _adminService.AddStaffAsync(model);
+            _logger.LogInformation("Successfully added new staff member: {StaffName}", model.FullName);
             return RedirectToAction(nameof(ManageStaff));
         }
 
-        await _adminService.UpdateStaffSalaryAsync(model);
-        TempData["Message"] = "Salary updated successfully";
-        return RedirectToAction(nameof(ManageStaff));
-    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateSalary(int staffId, decimal newSalary)
+        {
+            if (staffId <= 0 || newSalary <= 0)
+            {
+                _logger.LogWarning("Invalid salary update parameters");
+                return RedirectToAction(nameof(ManageStaff));
+            }
 
-    [HttpPost]
-    public async Task<IActionResult> ToggleStaffStatus(int staffId)
-    {
-        await _adminService.ToggleStaffStatusAsync(staffId);
-        TempData["Message"] = "Staff status updated";
-        return RedirectToAction(nameof(ManageStaff));
-    }
+            _logger.LogInformation("Updating salary for staff ID: {StaffId}. New salary: {NewSalary}",
+                staffId, newSalary);
 
-    // Complaint Management
-    public async Task<IActionResult> ManageComplaints()
-    {
-        var complaints = await _adminService.GetAllComplaintsAsync();
-        return View(complaints);
-    }
+            await _adminService.UpdateStaffSalaryAsync(new SalaryUpdate
+            {
+                StaffId = staffId,
+                NewSalary = newSalary
+            });
 
-    [HttpPost]
-    public async Task<IActionResult> ResolveComplaint(int complaintId)
-    {
-        await _adminService.ResolveComplaintAsync(complaintId, "Resolved by admin");
-        TempData["Message"] = "Complaint resolved successfully";
-        return RedirectToAction(nameof(ManageComplaints));
-    }
+            return RedirectToAction(nameof(ManageStaff));
+        }
 
-    // Asset Management
-    public async Task<IActionResult> ManageAssets()
-    {
-        var assets = await _adminService.GetAllAssetsAsync();
-        return View(assets);
-    }
+        [HttpPost]
+        public async Task<IActionResult> ToggleStaffStatus(int staffId)
+        {
+            _logger.LogInformation("Toggling status for staff ID: {StaffId}", staffId);
+            await _adminService.ToggleStaffStatusAsync(staffId);
+            _logger.LogInformation("Successfully toggled status for staff ID: {StaffId}", staffId);
+            return RedirectToAction(nameof(ManageStaff));
+        }
 
+        #endregion
+
+        #region Complaint Management
+
+        public async Task<IActionResult> ManageComplaints()
+        {
+            _logger.LogDebug("Fetching all complaints for management");
+            var complaints = await _adminService.GetAllComplaintsAsync();
+            _logger.LogInformation("Retrieved {ComplaintCount} complaints", complaints.Count);
+            return View(complaints);
+        }
+
+        #endregion
+
+        #region Asset Management
+
+        public async Task<IActionResult> ManageAssets()
+        {
+            _logger.LogDebug("Fetching all assets for management");
+            var assets = await _adminService.GetAllAssetsAsync();
+            _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
+            return View(assets);
+        }
+
+        #endregion
+    }
 }

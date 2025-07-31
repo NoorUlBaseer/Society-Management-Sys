@@ -1,29 +1,50 @@
 ﻿@{
     ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
 }
 
-<h1>Admin Dashboard</h1>
+<div class="container">
+    <h1 class="mt-4">Admin Dashboard</h1>
 
-<div>
-    <h3>User Management</h3>
-    <p>Manage all system users, roles and permissions</p>
-    <a href="/Admin/Admin/ManageUsers">Go to Users</a>
-</div>
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Users</h5>
+                    <p class="card-text">Manage system users</p>
+                    <a href="@Url.Action("ManageUsers")" class="btn btn-light">Go to Users</a>
+                </div>
+            </div>
+        </div>
 
-<div>
-    <h3>Staff Management</h3>
-    <p>Manage staff members, salaries and employment details</p>
-    <a href="/Admin/Admin/ManageStaff">Go to Staff</a>
-</div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Staff</h5>
+                    <p class="card-text">Manage staff members</p>
+                    <a href="@Url.Action("ManageStaff")" class="btn btn-light">Go to Staff</a>
+                </div>
+            </div>
+        </div>
 
-<div>
-    <h3>Complaint Management</h3>
-    <p>View and resolve resident complaints and issues</p>
-    <a href="/Admin/Admin/ManageComplaints">Go to Complaints</a>
-</div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Complaints</h5>
+                    <p class="card-text">View and resolve complaints</p>
+                    <a href="@Url.Action("ManageComplaints")" class="btn btn-light">Go to Complaints</a>
+                </div>
+            </div>
+        </div>
 
-<div>
-    <h3>Asset Management</h3>
-    <p>Manage society properties and assets</p>
-    <a href="/Admin/Admin/ManageAssets">Go to Assets</a>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Assets</h5>
+                    <p class="card-text">Manage properties/assets</p>
+                    <a href="@Url.Action("ManageAssets")" class="btn btn-light">Go to Assets</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

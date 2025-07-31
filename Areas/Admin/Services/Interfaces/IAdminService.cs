@@ -16,7 +16,7 @@ public interface IAdminService
 
     // Complaint Management
     Task<List<Complaint>> GetAllComplaintsAsync();
-    Task ResolveComplaintAsync(int complaintId, string resolution);
+    //Task ResolveComplaintAsync(int complaintId, string resolution);
 
     // Asset Management
     Task<List<Asset>> GetAllAssetsAsync();

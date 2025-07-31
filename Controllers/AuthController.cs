@@ -41,12 +41,18 @@ namespace SocietyMng.Controllers
                 return View(model);
             }
 
+            if (!user.IsActive)
+            {
+                ModelState.AddModelError(string.Empty, "Your account has been blocked by the administrator. Please contact support.");
+                return View(model);
+            }
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Email, user.Email),
                 new(ClaimTypes.Name, user.FullName),
                 new(ClaimTypes.Role, user.Role.Code)
+               
             };
 
             var authProperties = new AuthenticationProperties
@@ -131,10 +137,19 @@ namespace SocietyMng.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            HttpContext.Session.Clear();
+
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+
+            return RedirectToAction("Login", "Auth");
         }
 
         //helper functions
