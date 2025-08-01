@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using SocietyMng.Configurations;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;
 using SocietyMng.Models.Auth;
@@ -13,16 +15,18 @@ namespace SocietyMng.Controllers
     public class AuthController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly AppSettings _appSettings;
 
-        public AuthController(AppDbContext context)
+        public AuthController(AppDbContext context, IOptions<AppSettings> appSettings)
         {
             _context = context;
+            _appSettings = appSettings.Value;
         }
 
         [HttpGet]
-        public IActionResult Login(string? backURL = null)
+        public IActionResult Login(string? returnUrl = null)
         {
-            ViewData["ReturnUrl"] = backURL;
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
@@ -52,7 +56,7 @@ namespace SocietyMng.Controllers
                 new(ClaimTypes.Email, user.Email),
                 new(ClaimTypes.Name, user.FullName),
                 new(ClaimTypes.Role, user.Role.Code)
-               
+
             };
 
             var authProperties = new AuthenticationProperties
@@ -66,7 +70,7 @@ namespace SocietyMng.Controllers
                 authProperties);
 
             //id admin-> admin dashboard
-            if (user.Role.Code == "Admin")
+            if (user.Role.Code == _appSettings.User_Role.Admin)
             {
                 return RedirectToAction("Dashboard", "Admin", new { area = "Admin" });
             }
@@ -75,28 +79,29 @@ namespace SocietyMng.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
             var model = new RegisterModel();
             return View(model);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
             if (await _context.Users.AnyAsync(u => u.Email == model.Email))
             {
-                ModelState.AddModelError("Email", "Email is already registered");
+                ModelState.AddModelError("Email", "Email already registered");
                 return View(model);
             }
 
             var roleItem = await _context.SystemCodeItems
                 .Include(sci => sci.SystemCode)
-                .Where(sci => sci.Code == model.SelectedRole)
-                .Where(sci => sci.SystemCode.Code == "User_Role")
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(sci =>
+                    sci.Code == model.SelectedRole &&
+                    sci.SystemCode.Code == "User_Role");
 
             if (roleItem == null)
             {
@@ -110,7 +115,7 @@ namespace SocietyMng.Controllers
                 PasswordHash = HashPassword(model.Password),
                 FullName = model.FullName,
                 PhoneNumber = model.PhoneNumber,
-                Gender = model.Gender ?? "Unknown",
+                Gender = model.Gender,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
                 RoleId = roleItem.Id
@@ -124,12 +129,12 @@ namespace SocietyMng.Controllers
                 await Login(new LoginModel
                 {
                     Email = model.Email,
-                    Password = model.Password,
+                    Password = model.Password
                 });
 
                 return RedirectToAction("Index", "Home");
             }
-            catch (Exception exep)
+            catch
             {
                 ModelState.AddModelError("", "Registration failed. Please try again.");
                 return View(model);
@@ -137,29 +142,19 @@ namespace SocietyMng.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            HttpContext.Session.Clear();
-
-            foreach (var cookie in Request.Cookies.Keys)
-            {
-                Response.Cookies.Delete(cookie);
-            }
-
-            return RedirectToAction("Login", "Auth");
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Login");
         }
 
-        //helper functions
         private static string HashPassword(string password) =>
             BCrypt.Net.BCrypt.HashPassword(password);
 
-        private static bool VerifyPassword(string enteredPassword, string storedHash) =>
-            BCrypt.Net.BCrypt.Verify(enteredPassword, storedHash);
+        private static bool VerifyPassword(string password, string hash) =>
+            BCrypt.Net.BCrypt.Verify(password, hash);
 
-        private IActionResult RedirectToLocal(string backURL) =>
-            Url.IsLocalUrl(backURL) ? Redirect(backURL) : RedirectToAction("Index", "Home");
+        private IActionResult RedirectToLocal(string returnUrl) =>
+            Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToAction("Index", "Home");
     }
 }

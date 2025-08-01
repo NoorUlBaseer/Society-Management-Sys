@@ -12,106 +12,104 @@ namespace SocietyMng.Data
         public DbSet<SystemCode> SystemCodes { get; set; }
         public DbSet<SystemCodeItem> SystemCodeItems { get; set; }
         public DbSet<Complaint> Complaints { get; set; }
-        public DbSet<Staff> Staff { get; set; }
         public DbSet<Asset> Assets { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // user + sys code item 
+            //  User -> Role 
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
-                .WithMany()
+                .WithMany(u => u.Users)
                 .HasForeignKey(u => u.RoleId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-
-            modelBuilder.Entity<SystemCode>().HasData(
-                new SystemCode
-                {
-                    Id = 1,
-                    Code = "User_Role",
-                    Description = "User roles in the system"
-                });
-
-            // seeding codes
-            modelBuilder.Entity<SystemCodeItem>().HasData(
-                new SystemCodeItem
-                {
-                    Id = 1,
-                    SystemCodeId = 1,
-                    Code = "Admin",
-                    Description = "System Administrator",
-                    SortOrder = 1,
-                    IsActive = true
-                },
-                new SystemCodeItem
-                {
-                    Id = 2,
-                    SystemCodeId = 1,
-                    Code = "Resident",
-                    Description = "Society Resident",
-                    SortOrder = 2,
-                    IsActive = true
-                },
-                new SystemCodeItem
-                {
-                    Id = 3,
-                    SystemCodeId = 1,
-                    Code = "Buyer",
-                    Description = "Property Buyer",
-                    SortOrder = 3,
-                    IsActive = true
-                });
-
-            //asset + sys code item
+            //  Asset relations
             modelBuilder.Entity<Asset>()
-               .HasOne(a => a.RoomCount)
-               .WithMany()
-               .HasForeignKey(a => a.RoomCountId)
-               .OnDelete(DeleteBehavior.NoAction);
+                .HasOne(a => a.Block)
+                .WithMany(b => b.BlockAssets)
+                .HasForeignKey(a => a.BlockId)
+                .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Asset>()
+                .HasOne(a => a.PropertyType)
+                .WithMany(p => p.TypeAssets)
+                .HasForeignKey(a => a.PropertyTypeId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Asset>()
                 .HasOne(a => a.Status)
-                .WithMany()
+                .WithMany(s => s.StatusAssets)
                 .HasForeignKey(a => a.StatusId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-
-            //asset + user
-            modelBuilder.Entity<Asset>()
-                .HasOne(a => a.UploadedByUser)
-                .WithMany()
-                .HasForeignKey(a => a.UploadedByUserId)
+            //  Booking relations
+            modelBuilder.Entity<Booking>()
+                .HasOne(b => b.User)
+                .WithMany(u => u.Bookings)
+                .HasForeignKey(b => b.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Booking>()
+                .HasOne(b => b.Asset)
+                .WithMany(a => a.Bookings)
+                .HasForeignKey(b => b.AssetId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            //seeding code
+            //  Complaint relations
+            modelBuilder.Entity<Complaint>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Complaints)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Complaint>()
+                .HasOne(c => c.Asset)
+                .WithMany(a => a.Complaints)
+                .HasForeignKey(c => c.AssetId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Complaint>()
+                .HasOne(c => c.Booking)
+                .WithMany(b => b.Complaints)
+                .HasForeignKey(c => c.BookingId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // seeding sys codes
             modelBuilder.Entity<SystemCode>().HasData(
-               new SystemCode { Id = 2, Code = "Room_No", Description = "Property room counts" },
-               new SystemCode { Id = 3, Code = "Asset_Status", Description = "Rental/Sale statuses" }
+                new SystemCode { Id = 1, Code = "User_Role", Description = "User roles in the system" },
+                new SystemCode { Id = 2, Code = "Block", Description = "Society blocks" },
+                new SystemCode { Id = 3, Code = "Property_Type", Description = "Property types" },
+                new SystemCode { Id = 4, Code = "Asset_Status", Description = "Asset statuses" }
             );
 
+            // sys code items seeding
             modelBuilder.Entity<SystemCodeItem>().HasData(
-                new { Id = 4, SystemCodeId = 2, Code = "1_ROOM", Description = "1 Bedroom", SortOrder = 1, IsActive = true },
-                new { Id = 5, SystemCodeId = 2, Code = "2_ROOMS", Description = "2 Rooms, 1 Kitchen", SortOrder = 2, IsActive = true },
-                new { Id = 6, SystemCodeId = 2, Code = "3_ROOMS", Description = "3 Rooms, 1 Living room & 1 Kitchen", SortOrder = 3, IsActive = true }
+                // User Roles
+                new SystemCodeItem { Id = 1, SystemCodeId = 1, Code = "Admin", Description = "System Administrator", SortOrder = 1, IsActive = true },
+                new SystemCodeItem { Id = 2, SystemCodeId = 1, Code = "Buyer", Description = "Property Buyer", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 3, SystemCodeId = 1, Code = "Sales", Description = "Society Sales", SortOrder = 3, IsActive = true },
+
+                // Blocks 
+                new SystemCodeItem { Id = 4, SystemCodeId = 2, Code = "BLOCK_A", Description = "Block A", SortOrder = 1, IsActive = true },
+                new SystemCodeItem { Id = 5, SystemCodeId = 2, Code = "BLOCK_B", Description = "Block B", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 6, SystemCodeId = 2, Code = "BLOCK_C", Description = "Block C", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 7, SystemCodeId = 2, Code = "BLOCK_D", Description = "Block D", SortOrder = 2, IsActive = true },
+
+                // Property Types
+                new SystemCodeItem { Id = 8, SystemCodeId = 3, Code = "APARTMENT", Description = "Apartment", SortOrder = 1, IsActive = true },
+                new SystemCodeItem { Id = 9, SystemCodeId = 3, Code = "VILLA", Description = "Villa", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 10, SystemCodeId = 3, Code = "COMMERCIAL", Description = "Commercial", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 11, SystemCodeId = 3, Code = "LAND", Description = "Land/Plot", SortOrder = 2, IsActive = true },
+
+                // Asset Statuses
+                new SystemCodeItem { Id = 12, SystemCodeId = 4, Code = "AVAILABLE", Description = "Available", SortOrder = 1, IsActive = true },
+                new SystemCodeItem { Id = 13, SystemCodeId = 4, Code = "BOOKED", Description = "Booked", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 14, SystemCodeId = 4, Code = "SOLD", Description = "Sold", SortOrder = 3, IsActive = true }
             );
 
-            // assets statuses
-            modelBuilder.Entity<SystemCodeItem>().HasData(
-                // Rental assets
-                new { Id = 7, SystemCodeId = 3, Code = "Rental_avail", Description = "Available for Rent", SortOrder = 1, IsActive = true },
-                new { Id = 8, SystemCodeId = 3, Code = "Rented", Description = "Rented", SortOrder = 2, IsActive = true },
-
-                // Sale assets
-                new { Id = 9, SystemCodeId = 3, Code = "Sale_avail", Description = "Available for Sale", SortOrder = 3, IsActive = true },
-                new { Id = 10, SystemCodeId = 3, Code = "Sold", Description = "Sold", SortOrder = 4, IsActive = true }
-            );
-
-            // Seeders
+            
             modelBuilder.Entity<User>().HasData(SeedAdmin.AdminUser);
-            modelBuilder.Entity<Staff>().HasData(StaffSeedData.GetDummyStaff());
         }
     }
 }

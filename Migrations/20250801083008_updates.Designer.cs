@@ -12,8 +12,8 @@ using SocietyMng.Data;
 namespace SocietyMng.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250730075932_seedingdata")]
-    partial class seedingdata
+    [Migration("20250801083008_updates")]
+    partial class updates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,9 @@ namespace SocietyMng.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("BlockId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DateUploaded")
                         .HasColumnType("datetime2");
 
@@ -48,27 +51,66 @@ namespace SocietyMng.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PlotNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("RoomCountId")
+                    b.Property<int>("PropertyTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UploadedByUserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomCountId");
+                    b.HasIndex("BlockId");
+
+                    b.HasIndex("PropertyTypeId");
 
                     b.HasIndex("StatusId");
 
-                    b.HasIndex("UploadedByUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Assets");
+                });
+
+            modelBuilder.Entity("SocietyMng.Data.Entities.Booking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AssetId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BookingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("SocietyMng.Data.Entities.Complaint", b =>
@@ -78,6 +120,12 @@ namespace SocietyMng.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AssetId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -98,149 +146,13 @@ namespace SocietyMng.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssetId");
+
+                    b.HasIndex("BookingId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Complaints");
-                });
-
-            modelBuilder.Entity("SocietyMng.Data.Entities.Staff", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BankAccount")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("HireDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Salary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Staff");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            BankAccount = "US1234567890123456",
-                            ContactNumber = "555-0101",
-                            Email = "john.smith@example.com",
-                            FullName = "John Smith",
-                            HireDate = new DateTime(2018, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Position = "Manager",
-                            Salary = 65000.00m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            BankAccount = "US2345678901234567",
-                            ContactNumber = "555-0102",
-                            Email = "emily.j@example.com",
-                            FullName = "Emily Johnson",
-                            HireDate = new DateTime(2019, 3, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Position = "Accountant",
-                            Salary = 55000.00m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            BankAccount = "US3456789012345678",
-                            ContactNumber = "555-0103",
-                            Email = "michael.w@example.com",
-                            FullName = "Michael Williams",
-                            HireDate = new DateTime(2020, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Position = "Maintenance Supervisor",
-                            Salary = 48000.00m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            BankAccount = "US4567890123456789",
-                            ContactNumber = "555-0104",
-                            Email = "sarah.b@example.com",
-                            FullName = "Sarah Brown",
-                            HireDate = new DateTime(2021, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Position = "Administrative Assistant",
-                            Salary = 42000.00m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            BankAccount = "US5678901234567890",
-                            ContactNumber = "555-0105",
-                            Email = "robert.d@example.com",
-                            FullName = "Robert Davis",
-                            HireDate = new DateTime(2017, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false,
-                            Position = "Security Officer",
-                            Salary = 38000.00m
-                        },
-                        new
-                        {
-                            Id = 6,
-                            BankAccount = "US6789012345678901",
-                            ContactNumber = "555-0106",
-                            Email = "jennifer.m@example.com",
-                            FullName = "Jennifer Miller",
-                            HireDate = new DateTime(2022, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Position = "Community Manager",
-                            Salary = 58000.00m
-                        },
-                        new
-                        {
-                            Id = 7,
-                            BankAccount = "US7890123456789012",
-                            ContactNumber = "555-0107",
-                            Email = "david.w@example.com",
-                            FullName = "David Wilson",
-                            HireDate = new DateTime(2020, 9, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Position = "Maintenance Technician",
-                            Salary = 45000.00m
-                        },
-                        new
-                        {
-                            Id = 8,
-                            BankAccount = "US8901234567890123",
-                            ContactNumber = "555-0108",
-                            Email = "lisa.t@example.com",
-                            FullName = "Lisa Taylor",
-                            HireDate = new DateTime(2019, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = true,
-                            Position = "Accountant",
-                            Salary = 53000.00m
-                        });
                 });
 
             modelBuilder.Entity("SocietyMng.Data.Entities.SystemCode", b =>
@@ -273,14 +185,20 @@ namespace SocietyMng.Migrations
                         new
                         {
                             Id = 2,
-                            Code = "Room_No",
-                            Description = "Property room counts"
+                            Code = "Block",
+                            Description = "Society blocks"
                         },
                         new
                         {
                             Id = 3,
+                            Code = "Property_Type",
+                            Description = "Property types"
+                        },
+                        new
+                        {
+                            Id = 4,
                             Code = "Asset_Status",
-                            Description = "Rental/Sale statuses"
+                            Description = "Asset statuses"
                         });
                 });
 
@@ -328,8 +246,8 @@ namespace SocietyMng.Migrations
                         new
                         {
                             Id = 2,
-                            Code = "Resident",
-                            Description = "Society Resident",
+                            Code = "Buyer",
+                            Description = "Property Buyer",
                             IsActive = true,
                             SortOrder = 2,
                             SystemCodeId = 1
@@ -337,8 +255,8 @@ namespace SocietyMng.Migrations
                         new
                         {
                             Id = 3,
-                            Code = "Buyer",
-                            Description = "Property Buyer",
+                            Code = "Sales",
+                            Description = "Society Sales",
                             IsActive = true,
                             SortOrder = 3,
                             SystemCodeId = 1
@@ -346,8 +264,8 @@ namespace SocietyMng.Migrations
                         new
                         {
                             Id = 4,
-                            Code = "1_ROOM",
-                            Description = "1 Bedroom",
+                            Code = "BLOCK_A",
+                            Description = "Block A",
                             IsActive = true,
                             SortOrder = 1,
                             SystemCodeId = 2
@@ -355,8 +273,8 @@ namespace SocietyMng.Migrations
                         new
                         {
                             Id = 5,
-                            Code = "2_ROOMS",
-                            Description = "2 Rooms, 1 Kitchen",
+                            Code = "BLOCK_B",
+                            Description = "Block B",
                             IsActive = true,
                             SortOrder = 2,
                             SystemCodeId = 2
@@ -364,47 +282,83 @@ namespace SocietyMng.Migrations
                         new
                         {
                             Id = 6,
-                            Code = "3_ROOMS",
-                            Description = "3 Rooms, 1 Living room & 1 Kitchen",
+                            Code = "BLOCK_C",
+                            Description = "Block C",
                             IsActive = true,
-                            SortOrder = 3,
+                            SortOrder = 2,
                             SystemCodeId = 2
                         },
                         new
                         {
                             Id = 7,
-                            Code = "Rental_avail",
-                            Description = "Available for Rent",
+                            Code = "BLOCK_D",
+                            Description = "Block D",
+                            IsActive = true,
+                            SortOrder = 2,
+                            SystemCodeId = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Code = "APARTMENT",
+                            Description = "Apartment",
                             IsActive = true,
                             SortOrder = 1,
                             SystemCodeId = 3
                         },
                         new
                         {
-                            Id = 8,
-                            Code = "Rented",
-                            Description = "Rented",
+                            Id = 9,
+                            Code = "VILLA",
+                            Description = "Villa",
                             IsActive = true,
                             SortOrder = 2,
                             SystemCodeId = 3
                         },
                         new
                         {
-                            Id = 9,
-                            Code = "Sale_avail",
-                            Description = "Available for Sale",
+                            Id = 10,
+                            Code = "COMMERCIAL",
+                            Description = "Commercial",
                             IsActive = true,
-                            SortOrder = 3,
+                            SortOrder = 2,
                             SystemCodeId = 3
                         },
                         new
                         {
-                            Id = 10,
-                            Code = "Sold",
+                            Id = 11,
+                            Code = "LAND",
+                            Description = "Land/Plot",
+                            IsActive = true,
+                            SortOrder = 2,
+                            SystemCodeId = 3
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Code = "AVAILABLE",
+                            Description = "Available",
+                            IsActive = true,
+                            SortOrder = 1,
+                            SystemCodeId = 4
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Code = "BOOKED",
+                            Description = "Booked",
+                            IsActive = true,
+                            SortOrder = 2,
+                            SystemCodeId = 4
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Code = "SOLD",
                             Description = "Sold",
                             IsActive = true,
-                            SortOrder = 4,
-                            SystemCodeId = 3
+                            SortOrder = 3,
+                            SystemCodeId = 4
                         });
                 });
 
@@ -456,7 +410,7 @@ namespace SocietyMng.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@society.com",
+                            Email = "mishal@society.com",
                             FullName = "Mishal Ali",
                             Gender = "Female",
                             IsActive = true,
@@ -468,38 +422,75 @@ namespace SocietyMng.Migrations
 
             modelBuilder.Entity("SocietyMng.Data.Entities.Asset", b =>
                 {
-                    b.HasOne("SocietyMng.Data.Entities.SystemCodeItem", "RoomCount")
-                        .WithMany()
-                        .HasForeignKey("RoomCountId")
+                    b.HasOne("SocietyMng.Data.Entities.SystemCodeItem", "Block")
+                        .WithMany("BlockAssets")
+                        .HasForeignKey("BlockId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("SocietyMng.Data.Entities.SystemCodeItem", "PropertyType")
+                        .WithMany("TypeAssets")
+                        .HasForeignKey("PropertyTypeId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("SocietyMng.Data.Entities.SystemCodeItem", "Status")
-                        .WithMany()
+                        .WithMany("StatusAssets")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SocietyMng.Data.Entities.User", "UploadedByUser")
-                        .WithMany()
-                        .HasForeignKey("UploadedByUserId")
+                    b.HasOne("SocietyMng.Data.Entities.User", null)
+                        .WithMany("UploadedAssets")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Block");
+
+                    b.Navigation("PropertyType");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("SocietyMng.Data.Entities.Booking", b =>
+                {
+                    b.HasOne("SocietyMng.Data.Entities.Asset", "Asset")
+                        .WithMany("Bookings")
+                        .HasForeignKey("AssetId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("RoomCount");
+                    b.HasOne("SocietyMng.Data.Entities.User", "User")
+                        .WithMany("Bookings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                    b.Navigation("Status");
+                    b.Navigation("Asset");
 
-                    b.Navigation("UploadedByUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SocietyMng.Data.Entities.Complaint", b =>
                 {
+                    b.HasOne("SocietyMng.Data.Entities.Asset", "Asset")
+                        .WithMany("Complaints")
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("SocietyMng.Data.Entities.Booking", "Booking")
+                        .WithMany("Complaints")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("SocietyMng.Data.Entities.User", "User")
                         .WithMany("Complaints")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Asset");
+
+                    b.Navigation("Booking");
 
                     b.Navigation("User");
                 });
@@ -518,7 +509,7 @@ namespace SocietyMng.Migrations
             modelBuilder.Entity("SocietyMng.Data.Entities.User", b =>
                 {
                     b.HasOne("SocietyMng.Data.Entities.SystemCodeItem", "Role")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -526,14 +517,41 @@ namespace SocietyMng.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("SocietyMng.Data.Entities.Asset", b =>
+                {
+                    b.Navigation("Bookings");
+
+                    b.Navigation("Complaints");
+                });
+
+            modelBuilder.Entity("SocietyMng.Data.Entities.Booking", b =>
+                {
+                    b.Navigation("Complaints");
+                });
+
             modelBuilder.Entity("SocietyMng.Data.Entities.SystemCode", b =>
                 {
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("SocietyMng.Data.Entities.SystemCodeItem", b =>
+                {
+                    b.Navigation("BlockAssets");
+
+                    b.Navigation("StatusAssets");
+
+                    b.Navigation("TypeAssets");
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("SocietyMng.Data.Entities.User", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("Complaints");
+
+                    b.Navigation("UploadedAssets");
                 });
 #pragma warning restore 612, 618
         }

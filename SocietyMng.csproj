@@ -18,7 +18,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.7" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.74.1" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Validation" Version="4.0.0" />
   </ItemGroup>
@@ -28,9 +30,6 @@
     <Folder Include="Areas\Assets\Models\" />
     <Folder Include="Areas\Assets\ViewModels\" />
     <Folder Include="Areas\Assets\Views\" />
-    <Folder Include="Areas\User\Models\" />
-    <Folder Include="Areas\User\ViewModels\" />
-    <Folder Include="Areas\User\Views\" />
     <Folder Include="Services\Assets\" />
     <Folder Include="Services\Storage\" />
     <Folder Include="Services\Notification\" />

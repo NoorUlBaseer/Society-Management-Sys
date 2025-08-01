@@ -14,26 +14,6 @@ namespace SocietyMng.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Staff",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ContactNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    HireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    BankAccount = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Staff", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SystemCodes",
                 columns: table => new
                 {
@@ -103,19 +83,26 @@ namespace SocietyMng.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoomCountId = table.Column<int>(type: "int", nullable: false),
-                    StatusId = table.Column<int>(type: "int", nullable: false),
+                    PlotNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DateUploaded = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UploadedByUserId = table.Column<int>(type: "int", nullable: false)
+                    BlockId = table.Column<int>(type: "int", nullable: false),
+                    PropertyTypeId = table.Column<int>(type: "int", nullable: false),
+                    StatusId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Assets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Assets_SystemCodeItems_RoomCountId",
-                        column: x => x.RoomCountId,
+                        name: "FK_Assets_SystemCodeItems_BlockId",
+                        column: x => x.BlockId,
+                        principalTable: "SystemCodeItems",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Assets_SystemCodeItems_PropertyTypeId",
+                        column: x => x.PropertyTypeId,
                         principalTable: "SystemCodeItems",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -124,8 +111,35 @@ namespace SocietyMng.Migrations
                         principalTable: "SystemCodeItems",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Assets_Users_UploadedByUserId",
-                        column: x => x.UploadedByUserId,
+                        name: "FK_Assets_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    AssetId = table.Column<int>(type: "int", nullable: false),
+                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Assets_AssetId",
+                        column: x => x.AssetId,
+                        principalTable: "Assets",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Bookings_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
@@ -140,32 +154,28 @@ namespace SocietyMng.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    AssetId = table.Column<int>(type: "int", nullable: true),
+                    BookingId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Complaints", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Complaints_Assets_AssetId",
+                        column: x => x.AssetId,
+                        principalTable: "Assets",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Complaints_Bookings_BookingId",
+                        column: x => x.BookingId,
+                        principalTable: "Bookings",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Complaints_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Staff",
-                columns: new[] { "Id", "BankAccount", "ContactNumber", "Email", "FullName", "HireDate", "IsActive", "Position", "Salary" },
-                values: new object[,]
-                {
-                    { 1, "US1234567890123456", "555-0101", "john.smith@example.com", "John Smith", new DateTime(2018, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Manager", 65000.00m },
-                    { 2, "US2345678901234567", "555-0102", "emily.j@example.com", "Emily Johnson", new DateTime(2019, 3, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Accountant", 55000.00m },
-                    { 3, "US3456789012345678", "555-0103", "michael.w@example.com", "Michael Williams", new DateTime(2020, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Maintenance Supervisor", 48000.00m },
-                    { 4, "US4567890123456789", "555-0104", "sarah.b@example.com", "Sarah Brown", new DateTime(2021, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Administrative Assistant", 42000.00m },
-                    { 5, "US5678901234567890", "555-0105", "robert.d@example.com", "Robert Davis", new DateTime(2017, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "Security Officer", 38000.00m },
-                    { 6, "US6789012345678901", "555-0106", "jennifer.m@example.com", "Jennifer Miller", new DateTime(2022, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Community Manager", 58000.00m },
-                    { 7, "US7890123456789012", "555-0107", "david.w@example.com", "David Wilson", new DateTime(2020, 9, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Maintenance Technician", 45000.00m },
-                    { 8, "US8901234567890123", "555-0108", "lisa.t@example.com", "Lisa Taylor", new DateTime(2019, 6, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), true, "Accountant", 53000.00m }
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -174,8 +184,9 @@ namespace SocietyMng.Migrations
                 values: new object[,]
                 {
                     { 1, "User_Role", "User roles in the system" },
-                    { 2, "Room_No", "Property room counts" },
-                    { 3, "Asset_Status", "Rental/Sale statuses" }
+                    { 2, "Block", "Society blocks" },
+                    { 3, "Property_Type", "Property types" },
+                    { 4, "Asset_Status", "Asset statuses" }
                 });
 
             migrationBuilder.InsertData(
@@ -184,26 +195,35 @@ namespace SocietyMng.Migrations
                 values: new object[,]
                 {
                     { 1, "Admin", "System Administrator", true, 1, 1 },
-                    { 2, "Resident", "Society Resident", true, 2, 1 },
-                    { 3, "Buyer", "Property Buyer", true, 3, 1 },
-                    { 4, "1_ROOM", "1 Bedroom", true, 1, 2 },
-                    { 5, "2_ROOMS", "2 Rooms, 1 Kitchen", true, 2, 2 },
-                    { 6, "3_ROOMS", "3 Rooms, 1 Living room & 1 Kitchen", true, 3, 2 },
-                    { 7, "Rental_avail", "Available for Rent", true, 1, 3 },
-                    { 8, "Rented", "Rented", true, 2, 3 },
-                    { 9, "Sale_avail", "Available for Sale", true, 3, 3 },
-                    { 10, "Sold", "Sold", true, 4, 3 }
+                    { 2, "Buyer", "Property Buyer", true, 2, 1 },
+                    { 3, "Sales", "Society Sales", true, 3, 1 },
+                    { 4, "BLOCK_A", "Block A", true, 1, 2 },
+                    { 5, "BLOCK_B", "Block B", true, 2, 2 },
+                    { 6, "BLOCK_C", "Block C", true, 2, 2 },
+                    { 7, "BLOCK_D", "Block D", true, 2, 2 },
+                    { 8, "APARTMENT", "Apartment", true, 1, 3 },
+                    { 9, "VILLA", "Villa", true, 2, 3 },
+                    { 10, "COMMERCIAL", "Commercial", true, 2, 3 },
+                    { 11, "LAND", "Land/Plot", true, 2, 3 },
+                    { 12, "AVAILABLE", "Available", true, 1, 4 },
+                    { 13, "BOOKED", "Booked", true, 2, 4 },
+                    { 14, "SOLD", "Sold", true, 3, 4 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedAt", "Email", "FullName", "Gender", "IsActive", "PasswordHash", "PhoneNumber", "RoleId" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@society.com", "Mishal Ali", "Female", true, "$2a$08$1m.DC2ZBSdrDYHzW/QiGJexNx9U7TlAuBaBsav6..pGLkh7zJT4Ym", "1122334455", 1 });
+                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "mishal@society.com", "Mishal Ali", "Female", true, "$2a$08$1m.DC2ZBSdrDYHzW/QiGJexNx9U7TlAuBaBsav6..pGLkh7zJT4Ym", "1122334455", 1 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Assets_RoomCountId",
+                name: "IX_Assets_BlockId",
                 table: "Assets",
-                column: "RoomCountId");
+                column: "BlockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Assets_PropertyTypeId",
+                table: "Assets",
+                column: "PropertyTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Assets_StatusId",
@@ -211,9 +231,29 @@ namespace SocietyMng.Migrations
                 column: "StatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Assets_UploadedByUserId",
+                name: "IX_Assets_UserId",
                 table: "Assets",
-                column: "UploadedByUserId");
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_AssetId",
+                table: "Bookings",
+                column: "AssetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_UserId",
+                table: "Bookings",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Complaints_AssetId",
+                table: "Complaints",
+                column: "AssetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Complaints_BookingId",
+                table: "Complaints",
+                column: "BookingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Complaints_UserId",
@@ -235,13 +275,13 @@ namespace SocietyMng.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Assets");
-
-            migrationBuilder.DropTable(
                 name: "Complaints");
 
             migrationBuilder.DropTable(
-                name: "Staff");
+                name: "Bookings");
+
+            migrationBuilder.DropTable(
+                name: "Assets");
 
             migrationBuilder.DropTable(
                 name: "Users");

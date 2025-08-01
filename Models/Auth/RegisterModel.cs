@@ -5,55 +5,43 @@ namespace SocietyMng.Models.Auth
 {
     public class RegisterModel
     {
+        // Form properties
         [Required(ErrorMessage = "Full name is required")]
-        [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
-        [Display(Name = "Full Name")]
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
-        [Display(Name = "Email")]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]
-        [StringLength(12, MinimumLength = 5, ErrorMessage = "Phone number must be between 5-12 characters.")]
-        [RegularExpression(@"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$",  //no alphabets
-        ErrorMessage = "Invalid phone number")]
-        [Display(Name = "Phone Number")]
+        [RegularExpression(@"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$")]
         public string PhoneNumber { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
+        [Required]
         [DataType(DataType.Password)]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters")]
-        [Display(Name = "Password")]
+        [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
-        [Compare("Password", ErrorMessage = "The passwords don't match.")]
+        [Compare("Password")]
         public string ConfirmPassword { get; set; }
 
-        [Required(ErrorMessage = "Gender is required")]
-        [Display(Name = "Gender")]
+        [Required]
         public string Gender { get; set; } = "Other";
 
-        [Required(ErrorMessage = "Please select a role")]
-        [Display(Name = "Account Type")]
+        [Required]
         public string SelectedRole { get; set; }
 
-        [Display(Name = "Show Password")]
         public bool ShowPassword { get; set; }
-
         public IEnumerable<SelectListItem> GetRoleOptions()
         {
             return new List<SelectListItem>
             {
-                new SelectListItem { Value = "Resident", Text = "Resident" },
-                new SelectListItem { Value = "Buyer", Text = "Buyer" }
+                new SelectListItem { Value = "Buyer", Text = "Buyer" },
+                new SelectListItem { Value = "Sales", Text = "Sales" }               
             };
         }
-
-        public IEnumerable<SelectListItem> GenderOptions => new List<SelectListItem>
+        public IEnumerable<SelectListItem> GenderOptions { get; set; } = new List<SelectListItem>
         {
             new SelectListItem { Value = "Male", Text = "Male" },
             new SelectListItem { Value = "Female", Text = "Female" },
