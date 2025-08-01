@@ -3,10 +3,14 @@
     public class AssetView
     {
         public int Id { get; set; }
-        public string Name { get; set; }
         public string Description { get; set; }
-        public decimal Value { get; set; }
-        public DateTime PurchaseDate { get; set; } = DateTime.Today;
-        public bool IsActive { get; set; } = true;
+        public string Address { get; set; }
+        public string PlotNumber { get; set; }
+        public string ImagePath { get; set; }
+        public decimal Price { get; set; }
+        public string Block { get; set; }
+        public string PropertyType { get; set; }
+        public string Status { get; set; }
+        public IFormFile ImageFile { get; set; } 
     }
 }

@@ -98,14 +98,13 @@ namespace SocietyMng.Data
 
                 // Property Types
                 new SystemCodeItem { Id = 8, SystemCodeId = 3, Code = "APARTMENT", Description = "Apartment", SortOrder = 1, IsActive = true },
-                new SystemCodeItem { Id = 9, SystemCodeId = 3, Code = "VILLA", Description = "Villa", SortOrder = 2, IsActive = true },
-                new SystemCodeItem { Id = 10, SystemCodeId = 3, Code = "COMMERCIAL", Description = "Commercial", SortOrder = 2, IsActive = true },
-                new SystemCodeItem { Id = 11, SystemCodeId = 3, Code = "LAND", Description = "Land/Plot", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 9, SystemCodeId = 3, Code = "COMMERCIAL", Description = "Commercial", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 10, SystemCodeId = 3, Code = "LAND", Description = "Land/Plot", SortOrder = 2, IsActive = true },
 
                 // Asset Statuses
-                new SystemCodeItem { Id = 12, SystemCodeId = 4, Code = "AVAILABLE", Description = "Available", SortOrder = 1, IsActive = true },
-                new SystemCodeItem { Id = 13, SystemCodeId = 4, Code = "BOOKED", Description = "Booked", SortOrder = 2, IsActive = true },
-                new SystemCodeItem { Id = 14, SystemCodeId = 4, Code = "SOLD", Description = "Sold", SortOrder = 3, IsActive = true }
+                new SystemCodeItem { Id = 11, SystemCodeId = 4, Code = "AVAILABLE", Description = "Available", SortOrder = 1, IsActive = true },
+                new SystemCodeItem { Id = 12, SystemCodeId = 4, Code = "BOOKED", Description = "Booked", SortOrder = 2, IsActive = true },
+                new SystemCodeItem { Id = 13, SystemCodeId = 4, Code = "SOLD", Description = "Sold", SortOrder = 3, IsActive = true }
             );
 
             

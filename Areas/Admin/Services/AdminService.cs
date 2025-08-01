@@ -65,94 +65,92 @@ namespace SocietyMng.Services
             }
         }
 
-    //    // Staff Management
-    //    public async Task<List<Staff>> GetAllStaffAsync()
-    //    {
-    //        _logger.LogDebug("Fetching all staff members from database");
-    //        var staff = await _context.Staff.ToListAsync();
-    //        _logger.LogInformation("Retrieved {StaffCount} staff members", staff.Count);
-    //        return staff;
-    //    }
+        //    // Staff Management
+        //    public async Task<List<Staff>> GetAllStaffAsync()
+        //    {
+        //        _logger.LogDebug("Fetching all staff members from database");
+        //        var staff = await _context.Staff.ToListAsync();
+        //        _logger.LogInformation("Retrieved {StaffCount} staff members", staff.Count);
+        //        return staff;
+        //    }
 
-    //    public async Task AddStaffAsync(StaffView model)
-    //    {
-    //        _logger.LogDebug("Adding new staff member: {StaffName}", model.FullName);
-    //        var staff = new Staff
-    //        {
-    //            FullName = model.FullName,
-    //            Email = model.Email,
-    //            ContactNumber = model.ContactNumber,
-    //            Position = model.Position,
-    //            Salary = model.Salary,
-    //            HireDate = model.HireDate,
-    //            IsActive = model.IsActive,
-    //            BankAccount = model.BankAccount
-    //        };
+        //    public async Task AddStaffAsync(StaffView model)
+        //    {
+        //        _logger.LogDebug("Adding new staff member: {StaffName}", model.FullName);
+        //        var staff = new Staff
+        //        {
+        //            FullName = model.FullName,
+        //            Email = model.Email,
+        //            ContactNumber = model.ContactNumber,
+        //            Position = model.Position,
+        //            Salary = model.Salary,
+        //            HireDate = model.HireDate,
+        //            IsActive = model.IsActive,
+        //            BankAccount = model.BankAccount
+        //        };
 
-    //        await _context.Staff.AddAsync(staff);
-    //        await _context.SaveChangesAsync();
-    //        _logger.LogInformation("Successfully added new staff member ID: {StaffId}, Name: {StaffName}", staff.Id, staff.FullName);
-    //    }
+        //        await _context.Staff.AddAsync(staff);
+        //        await _context.SaveChangesAsync();
+        //        _logger.LogInformation("Successfully added new staff member ID: {StaffId}, Name: {StaffName}", staff.Id, staff.FullName);
+        //    }
 
-    //    public async Task UpdateStaffSalaryAsync(SalaryUpdate model)
-    //    {
-    //        if (model == null || model.StaffId <= 0 || model.NewSalary <= 0)
-    //        {
-    //            _logger.LogWarning("Invalid salary update model received");
-    //            throw new ArgumentException("Invalid salary update parameters");
-    //        }
+        //    public async Task UpdateStaffSalaryAsync(SalaryUpdate model)
+        //    {
+        //        if (model == null || model.StaffId <= 0 || model.NewSalary <= 0)
+        //        {
+        //            _logger.LogWarning("Invalid salary update model received");
+        //            throw new ArgumentException("Invalid salary update parameters");
+        //        }
 
-    //        var staff = await _context.Staff.FindAsync(model.StaffId);
-    //        if (staff == null)
-    //        {
-    //            _logger.LogWarning("Staff ID: {StaffId} not found for salary update", model.StaffId);
-    //            throw new KeyNotFoundException($"Staff with ID {model.StaffId} not found");
-    //        }
+        //        var staff = await _context.Staff.FindAsync(model.StaffId);
+        //        if (staff == null)
+        //        {
+        //            _logger.LogWarning("Staff ID: {StaffId} not found for salary update", model.StaffId);
+        //            throw new KeyNotFoundException($"Staff with ID {model.StaffId} not found");
+        //        }
 
-    //        staff.Salary = model.NewSalary;
-    //        await _context.SaveChangesAsync();
-    //        _logger.LogInformation("Salary updated for {StaffName} to {NewSalary}",
-    //            staff.FullName, model.NewSalary);
-    //    }
+        //        staff.Salary = model.NewSalary;
+        //        await _context.SaveChangesAsync();
+        //        _logger.LogInformation("Salary updated for {StaffName} to {NewSalary}",
+        //            staff.FullName, model.NewSalary);
+        //    }
 
-    //    public async Task ToggleStaffStatusAsync(int staffId)
-    //    {
-    //        _logger.LogDebug("Attempting to toggle status for staff ID: {StaffId}", staffId);
-    //        var staff = await _context.Staff.FindAsync(staffId);
-    //        if (staff != null)
-    //        {
-    //            staff.IsActive = !staff.IsActive;
-    //            await _context.SaveChangesAsync();
-    //            _logger.LogInformation("Staff ID: {StaffId} status changed to {Status}", staffId, staff.IsActive ? "Active" : "Inactive");
-    //        }
-    //        else
-    //        {
-    //            _logger.LogWarning("Staff ID: {StaffId} not found for status toggle", staffId);
-    //        }
-    //    }
+        //    public async Task ToggleStaffStatusAsync(int staffId)
+        //    {
+        //        _logger.LogDebug("Attempting to toggle status for staff ID: {StaffId}", staffId);
+        //        var staff = await _context.Staff.FindAsync(staffId);
+        //        if (staff != null)
+        //        {
+        //            staff.IsActive = !staff.IsActive;
+        //            await _context.SaveChangesAsync();
+        //            _logger.LogInformation("Staff ID: {StaffId} status changed to {Status}", staffId, staff.IsActive ? "Active" : "Inactive");
+        //        }
+        //        else
+        //        {
+        //            _logger.LogWarning("Staff ID: {StaffId} not found for status toggle", staffId);
+        //        }
+        //    }
 
-    //    // Complaint Management
-    //    public async Task<List<Complaint>> GetAllComplaintsAsync()
-    //    {
-    //        _logger.LogDebug("Fetching all complaints from database");
-    //        var complaints = await _context.Complaints
-    //            .Include(c => c.User)
-    //            .ToListAsync();
-    //        _logger.LogInformation("Retrieved {ComplaintCount} complaints", complaints.Count);
-    //        return complaints;
-    //    }
+        //    // Complaint Management
+        //    public async Task<List<Complaint>> GetAllComplaintsAsync()
+        //    {
+        //        _logger.LogDebug("Fetching all complaints from database");
+        //        var complaints = await _context.Complaints
+        //            .Include(c => c.User)
+        //            .ToListAsync();
+        //        _logger.LogInformation("Retrieved {ComplaintCount} complaints", complaints.Count);
+        //        return complaints;
+        //    }
 
-    //    // Asset Management
-    //    public async Task<List<Asset>> GetAllAssetsAsync()
-    //    {
-    //        _logger.LogDebug("Fetching all assets from database");
-    //        var assets = await _context.Assets
-    //            .Include(a => a.Status)
-    //            .Include(a => a.RoomCount)
-    //            .Include(a => a.UploadedByUser)
-    //            .ToListAsync();
-    //        _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
-    //        return assets;
-    //    }
+        // Asset Management
+        //public async Task<List<Asset>> GetAllAssetsAsync()
+        //{
+        //    _logger.LogDebug("Fetching all assets from database");
+        //    var assets = await _context.Assets
+        //        .Include(a => a.Status)
+        //        .ToListAsync();
+        //    _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
+        //    return assets;
+        //}
     }
 }

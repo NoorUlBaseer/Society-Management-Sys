@@ -26,10 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Assets\Controllers\" />
-    <Folder Include="Areas\Assets\Models\" />
-    <Folder Include="Areas\Assets\ViewModels\" />
-    <Folder Include="Areas\Assets\Views\" />
     <Folder Include="Services\Assets\" />
     <Folder Include="Services\Storage\" />
     <Folder Include="Services\Notification\" />
