@@ -23,6 +23,11 @@ namespace SocietyMng.Controllers
             _appSettings = appSettings.Value;
         }
 
+        public IActionResult Landing()
+        {
+            return View();
+        }
+
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {

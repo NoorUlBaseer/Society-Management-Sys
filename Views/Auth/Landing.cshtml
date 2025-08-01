@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "Welcome";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kokoro&display=swap" rel="stylesheet">
+    <title>CivicNest</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            font-family: 'Kokoro', sans-serif;
+            background: linear-gradient(to bottom, black, #408350);
+            color: white;
+            overflow: hidden;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+
+        #splashText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            letter-spacing: 2px;
+            font-family: 'Julius Sans One', sans-serif;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+            #splashText.hide {
+                opacity: 0;
+                transform: translate(-50%, -70%);
+                pointer-events: none;
+            }
+
+        #chooseContent {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease, transform 1s ease;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 30%);
+        }
+
+            #chooseContent.show {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+
+            #chooseContent h1 {
+                font-family: 'Julius Sans One', sans-serif;
+                font-size: 4em;
+                margin-bottom: 10px;
+            }
+
+            #chooseContent p {
+                margin-bottom: 50px;
+                font-size: 1.5em;
+            }
+
+            #chooseContent a {
+                display: block;
+                margin: 10px auto;
+                width: 120px;
+                padding: 10px 50px;
+                background: #D9D9D9;
+                color: black;
+                border: none;
+                border-radius: 20px;
+                text-decoration: none;
+                font-size: 1.5em;
+            }
+
+                #chooseContent a:hover {
+                    background: #ddd;
+                }
+    </style>
+</head>
+<body>
+    <div id="splashText">CIVICNEST</div>
+
+    <div id="chooseContent">
+        <h1>CIVICNEST</h1>
+        <p>Your gateway to buying plots and homes with confidence.</p>
+
+        <div class="button-row">
+            <a href="@Url.Action("Login", "Auth")">Login</a>
+            <a href="@Url.Action("Register", "Auth")">Sign Up</a>
+        </div>
+
+    </div>
+        
+    <script>
+        const splashText = document.getElementById('splashText');
+        const chooseContent = document.getElementById('chooseContent');
+
+        const revealContent = () => {
+            splashText.classList.add('hide');
+            chooseContent.classList.add('show');
+            document.removeEventListener('keydown', revealContent);
+            document.removeEventListener('mousedown', revealContent);
+        };
+
+        document.addEventListener('keydown', revealContent);
+        document.addEventListener('mousedown', revealContent);
+    </script>
+</body>
+</html>
+
+
