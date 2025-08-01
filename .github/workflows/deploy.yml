@@ -1,0 +1,45 @@
+name: Build and Deploy .NET App for Windows to EC2
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Set up .NET 9 SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Publish application (win-x64, portable)
+      run: dotnet publish -c Release -r win-x64 --self-contained false -o publish
+
+    - name: Set up SSH access
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Upload published files to EC2
+      run: |
+        rsync -avz --delete \
+          --exclude='appsettings.Production.json' \
+          ./publish/ \
+          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/Society-Management-System-Release-Project/Release-Proj/
+
+    - name: Restart .NET service on EC2
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          sudo systemctl restart society-app
+          sudo systemctl status society-app --no-pager
+        EOF
