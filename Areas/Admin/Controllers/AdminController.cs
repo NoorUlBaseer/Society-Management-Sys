@@ -32,9 +32,10 @@ namespace SocietyMng.Areas.Admin.Controllers
         public async Task<IActionResult> ManageUsers()
         {
             _logger.LogDebug("Fetching all users for management");
-            var users = await _adminService.GetAllUsersAsync();
-            _logger.LogInformation("Retrieved {UserCount} users for management", users.Count);
-            return View(users);
+            //var users = await _adminService.GetAllUsersAsync();
+           // _logger.LogInformation("Retrieved {UserCount} users for management", users.Count);
+            //return View(users);
+            return View();
         }
 
         [HttpPost]
