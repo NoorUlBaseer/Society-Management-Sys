@@ -166,11 +166,10 @@ namespace SocietyMng.Controllers
                     Email = model.Email,
                     Password = model.Password
                 });
-
-                if (user.Role.Code == _appSettings.User_Role.Buyer)
-                {
+                if (model.SelectedRole == _appSettings.User_Role.Buyer)
                     return RedirectToAction("Dashboard", "Buyer", new { area = "Buyer" });
-                }
+
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
