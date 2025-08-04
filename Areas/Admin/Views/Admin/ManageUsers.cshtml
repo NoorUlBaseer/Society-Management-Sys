@@ -17,50 +17,197 @@
         <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
     }
 
-    <div class="table-responsive mt-4">
-@*         <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model)
-                {
-                    <tr>
-                        <td>@user.Id</td>
-                        <td>@user.FullName</td>
-                        <td>@user.Email</td>
-                        <td>@user.Role?.Description</td>
-                        <td>@(user.IsActive ? "Active" : "Blocked")</td>
-                        <td>@user.CreatedAt.ToString("d")</td>
-                        <td>
-                            @using (Html.BeginForm("ToggleUserStatus", "Admin", new { area = "Admin" }, FormMethod.Post))
-                            {
-                                @Html.Hidden("userId", user.Id)
-                                <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-warning" : "btn-success")">
-                                    @(user.IsActive ? "Block" : "Unblock")
-                                </button>
-                            }
+    <div class="container d-flex justify-content-center">
+        <div class="table-responsive m-4 p-5 rounded-5" style="max-width: 900px; width: 100%; background-color: #ffffff;">
 
-                            @using (Html.BeginForm("DeleteUser", "Admin", new { area = "Admin" }, FormMethod.Post))
-                            {
-                                @Html.Hidden("userId", user.Id)
-                                <button type="submit" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Delete user @user.FullName?');">
-                                    Delete
-                                </button>
-                            }
-                        </td>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="m-0 text-black">All Users</h2>
+                <!-- DataTables will auto-place its search input here -->
+            </div>
+            <div class="mb-3 d-flex justify-content-end">
+                <div class="d-flex align-items-center gap-3 flex-wrap p-2 rounded" style="background-color: #f9f9f9;">
+                    <div id="customSearchWrapper" class="d-flex align-items-center"></div>
+
+                    <div class="d-flex align-items-center px-2">
+                        <label class="me-2 fw-bold text-black-50 m-0" for="sortSelect">Sort by:</label>
+                        <select id="sortSelect" class="form-select form-select-sm border-0 p-0 bg-transparent" style="width: auto; box-shadow: none;">
+                            <option value="">None</option>
+                            <option value="0-asc">ID ↑</option>
+                            <option value="0-desc">ID ↓</option>
+                            <option value="1-asc">Name ↑</option>
+                            <option value="1-desc">Name ↓</option>
+                            <option value="2-asc">Email ↑</option>
+                            <option value="2-desc">Email ↓</option>
+                            <option value="3-asc">Role ↑</option>
+                            <option value="3-desc">Role ↓</option>
+                            <option value="4-asc">Created ↑</option>
+                            <option value="4-desc">Created ↓</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <table id="userTable" class="table w-100">
+                <thead class="bg-white">
+                    <tr class="text-center" style="text-align: center !important;">
+                        <th class="fw-normal text-secondary rounded-top-start px-3 py-2">ID</th>
+                        <th class="fw-normal text-secondary px-3 py-2">Name</th>
+                        <th class="fw-normal text-secondary px-3 py-2">Email</th>
+                        <th class="fw-normal text-secondary px-3 py-2">Role</th>
+                        <th class="fw-normal text-secondary px-3 py-2">Created</th>
+                        <th class="fw-normal text-secondary rounded-top-end px-3 py-2">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table> *@
+                </thead>
+
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr class="text-center user-row" style="cursor: pointer;"
+                            data-phone="@user.PhoneNumber"
+                            data-gender="@user.Gender"
+                            data-status="@(user.IsActive ? "Active" : "Blocked")">
+                            <td class="px-3 py-2">@user.Id</td>
+                            <td class="px-3 py-2">@user.FullName</td>
+                            <td class="px-3 py-2">@user.Email</td>
+                            <td class="px-3 py-2">@user.Role?.Description</td>
+                            <td class="px-3 py-2">@user.CreatedAt.ToString("d")</td>
+                            <td class="px-3 py-2">
+                                <div class="d-flex gap-2 justify-content-center">
+                                    @using (Html.BeginForm("ToggleUserStatus", "Admin", new { area = "Admin" }, FormMethod.Post))
+                                    {
+                                        @Html.Hidden("userId", user.Id)
+                                        <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-warning" : "btn-success")" style="min-width: 80px;">
+                                            @(user.IsActive ? "Block" : "Unblock")
+                                        </button>
+                                    }
+                                    @using (Html.BeginForm("DeleteUser", "Admin", new { area = "Admin" }, FormMethod.Post))
+                                    {
+                                        @Html.Hidden("userId", user.Id)
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Delete user @user.FullName?');">
+                                            Delete
+                                        </button>
+                                    }
+                                </div>                            
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="userInfoModal" tabindex="-1" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userInfoModalLabel">User Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>ID:</strong> <span id="modalUserId"></span></p>
+                <p><strong>Name:</strong> <span id="modalUserName"></span></p>
+                <p><strong>Email:</strong> <span id="modalUserEmail"></span></p>
+                <p><strong>Role:</strong> <span id="modalUserRole"></span></p>
+                <p><strong>Created:</strong> <span id="modalUserCreated"></span></p>
+                <hr />
+                <p><strong>Phone:</strong> <span id="modalUserPhone"></span></p>
+                <p><strong>Gender:</strong> <span id="modalUserGender"></span></p>
+                <p><strong>Status:</strong> <span id="modalUserStatus"></span></p>
+                <hr />
+                @using (Html.BeginForm("DeleteUser", "Admin", new { area = "Admin" }, FormMethod.Post))
+                {
+                    @Html.Hidden("userId", null, new { id = "modalDeleteUserId" })
+                    <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete user?');">
+                        Delete
+                    </button>
+                }
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#userTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "columnDefs": [
+                    { "orderable": false, "targets": "_all" }
+                ],
+                "info": false,
+                "lengthChange": false,
+                "pageLength": 10,
+                "language": {
+                    "emptyTable": "No users found",
+                    "paginate": {
+                        "previous": "<",
+                        "next": ">"
+                    },
+                    "search": "",
+                    "searchPlaceholder": "Search users..."
+                }
+            });
+
+            $('#sortSelect').on('change', function () {
+                const val = $(this).val();
+                if (!val) {
+                    table.order([]).draw();
+                    return;
+                }
+
+                const [colIndex, dir] = val.split('-');
+                table.order([parseInt(colIndex), dir]).draw();
+            });
+
+            let searchBox = $('#userTable_filter input');
+            let searchLabel = $('#userTable_filter label');
+            let searchWrapper = $('#customSearchWrapper');
+
+            searchBox.addClass('form-control form-control-sm bg-light text-dark border-0');
+            searchBox.wrap('<div class="input-group"></div>');
+            searchBox.before('<span class="input-group-text bg-white"><i class="bi bi-search"></i></span>');
+
+            searchWrapper.append(searchBox.closest('.input-group'));
+            searchLabel.remove();
+
+        });
+
+        $(document).on('click', '.user-row', function (e) {
+            if ($(e.target).closest("form").length > 0) return;
+
+            const rowData = $('#userTable').DataTable().row(this).data();
+            $('#modalUserId').text(rowData[0]);
+            $('#modalUserName').text(rowData[1]);
+            $('#modalUserEmail').text(rowData[2]);
+            $('#modalUserRole').text(rowData[3]);
+            $('#modalUserCreated').text(rowData[4]);
+
+
+            $('#modalUserPhone').text($(this).data('phone'));
+            $('#modalUserGender').text($(this).data('gender'));
+            $('#modalUserStatus').text($(this).data('status'));
+
+            $('#modalDeleteUserId').val(rowData[0]);
+
+            const modal = new bootstrap.Modal(document.getElementById('userInfoModal'));
+            modal.show();
+        });
+
+    </script>
+}
