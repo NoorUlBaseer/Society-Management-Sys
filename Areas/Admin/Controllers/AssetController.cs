@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using SocietyMng.Areas.Admin.DTOs;
 using SocietyMng.Configurations;
 using SocietyMng.Data;
+using SocietyMng.Data.Entities;
 
 namespace SocietyMng.Areas.Admin.Controllers
 {
@@ -25,7 +26,33 @@ namespace SocietyMng.Areas.Admin.Controllers
             _context = context;
             _appSettings = appSet.Value;
             _logger = logger;
+            //for to wwwroot -> public asset img folder
             _webHostEnvironment = webHostEnvironment;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var assets= await _adminService.GetAllAssetsAsync();
+            return View(assets);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var asset = await _context.Assets
+                .Include(a => a.Block)
+                .Include (a => a.PropertyType)
+                .Include(a => a.Status)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (asset == null)
+            {
+                TempData["Error"] = "Asset not found!";
+                return RedirectToAction("Index");
+            }
+
+            return View(asset);
         }
 
         [HttpGet]
@@ -56,11 +83,9 @@ namespace SocietyMng.Areas.Admin.Controllers
             try
             {
                 _logger.LogDebug("Processing Create Asset POST request");
-
-                // Remove ImagePath from model validation since it will be set automatically
                 ModelState.Remove("ImagePath");
 
-                // Check for image file first
+               
                 if (ImageFile == null || ImageFile.Length == 0)
                 {
                     _logger.LogWarning("No image file provided");
@@ -88,7 +113,7 @@ namespace SocietyMng.Areas.Admin.Controllers
                     _logger.LogInformation("Processing image upload: {FileName}, Size: {Size} bytes",
                         ImageFile.FileName, ImageFile.Length);
 
-                    // Validate extension
+                    // img extension check
                     var ext = Path.GetExtension(ImageFile.FileName).ToLowerInvariant();
 
                     if (!_appSettings.FileUploadPath.AllowedExtensions.Contains(ext))
@@ -100,7 +125,7 @@ namespace SocietyMng.Areas.Admin.Controllers
                         return View(model);
                     }
 
-                    // Validate size
+                    // img size check
                     var maxBytes = _appSettings.FileUploadPath.MaxFileSizeMB * 1024 * 1024;
                     if (ImageFile.Length > maxBytes)
                     {
@@ -111,14 +136,13 @@ namespace SocietyMng.Areas.Admin.Controllers
                         return View(model);
                     }
 
-                    // Create the full upload path using IWebHostEnvironment
+                    //iwebenv config -> for wwwroot
                     var uploadsPath = Path.Combine(_webHostEnvironment.WebRootPath, _appSettings.FileUploadPath.AssetImages);
 
                     _logger.LogInformation("Upload directory path: {Directory}", uploadsPath);
                     _logger.LogInformation("WebRoot path: {WebRoot}", _webHostEnvironment.WebRootPath);
                     _logger.LogInformation("Configured asset images path: {AssetPath}", _appSettings.FileUploadPath.AssetImages);
 
-                    // Ensure directory exists
                     if (!Directory.Exists(uploadsPath))
                     {
                         Directory.CreateDirectory(uploadsPath);
@@ -129,21 +153,20 @@ namespace SocietyMng.Areas.Admin.Controllers
                         _logger.LogInformation("Upload directory already exists: {Directory}", uploadsPath);
                     }
 
-                    // Generate unique filename with timestamp for extra uniqueness
+                    // generate img path  by timestamp
                     var timeStamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                     var fileName = $"{timeStamp}_{Guid.NewGuid()}{ext}";
                     var fullFilePath = Path.Combine(uploadsPath, fileName);
 
                     _logger.LogInformation("Saving file to: {FilePath}", fullFilePath);
 
-                    // Save the file
+                   
                     using (var fileStream = new FileStream(fullFilePath, FileMode.Create))
                     {
                         await ImageFile.CopyToAsync(fileStream);
                         await fileStream.FlushAsync();
                     }
 
-                    // Verify file was saved
                     if (System.IO.File.Exists(fullFilePath))
                     {
                         var fileInfo = new FileInfo(fullFilePath);
@@ -156,30 +179,27 @@ namespace SocietyMng.Areas.Admin.Controllers
                         throw new InvalidOperationException("Failed to save uploaded file");
                     }
 
-                    // Set the relative web path for the database (this is what browsers will use)
+                    //relative wwwroot folder
                     var webRelativePath = $"/{_appSettings.FileUploadPath.AssetImages.Replace("\\", "/")}/{fileName}";
                     model.ImagePath = webRelativePath;
 
                     _logger.LogInformation("Image saved with web path: {WebPath}", webRelativePath);
                 }
 
-                // Validate foreign key relationships
+                // foreign key checks
                 var blockExists = await _context.SystemCodeItems.AnyAsync(x => x.Id == model.BlockId);
                 var propertyTypeExists = await _context.SystemCodeItems.AnyAsync(x => x.Id == model.PropertyTypeId);
-                var statusExists = await _context.SystemCodeItems.AnyAsync(x => x.Id == model.StatusId);
 
-                if (!blockExists || !propertyTypeExists || !statusExists)
+                if (!blockExists || !propertyTypeExists)
                 {
                     if (!blockExists) ModelState.AddModelError("BlockId", "Selected block is invalid.");
                     if (!propertyTypeExists) ModelState.AddModelError("PropertyTypeId", "Selected property type is invalid.");
-                    if (!statusExists) ModelState.AddModelError("StatusId", "Selected status is invalid.");
 
                     await PopulateLookupsAsync();
                     ViewBag.MaxFileSizeMB = _appSettings.FileUploadPath.MaxFileSizeMB;
                     return View(model);
                 }
-
-                // Call the service
+              
                 await _adminService.AddAssetAsync(model);
                 _logger.LogInformation("Asset created successfully with ImagePath: {ImagePath}", model.ImagePath);
 
@@ -188,6 +208,7 @@ namespace SocietyMng.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
+                //ViewBag ->to tell the frontend about file size
                 _logger.LogError(ex, "Error creating asset");
                 ViewBag.ErrorMessage = $"An error occurred while creating the asset: {ex.Message}";
                 await PopulateLookupsAsync();
@@ -197,35 +218,68 @@ namespace SocietyMng.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Edit(int id)
         {
-            try
+            var asset = await _context.Assets.FindAsync(id);
+
+
+            if (asset == null)
             {
-                _logger.LogDebug("Loading Assets Index");
-                var assets = await _context.Assets
-                    .Include(a => a.Block)
-                    .Include(a => a.PropertyType)
-                    .Include(a => a.Status)
-                    .ToListAsync();
-
-                _logger.LogInformation("Loaded {Count} assets for listing", assets.Count);
-
-                // Log image paths for debugging
-                foreach (var asset in assets.Take(3)) // Log first 3 for debugging
-                {
-                    _logger.LogDebug("Asset {Id} has ImagePath: {ImagePath}", asset.Id, asset.ImagePath);
-                }
-
-                return View(assets);
+                TempData["Error"] = "Asset not found!";
+                return RedirectToAction("Index");
             }
-            catch (Exception ex)
+
+            var model = new AssetUpdateView
             {
-                _logger.LogError(ex, "Error loading assets");
-                TempData["Error"] = "Error loading assets. Please try again.";
-                return View(new List<SocietyMng.Data.Entities.Asset>());
-            }
+                Id = asset.Id,
+                Description = asset.Description,
+                Address = asset.Address,
+                PlotNumber = asset.PlotNumber,
+                Price= asset.Price,
+                BlockId= asset.BlockId,
+                PropertyTypeId = asset.PropertyTypeId,
+                StatusId = asset.StatusId
+            };
+
+            await PopulateLookupsAsync();
+            return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, AssetUpdateView model)
+        {
+            if (id != model.Id) return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateLookupsAsync();
+                return View(model);
+            }
+            var success = await _adminService.UpdateAssetAsync(id, model);
+            if (success== null)
+            {
+                TempData["Error"] = "Failed to update asset.";
+                return View(model);
+            }
+
+            TempData["Success"] = "Asset updated successfully!";
+            return RedirectToAction("Index");
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            
+            await _adminService.DeleteAssetAsync(id);
+            TempData["SuccessMessage"] = "Asset deleted successfully!";
+            _logger.LogWarning("Successfully deleted Asset ID: {id}", id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        //to  extract dropdown val from the db ->to avoid hardcoding
         private async Task PopulateLookupsAsync()
         {
             try

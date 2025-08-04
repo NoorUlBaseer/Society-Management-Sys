@@ -59,14 +59,6 @@ namespace SocietyMng.Areas.Admin.Controllers
         #endregion
 
         #region Asset Management Routes
-
-        //// Redirect to Asset Controller for asset management
-        //public IActionResult ManageAssets()
-        //{
-        //    return RedirectToAction("Index", "Asset", new { area = "Admin" });
-        //}
-
-        // Redirect to Asset Controller for creating assets
         public IActionResult CreateAsset()
         {
             return RedirectToAction("Create", "Asset", new { area = "Admin" });

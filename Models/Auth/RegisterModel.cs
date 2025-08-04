@@ -5,12 +5,13 @@ namespace SocietyMng.Models.Auth
 {
     public class RegisterModel
     {
-        // Form properties
         [Required(ErrorMessage = "Full name is required")]
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+        ErrorMessage = "Email must be in format ammy@abc.com")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]

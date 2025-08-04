@@ -90,7 +90,7 @@
                                 @Html.ValidationMessageFor(m => m.PropertyTypeId, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        @* <div class="col-md-4">
                             <div class="form-group mb-3">
                                 @Html.LabelFor(m => m.StatusId, "Status", new { @class = "form-label" })
                                 @Html.DropDownListFor(m => m.StatusId,
@@ -99,7 +99,7 @@
                                                                 new { @class = "form-select" })
                                 @Html.ValidationMessageFor(m => m.StatusId, "", new { @class = "text-danger" })
                             </div>
-                        </div>
+                        </div> *@
                     </div>
 
                     <div class="row">
@@ -109,7 +109,7 @@
                                 <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept="image/*" required />
                                 @Html.ValidationMessage("ImageFile", "", new { @class = "text-danger" })
                                 @{
-                                        var maxFileSize = ViewBag.MaxFileSizeMB ?? 20; // Default to 20 if not set
+                                        var maxFileSize = ViewBag.MaxFileSizeMB ?? 20;
                                     }
                                     <small class="form-text text-muted">Maximum file size: @maxFileSize MB. Supported formats: JPG, PNG, GIF</small>
                                 </div>

@@ -4,6 +4,8 @@ namespace SocietyMng.Areas.Admin.DTOs
 {
     public class AssetCreateView
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Description is required")]
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
         public string Description { get; set; } = string.Empty;
@@ -28,16 +30,13 @@ namespace SocietyMng.Areas.Admin.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "Please select a valid property type")]
         public int PropertyTypeId { get; set; }
 
-        [Required(ErrorMessage = "Status is required")]
-        [Range(1, int.MaxValue, ErrorMessage = "Please select a valid status")]
         public int StatusId { get; set; }
-
-        // This property is set automatically during file upload - NOT required for validation
         public string? ImagePath { get; set; }
     }
 
 public class AssetUpdateView
     {
+        public int Id { get; set; }
         public string? Description { get; set; }
         public string? Address { get; set; }
         public string? PlotNumber { get; set; }

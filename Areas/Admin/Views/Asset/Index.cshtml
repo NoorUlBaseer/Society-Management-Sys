@@ -50,7 +50,6 @@
                                         <th>Property Type</th>
                                         <th>Status</th>
                                         <th>Date Added</th>
-                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -75,8 +74,13 @@
                                                 }
                                             </td>
                                             <td>
-                                                <div class="fw-bold">@asset.Description</div>
+                                                <a href="@Url.Action("Details", "Asset", new { area = "Admin", id = asset.Id })"
+                                                   class="fw-bold text-decoration-none text-primary"
+                                                   title="View Asset Details">
+                                                    @asset.Description
+                                                </a>
                                             </td>
+
                                             <td>
                                                 <small>@asset.Address</small>
                                             </td>
@@ -97,22 +101,6 @@
                                             </td>
                                             <td>
                                                 <small>@asset.DateUploaded.ToString("dd/MM/yyyy")</small>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-sm btn-outline-primary"
-                                                            onclick="viewAsset(@asset.Id)" title="View Details">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-warning"
-                                                            onclick="editAsset(@asset.Id)" title="Edit">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                                            onclick="deleteAsset(@asset.Id, '@asset.Description')" title="Delete">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
                                             </td>
                                         </tr>
                                     }
@@ -137,7 +125,6 @@
     </div>
 </div>
 
-<!-- Modal for Asset Details -->
 <div class="modal fade" id="assetModal" tabindex="-1" aria-labelledby="assetModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -146,7 +133,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="assetModalBody">
-                <!-- Asset details will be loaded here -->
+              
             </div>
         </div>
     </div>
@@ -154,10 +141,10 @@
 
 @section Scripts {
     <script>
-        function viewAsset(assetId) {
-            // Implement view functionality
-            console.log('View asset:', assetId);
+                function viewAsset(assetId) {
+            window.location.href = '@Url.Action("Details", "Asset", new { area = "Admin" })' + '/' + assetId;
         }
+
 
         function editAsset(assetId) {
             // Implement edit functionality

@@ -1,0 +1,89 @@
+﻿@model SocietyMng.Areas.Admin.DTOs.AssetUpdateView
+
+@{
+    ViewData["Title"] = "Edit Asset";
+    Layout = "_AdminLayout";
+}
+
+<div class="container">
+    <h1 class="mt-4">Edit Asset</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Asset Information</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Edit", "Asset", new { area = "Admin" }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.Id)
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Description)
+                                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "3", placeholder = "Enter asset description" })
+                                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Address)
+                                    @Html.TextAreaFor(m => m.Address, new { @class = "form-control", rows = "3", placeholder = "Enter complete address" })
+                                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.PlotNumber)
+                                    @Html.TextBoxFor(m => m.PlotNumber, new { @class = "form-control", placeholder = "Enter plot number" })
+                                    @Html.ValidationMessageFor(m => m.PlotNumber, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.Price)
+                                    @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", step = "0.01", min = "0", placeholder = "Enter price" })
+                                    @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.BlockId, "Block")
+                                    @Html.DropDownListFor(m => m.BlockId, new SelectList(ViewBag.Blocks as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description"), "-- Select Block --", new { @class = "form-select" })
+                                    @Html.ValidationMessageFor(m => m.BlockId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    @Html.LabelFor(m => m.PropertyTypeId, "Property Type")
+                                    @Html.DropDownListFor(m => m.PropertyTypeId, new SelectList(ViewBag.PropertyTypes as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description"), "-- Select Property Type --", new { @class = "form-select" })
+                                    @Html.ValidationMessageFor(m => m.PropertyTypeId, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-1"></i> Save Changes
+                            </button>
+                            <a href="@Url.Action("Index", "Asset", new { area = "Admin" })" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Cancel
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
