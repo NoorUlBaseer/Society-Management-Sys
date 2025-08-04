@@ -20,8 +20,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Publish application (win-x64, portable)
-      run: dotnet publish -c Release -r linux-x64 --self-contained false -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish
+    - name: Publish application (linux-x64)
+      run: dotnet publish -c Release -r linux-x64 --self-contained true -o ./publish
 
     - name: Set up SSH access
       run: |
