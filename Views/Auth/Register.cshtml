@@ -40,6 +40,7 @@
             flex-direction: column;
             justify-content: center;
             padding-left: 5rem;
+            z-index: 10;
         }
 
         .left-side-wrapper {
@@ -54,7 +55,6 @@
             flex-direction: column;
             align-items: center;
             text-align: center !important;
-            margin-bottom: 30px;
         }
 
         .register-container {
@@ -68,6 +68,7 @@
             right: 0;
             max-height: 40vh;
             opacity: 0.8;
+            z-index: 1;
         }
 
         .form-label, .form-control, .form-check-label, .form-check-input {
@@ -109,24 +110,43 @@
         <div class="left-side-wrapper">
             <div class="items">
                 <h1 class="display-4 fw-bold">CivicNest</h1>
-                <p class="lead mb-4">Register to explore plots and homes, manage your bookings, and stay updated with announcements.</p>
+                <p class="lead">Register to explore plots and homes, manage your bookings, and stay updated with announcements.</p>
             </div>
 
             <div class="register-container">
                 <form asp-action="Register" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <input asp-for="FullName" class="form-control" placeholder="Full Name" />
                         <span asp-validation-for="FullName" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <input asp-for="Email" class="form-control" placeholder="Email" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="Phone Number" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <select asp-for="Gender" asp-items="Model.GenderOptions" class="form-control">
+                            <option value="">Select Gender</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <select asp-for="SelectedRole" asp-items="Model.GetRoleOptions()" class="form-control">
+                            <option value="">Select Role</option>
+                        </select>
+                        <span asp-validation-for="SelectedRole" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-2">
                         <div class="position-relative">
                             <input asp-for="Password" type="@(Model.ShowPassword ? "text" : "password")" class="form-control pe-5" id="passwordInput" placeholder="Password" />
                             <i class="bi bi-eye" id="passwordToggleIcon1" style="cursor: pointer; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); font-size: 1.2rem;"></i>
@@ -134,7 +154,7 @@
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <div class="position-relative">
                             <input asp-for="ConfirmPassword" type="@(Model.ShowPassword ? "text" : "password")" class="form-control pe-5" id="confirmPasswordInput" placeholder="Confirm Password" />
                             <i class="bi bi-eye" id="passwordToggleIcon2" style="cursor: pointer; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); font-size: 1.2rem;"></i>
@@ -147,9 +167,10 @@
                     </div>
                 </form>
 
-                <div class="mt-3 text-center small-text">
+                <div class="mt-2 text-center small-text">
                     <p>Already have an account? <a asp-action="Login" class="text-light text-decoration-underline">Login here</a></p>
                 </div>
+
             </div>
         </div>
     </div>
@@ -174,14 +195,6 @@
             input.type = isPassword ? 'text' : 'password';
             this.classList.toggle('bi-eye');
             this.classList.toggle('bi-eye-slash');
-        });
-
-        document.getElementById('showPasswordCheckbox').addEventListener('change', function () {
-            const passwordInput = document.getElementById('passwordInput');
-            const confirmPasswordInput = document.getElementById('confirmPasswordInput');
-            const show = this.checked;
-            passwordInput.type = show ? 'text' : 'password';
-            confirmPasswordInput.type = show ? 'text' : 'password';
         });
     </script>
 </body>
