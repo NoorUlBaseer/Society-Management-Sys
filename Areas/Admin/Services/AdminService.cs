@@ -70,16 +70,24 @@ namespace SocietyMng.Services
 
             try
             {
+                var defaultStatus = await _context.SystemCodeItems
+           .FirstOrDefaultAsync(s => s.SystemCode.Code == "Asset_Status" && s.Code == "Available");
+
+                if (defaultStatus == null)
+                {
+                    throw new Exception("Default status 'Available' not found in SystemCodeItems.");
+                }
+
                 var asset = new Asset
                 {
                     Description = model.Description,
                     Address = model.Address,
                     PlotNumber = model.PlotNumber,
-                    ImagePath = model.ImagePath, // Make sure this is uncommented
+                    ImagePath = model.ImagePath, 
                     Price = model.Price,
                     BlockId = model.BlockId,
                     PropertyTypeId = model.PropertyTypeId,
-                    StatusId = model.StatusId,
+                    StatusId = defaultStatus.Id,
                     DateUploaded = DateTime.UtcNow
                 };
 
@@ -107,63 +115,61 @@ namespace SocietyMng.Services
             }
         }
 
-        //public async Task<List<Asset>> GetAllAssetsAsync()
-        //{
-        //    _logger.LogDebug("Fetching all assets from database");
-        //    var assets = await _context.Assets
-        //        .Include(a => a.Block)
-        //        .Include(a => a.PropertyType)
-        //        .Include(a => a.Status)
-        //        .ToListAsync();
-        //    _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
-        //    return assets;
-        //}
+        public async Task<List<Asset>> GetAllAssetsAsync()
+        {
+            _logger.LogDebug("Fetching all assets from database");
+            var assets = await _context.Assets
+                .Include(a => a.Block)
+                .Include(a => a.PropertyType)
+                .Include(a => a.Status)
+                .ToListAsync();
+            _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
+            return assets;
+        }
 
+        public async Task<Asset> UpdateAssetAsync(int id, AssetUpdateView model)
+        {
+            _logger.LogDebug("Updating asset ID: {AssetId}", id);
 
+            var asset = await _context.Assets.FindAsync(id);
+            if (asset == null)
+            {
+                _logger.LogWarning("Asset with ID: {AssetId} not found for update", id);
+                throw new KeyNotFoundException($"Asset with ID {id} not found");
+            }
 
+            asset.Description = model.Description ?? asset.Description;
+            asset.Address = model.Address ?? asset.Address;
+            asset.PlotNumber = model.PlotNumber ?? asset.PlotNumber;
+            asset.Price = model.Price ?? asset.Price;
+            asset.BlockId = model.BlockId ?? asset.BlockId;
+            asset.PropertyTypeId = model.PropertyTypeId ?? asset.PropertyTypeId;
+            asset.StatusId = model.StatusId ?? asset.StatusId;
 
-        //public async Task<Asset> UpdateAssetAsync(int id, AssetUpdateDto model)
-        //{
-        //    _logger.LogDebug("Updating asset ID: {AssetId}", id);
+            await _context.SaveChangesAsync();
 
-        //    var asset = await _context.Assets.FindAsync(id);
-        //    if (asset == null)
-        //    {
-        //        _logger.LogWarning("Asset with ID: {AssetId} not found for update", id);
-        //        throw new KeyNotFoundException($"Asset with ID {id} not found");
-        //    }
+            _logger.LogInformation("Successfully updated asset ID: {AssetId}", id);
+            return asset;
+        }
 
-        //    asset.Description = model.Description ?? asset.Description;
-        //    asset.Address = model.Address ?? asset.Address;
-        //    asset.PlotNumber = model.PlotNumber ?? asset.PlotNumber;
-        //    asset.ImagePath = model.ImagePath ?? asset.ImagePath;
-        //    asset.Price = model.Price ?? asset.Price;
-        //    asset.BlockId = model.BlockId ?? asset.BlockId;
-        //    asset.PropertyTypeId = model.PropertyTypeId ?? asset.PropertyTypeId;
-        //    asset.StatusId = model.StatusId ?? asset.StatusId;
+        public async Task DeleteAssetAsync(int id)
+        {
+            _logger.LogDebug("Deleting asset ID: {AssetId}", id);
 
-        //    await _context.SaveChangesAsync();
+            var asset = await _context.Assets.FindAsync(id);
+            if (asset != null)
+            {
+                _context.Assets.Remove(asset);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Successfully deleted asset ID: {AssetId}", id);
 
-        //    _logger.LogInformation("Successfully updated asset ID: {AssetId}", id);
-        //    return asset;
-        //}
-
-        //public async Task DeleteAssetAsync(int id)
-        //{
-        //    _logger.LogDebug("Deleting asset ID: {AssetId}", id);
-
-        //    var asset = await _context.Assets.FindAsync(id);
-        //    if (asset == null)
-        //    {
-        //        _logger.LogWarning("Asset with ID: {AssetId} not found for deletion", id);
-        //        throw new KeyNotFoundException($"Asset with ID {id} not found");
-        //    }
-
-        //    _context.Assets.Remove(asset);
-        //    await _context.SaveChangesAsync();
-
-        //    _logger.LogInformation("Successfully deleted asset ID: {AssetId}", id);
-        //}
+            }
+            else
+            {
+                _logger.LogWarning("Asset with ID: {AssetId} not found for deletion", id);
+                throw new KeyNotFoundException($"Asset with ID {id} not found");
+            }
+        }
 
         //    // Staff Management
         //    public async Task<List<Staff>> GetAllStaffAsync()
