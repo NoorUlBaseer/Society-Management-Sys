@@ -2,7 +2,6 @@
 using SocietyMng.Areas.Admin.DTOs;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;
-using Microsoft.Extensions.Logging;
 using SocietyMng.Configurations;
 using Microsoft.Extensions.Options;
 
@@ -69,24 +68,43 @@ namespace SocietyMng.Services
         {
             _logger.LogDebug("Creating new asset: {Description}", model.Description);
 
-            var asset = new Asset
+            try
             {
-                Description = model.Description,
-                Address = model.Address,
-                PlotNumber = model.PlotNumber,
-                ImagePath = model.ImagePath,
-                Price = model.Price,
-                BlockId = model.BlockId,
-                PropertyTypeId = model.PropertyTypeId,
-                StatusId = model.StatusId,
-                DateUploaded = DateTime.UtcNow
-            };
+                var asset = new Asset
+                {
+                    Description = model.Description,
+                    Address = model.Address,
+                    PlotNumber = model.PlotNumber,
+                    ImagePath = model.ImagePath, // Make sure this is uncommented
+                    Price = model.Price,
+                    BlockId = model.BlockId,
+                    PropertyTypeId = model.PropertyTypeId,
+                    StatusId = model.StatusId,
+                    DateUploaded = DateTime.UtcNow
+                };
 
-            await _context.Assets.AddAsync(asset);
-            await _context.SaveChangesAsync();
+                _logger.LogDebug("Asset entity created. About to add to context.");
 
-            _logger.LogInformation("Successfully created asset ID: {AssetId}", asset.Id);
-            // Removed return statement
+                await _context.Assets.AddAsync(asset);
+
+                _logger.LogDebug("Asset added to context. About to save changes.");
+
+                var result = await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully created asset ID: {AssetId}. SaveChanges result: {Result}",
+                    asset.Id, result);
+
+                if (result == 0)
+                {
+                    _logger.LogWarning("SaveChanges returned 0, indicating no changes were saved to database");
+                    throw new InvalidOperationException("No changes were saved to the database");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in AddAssetAsync for asset: {Description}", model.Description);
+                throw;
+            }
         }
 
         //public async Task<List<Asset>> GetAllAssetsAsync()

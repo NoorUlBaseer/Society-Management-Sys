@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Assets\" />
     <Folder Include="Services\Storage\" />
     <Folder Include="Services\Notification\" />
   </ItemGroup>
