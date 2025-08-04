@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Buyer Dashboard";
+    // Layout = "_BuyerLayout"; Change if using a different layout for buyers
+}
+
+<div class="container">
+    <h1 class="mt-4">Buyer Dashboard</h1>
+
+    <div class="row mt-4">
+        <!-- Manage Profile -->
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">My Profile</h5>
+                    <p class="card-text">View or edit your profile</p>
+                    <a href="@Url.Action("Profile", "Buyer")" class="btn btn-light">Manage Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings -->
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">My Bookings</h5>
+                    <p class="card-text">View and manage your bookings</p>
+                    <a href="@Url.Action("MyBookings", "Buyer")" class="btn btn-light">View Bookings</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Browse Assets -->
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Available Assets</h5>
+                    <p class="card-text">Browse assets to book</p>
+                    <a href="@Url.Action("AssetListings", "Buyer")" class="btn btn-light">Browse Assets</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complaints -->
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Complaints</h5>
+                    <p class="card-text">Submit a complaint or view status</p>
+                    <a href="@Url.Action("MyComplaints", "Buyer")" class="btn btn-light">Make Complaint</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
