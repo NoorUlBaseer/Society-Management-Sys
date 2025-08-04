@@ -105,6 +105,11 @@ namespace SocietyMng.Controllers
                 return RedirectToAction("Dashboard", "Admin", new { area = "Admin" });
             }
 
+            else if (user.Role.Code == _appSettings.User_Role.Buyer)
+            {
+                return RedirectToAction("Dashboard", "Buyer", new { area = "Buyer" });
+            }
+
             return RedirectToLocal(backURL);
         }
 
@@ -162,7 +167,10 @@ namespace SocietyMng.Controllers
                     Password = model.Password
                 });
 
-                return RedirectToAction("Index", "Home");
+                if (user.Role.Code == _appSettings.User_Role.Buyer)
+                {
+                    return RedirectToAction("Dashboard", "Buyer", new { area = "Buyer" });
+                }
             }
             catch
             {

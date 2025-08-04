@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SocietyMng.Configurations;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using SocietyMng.Services.Interfaces;
 
 namespace SocietyMng.Extensions
 {
@@ -59,14 +60,14 @@ namespace SocietyMng.Extensions
                 options.AddPolicy("AdminOnly", policy =>
                     policy.RequireRole("Admin"));
 
-                options.AddPolicy("StaffOrAdmin", policy =>
-                    policy.RequireRole("Admin"));
+                options.AddPolicy("BuyerOnly", policy =>
+                    policy.RequireRole("Buyer"));
             });
         }
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<IAdminService, AdminService>();
-            //services.AddScoped<IAssetService, AssetService>();
+            services.AddScoped<IBuyerService, BuyerService>();
             //services.AddScoped<IBookingService, BookingService>();
             //services.AddScoped<IComplaintService, ComplaintService>();
             //services.AddScoped<IPropertyTypeService, PropertyTypeService>();
