@@ -202,12 +202,11 @@ namespace SocietyMng.Migrations
                     { 6, "BLOCK_C", "Block C", true, 2, 2 },
                     { 7, "BLOCK_D", "Block D", true, 2, 2 },
                     { 8, "APARTMENT", "Apartment", true, 1, 3 },
-                    { 9, "VILLA", "Villa", true, 2, 3 },
-                    { 10, "COMMERCIAL", "Commercial", true, 2, 3 },
-                    { 11, "LAND", "Land/Plot", true, 2, 3 },
-                    { 12, "AVAILABLE", "Available", true, 1, 4 },
-                    { 13, "BOOKED", "Booked", true, 2, 4 },
-                    { 14, "SOLD", "Sold", true, 3, 4 }
+                    { 9, "COMMERCIAL", "Commercial", true, 2, 3 },
+                    { 10, "LAND", "Land/Plot", true, 2, 3 },
+                    { 11, "AVAILABLE", "Available", true, 1, 4 },
+                    { 12, "BOOKED", "Booked", true, 2, 4 },
+                    { 13, "SOLD", "Sold", true, 3, 4 }
                 });
 
             migrationBuilder.InsertData(

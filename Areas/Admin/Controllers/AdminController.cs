@@ -1,5 +1,4 @@
-﻿// AdminController.cs
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocietyMng.Areas.Admin.DTOs;
 using SocietyMng.Data.Entities;
@@ -60,93 +59,98 @@ namespace SocietyMng.Areas.Admin.Controllers
 
         #endregion
 
-    //    #region Staff Management
+        #region Asset Management Routes
 
-    //    public async Task<IActionResult> ManageStaff()
-    //    {
-    //        _logger.LogDebug("Fetching all staff members for management");
-    //        var staff = await _adminService.GetAllStaffAsync();
-    //        _logger.LogInformation("Retrieved {StaffCount} staff members", staff.Count);
-    //        return View(staff);
-    //    }
+        //// Redirect to Asset Controller for asset management
+        //public IActionResult ManageAssets()
+        //{
+        //    return RedirectToAction("Index", "Asset", new { area = "Admin" });
+        //}
 
-    //    [HttpGet]
-    //    public IActionResult AddStaff()
-    //    {
-    //        _logger.LogDebug("AddStaff form requested");
-    //        return View();
-    //    }
+        // Redirect to Asset Controller for creating assets
+        public IActionResult CreateAsset()
+        {
+            return RedirectToAction("Create", "Asset", new { area = "Admin" });
+        }
 
-    //    [HttpPost]
-    //    public async Task<IActionResult> AddStaff(StaffView model)
-    //    {
-    //        if (!ModelState.IsValid)
-    //        {
-    //            _logger.LogWarning("AddStaff form submitted with invalid model state");
-    //            return View(model);
-    //        }
+        #endregion
 
-    //        _logger.LogInformation("Attempting to add new staff member: {StaffName}", model.FullName);
-    //        await _adminService.AddStaffAsync(model);
-    //        _logger.LogInformation("Successfully added new staff member: {StaffName}", model.FullName);
-    //        return RedirectToAction(nameof(ManageStaff));
-    //    }
 
-    //    [HttpPost]
-    //    [ValidateAntiForgeryToken]
-    //    public async Task<IActionResult> UpdateSalary(int staffId, decimal newSalary)
-    //    {
-    //        if (staffId <= 0 || newSalary <= 0)
-    //        {
-    //            _logger.LogWarning("Invalid salary update parameters");
-    //            return RedirectToAction(nameof(ManageStaff));
-    //        }
+        //    #region Staff Management
 
-    //        _logger.LogInformation("Updating salary for staff ID: {StaffId}. New salary: {NewSalary}",
-    //            staffId, newSalary);
+        //    public async Task<IActionResult> ManageStaff()
+        //    {
+        //        _logger.LogDebug("Fetching all staff members for management");
+        //        var staff = await _adminService.GetAllStaffAsync();
+        //        _logger.LogInformation("Retrieved {StaffCount} staff members", staff.Count);
+        //        return View(staff);
+        //    }
 
-    //        await _adminService.UpdateStaffSalaryAsync(new SalaryUpdate
-    //        {
-    //            StaffId = staffId,
-    //            NewSalary = newSalary
-    //        });
+        //    [HttpGet]
+        //    public IActionResult AddStaff()
+        //    {
+        //        _logger.LogDebug("AddStaff form requested");
+        //        return View();
+        //    }
 
-    //        return RedirectToAction(nameof(ManageStaff));
-    //    }
+        //    [HttpPost]
+        //    public async Task<IActionResult> AddStaff(StaffView model)
+        //    {
+        //        if (!ModelState.IsValid)
+        //        {
+        //            _logger.LogWarning("AddStaff form submitted with invalid model state");
+        //            return View(model);
+        //        }
 
-    //    [HttpPost]
-    //    public async Task<IActionResult> ToggleStaffStatus(int staffId)
-    //    {
-    //        _logger.LogInformation("Toggling status for staff ID: {StaffId}", staffId);
-    //        await _adminService.ToggleStaffStatusAsync(staffId);
-    //        _logger.LogInformation("Successfully toggled status for staff ID: {StaffId}", staffId);
-    //        return RedirectToAction(nameof(ManageStaff));
-    //    }
+        //        _logger.LogInformation("Attempting to add new staff member: {StaffName}", model.FullName);
+        //        await _adminService.AddStaffAsync(model);
+        //        _logger.LogInformation("Successfully added new staff member: {StaffName}", model.FullName);
+        //        return RedirectToAction(nameof(ManageStaff));
+        //    }
 
-    //    #endregion
+        //    [HttpPost]
+        //    [ValidateAntiForgeryToken]
+        //    public async Task<IActionResult> UpdateSalary(int staffId, decimal newSalary)
+        //    {
+        //        if (staffId <= 0 || newSalary <= 0)
+        //        {
+        //            _logger.LogWarning("Invalid salary update parameters");
+        //            return RedirectToAction(nameof(ManageStaff));
+        //        }
 
-    //    #region Complaint Management
+        //        _logger.LogInformation("Updating salary for staff ID: {StaffId}. New salary: {NewSalary}",
+        //            staffId, newSalary);
 
-    //    public async Task<IActionResult> ManageComplaints()
-    //    {
-    //        _logger.LogDebug("Fetching all complaints for management");
-    //        var complaints = await _adminService.GetAllComplaintsAsync();
-    //        _logger.LogInformation("Retrieved {ComplaintCount} complaints", complaints.Count);
-    //        return View(complaints);
-    //    }
+        //        await _adminService.UpdateStaffSalaryAsync(new SalaryUpdate
+        //        {
+        //            StaffId = staffId,
+        //            NewSalary = newSalary
+        //        });
 
-    //    #endregion
+        //        return RedirectToAction(nameof(ManageStaff));
+        //    }
 
-    //    #region Asset Management
+        //    [HttpPost]
+        //    public async Task<IActionResult> ToggleStaffStatus(int staffId)
+        //    {
+        //        _logger.LogInformation("Toggling status for staff ID: {StaffId}", staffId);
+        //        await _adminService.ToggleStaffStatusAsync(staffId);
+        //        _logger.LogInformation("Successfully toggled status for staff ID: {StaffId}", staffId);
+        //        return RedirectToAction(nameof(ManageStaff));
+        //    }
 
-    //    public async Task<IActionResult> ManageAssets()
-    //    {
-    //        _logger.LogDebug("Fetching all assets for management");
-    //        var assets = await _adminService.GetAllAssetsAsync();
-    //        _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
-    //        return View(assets);
-    //    }
+        //    #endregion
 
-    //    #endregion
+        //    #region Complaint Management
+
+        //    public async Task<IActionResult> ManageComplaints()
+        //    {
+        //        _logger.LogDebug("Fetching all complaints for management");
+        //        var complaints = await _adminService.GetAllComplaintsAsync();
+        //        _logger.LogInformation("Retrieved {ComplaintCount} complaints", complaints.Count);
+        //        return View(complaints);
+        //    }
+
+        //    #endregion
     }
 }

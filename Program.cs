@@ -31,15 +31,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Database migration failed.");
     }
 }
-
-app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Auth}/{action=Landing}");
-
 app.ConfigureMiddleware();
 
 app.Run();

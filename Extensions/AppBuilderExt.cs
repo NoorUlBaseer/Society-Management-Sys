@@ -21,11 +21,12 @@
             // Map routes
             app.MapControllerRoute(
                 name: "areas",
-                pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
+                pattern: "{area:exists}/{controller}/{action=Index}/{id?}");
+             
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Auth}/{action=Register}/{id?}");
+                pattern: "{controller=Auth}/{action=Landing}");
         }
     }
 }

@@ -20,8 +20,8 @@ public interface IAdminService
 
     //// Asset Management
     //Task<List<Asset>> GetAllAssetsAsync();
-    //Task AddAssetAsync(AssetView model);
-    //Task UpdateAssetAsync(AssetView model);
+    Task AddAssetAsync(AssetCreateView model);
+    //Task UpdateAssetAsync(AssetUpdateView model);
     //Task DeleteAssetAsync(int assetId);
     //Task ToggleAssetStatusAsync(int assetId);
 

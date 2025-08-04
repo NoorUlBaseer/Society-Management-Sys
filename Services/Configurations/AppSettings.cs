@@ -2,8 +2,9 @@
 {
     public class AppSettings
     {
-        public UserRole User_Role { get; set; } = new(); 
+        public UserRole User_Role { get; set; } = new();
         public Block Blocks { get; set; } = new();
+        public FileUploadPaths FileUploadPath { get; set; } = new();
 
         public class UserRole  
         {
@@ -19,5 +20,13 @@
             public string BLOCK_C { get; set; } = string.Empty;
             public string BLOCK_D { get; set; } = string.Empty;
         }
+
+        public class FileUploadPaths
+        {
+            public string AssetImages { get; set; }
+            public string[] AllowedExtensions { get; set; }
+            public int MaxFileSizeMB { get; set; }
+        }
+
     }
 }

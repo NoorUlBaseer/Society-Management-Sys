@@ -65,6 +65,88 @@ namespace SocietyMng.Services
             }
         }
 
+        public async Task AddAssetAsync(AssetCreateView model)
+        {
+            _logger.LogDebug("Creating new asset: {Description}", model.Description);
+
+            var asset = new Asset
+            {
+                Description = model.Description,
+                Address = model.Address,
+                PlotNumber = model.PlotNumber,
+                ImagePath = model.ImagePath,
+                Price = model.Price,
+                BlockId = model.BlockId,
+                PropertyTypeId = model.PropertyTypeId,
+                StatusId = model.StatusId,
+                DateUploaded = DateTime.UtcNow
+            };
+
+            await _context.Assets.AddAsync(asset);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Successfully created asset ID: {AssetId}", asset.Id);
+            // Removed return statement
+        }
+
+        //public async Task<List<Asset>> GetAllAssetsAsync()
+        //{
+        //    _logger.LogDebug("Fetching all assets from database");
+        //    var assets = await _context.Assets
+        //        .Include(a => a.Block)
+        //        .Include(a => a.PropertyType)
+        //        .Include(a => a.Status)
+        //        .ToListAsync();
+        //    _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
+        //    return assets;
+        //}
+
+
+
+
+        //public async Task<Asset> UpdateAssetAsync(int id, AssetUpdateDto model)
+        //{
+        //    _logger.LogDebug("Updating asset ID: {AssetId}", id);
+
+        //    var asset = await _context.Assets.FindAsync(id);
+        //    if (asset == null)
+        //    {
+        //        _logger.LogWarning("Asset with ID: {AssetId} not found for update", id);
+        //        throw new KeyNotFoundException($"Asset with ID {id} not found");
+        //    }
+
+        //    asset.Description = model.Description ?? asset.Description;
+        //    asset.Address = model.Address ?? asset.Address;
+        //    asset.PlotNumber = model.PlotNumber ?? asset.PlotNumber;
+        //    asset.ImagePath = model.ImagePath ?? asset.ImagePath;
+        //    asset.Price = model.Price ?? asset.Price;
+        //    asset.BlockId = model.BlockId ?? asset.BlockId;
+        //    asset.PropertyTypeId = model.PropertyTypeId ?? asset.PropertyTypeId;
+        //    asset.StatusId = model.StatusId ?? asset.StatusId;
+
+        //    await _context.SaveChangesAsync();
+
+        //    _logger.LogInformation("Successfully updated asset ID: {AssetId}", id);
+        //    return asset;
+        //}
+
+        //public async Task DeleteAssetAsync(int id)
+        //{
+        //    _logger.LogDebug("Deleting asset ID: {AssetId}", id);
+
+        //    var asset = await _context.Assets.FindAsync(id);
+        //    if (asset == null)
+        //    {
+        //        _logger.LogWarning("Asset with ID: {AssetId} not found for deletion", id);
+        //        throw new KeyNotFoundException($"Asset with ID {id} not found");
+        //    }
+
+        //    _context.Assets.Remove(asset);
+        //    await _context.SaveChangesAsync();
+
+        //    _logger.LogInformation("Successfully deleted asset ID: {AssetId}", id);
+        //}
+
         //    // Staff Management
         //    public async Task<List<Staff>> GetAllStaffAsync()
         //    {
@@ -141,16 +223,5 @@ namespace SocietyMng.Services
         //        _logger.LogInformation("Retrieved {ComplaintCount} complaints", complaints.Count);
         //        return complaints;
         //    }
-
-        // Asset Management
-        //public async Task<List<Asset>> GetAllAssetsAsync()
-        //{
-        //    _logger.LogDebug("Fetching all assets from database");
-        //    var assets = await _context.Assets
-        //        .Include(a => a.Status)
-        //        .ToListAsync();
-        //    _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
-        //    return assets;
-        //}
     }
 }

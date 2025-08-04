@@ -12,8 +12,8 @@ using SocietyMng.Data;
 namespace SocietyMng.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250801083008_updates")]
-    partial class updates
+    [Migration("20250803185357_seedingdata")]
+    partial class seedingdata
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -309,15 +309,6 @@ namespace SocietyMng.Migrations
                         new
                         {
                             Id = 9,
-                            Code = "VILLA",
-                            Description = "Villa",
-                            IsActive = true,
-                            SortOrder = 2,
-                            SystemCodeId = 3
-                        },
-                        new
-                        {
-                            Id = 10,
                             Code = "COMMERCIAL",
                             Description = "Commercial",
                             IsActive = true,
@@ -326,7 +317,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 11,
+                            Id = 10,
                             Code = "LAND",
                             Description = "Land/Plot",
                             IsActive = true,
@@ -335,7 +326,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 12,
+                            Id = 11,
                             Code = "AVAILABLE",
                             Description = "Available",
                             IsActive = true,
@@ -344,7 +335,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 13,
+                            Id = 12,
                             Code = "BOOKED",
                             Description = "Booked",
                             IsActive = true,
@@ -353,7 +344,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 14,
+                            Id = 13,
                             Code = "SOLD",
                             Description = "Sold",
                             IsActive = true,
