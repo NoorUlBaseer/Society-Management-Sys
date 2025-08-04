@@ -21,7 +21,7 @@ jobs:
       run: dotnet restore
 
     - name: Publish application (win-x64, portable)
-      run: dotnet publish -c Release -r win-x64 --self-contained false -o publish
+      run: dotnet publish -c Release -r linux-x64 --self-contained false --output ./publish
 
     - name: Set up SSH access
       run: |
