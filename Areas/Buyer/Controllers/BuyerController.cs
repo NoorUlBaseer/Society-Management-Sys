@@ -13,7 +13,7 @@ namespace SocietyMng.Areas.Buyer.Controllers
     public class BuyerController : Controller
     {
         private readonly IBuyerService _buyerService;
-        private readonly AppDbContext _context; 
+        private readonly AppDbContext _context;
 
         public BuyerController(IBuyerService buyerService, AppDbContext context)
         {
@@ -89,7 +89,7 @@ namespace SocietyMng.Areas.Buyer.Controllers
 
             if (success)
             {
-                return RedirectToAction("Landing","Auth", new { area = "" });
+                return RedirectToAction("Landing", "Auth", new { area = "" });
             }
             else
             {
@@ -100,8 +100,9 @@ namespace SocietyMng.Areas.Buyer.Controllers
 
         public async Task<IActionResult> MyBookings()
         {
-            // Implementation for viewing bookings
-            return View();
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var bookings = await _buyerService.GetUserBookingsAsync(userId);
+            return View(bookings);
         }
 
         public async Task<IActionResult> AssetListing()
@@ -110,22 +111,63 @@ namespace SocietyMng.Areas.Buyer.Controllers
             return View(assets);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AssetDetails(int id)
+        {
+            var asset = await _buyerService.GetAssetByIdAsync(id);
+            if (asset == null)
+            {
+                TempData["Error"] = "Asset not found";
+                return RedirectToAction("AssetListing");
+            }
+            return View(asset);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BookAsset(int assetId)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var result = await _buyerService.BookAssetAsync(userId, assetId);
+
+            if (result.Success)
+            {
+                TempData["Success"] = "Asset booked successfully!";
+                return RedirectToAction("MyBookings");
+            }
+            else
+            {
+                TempData["Error"] = result.ErrorMessage;
+                return RedirectToAction("AssetDetails", new { id = assetId });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelBooking(int bookingId)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var result = await _buyerService.CancelBookingAsync(userId, bookingId);
+
+            if (result.Success)
+            {
+                TempData["Success"] = "Booking cancelled successfully!";
+            }
+            else
+            {
+                TempData["Error"] = result.ErrorMessage;
+            }
+
+            return RedirectToAction("MyBookings");
+        }
 
         public async Task<IActionResult> MyComplaints()
         {
-            // Implementation for complaints
-            return View();
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var complaints = await _buyerService.GetUserComplaintsAsync(userId);
+            return View(complaints);
         }
     }
 }
-
-        
-
-//        public async Task<IActionResult> MyComplaints()
-//        {
-//            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-//            var complaints = await _buyerService.GetUserComplaintsAsync(userId);
-//            return View(complaints);
-//        }
-//    }
-//}
