@@ -209,11 +209,14 @@
             <span>Listings</span>
         </a>
 
-        <a href="@Url.Action("Logout", "Auth", new { area = "" })"
-           style="background: #dc3545;">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Logout</span>
-        </a>
+        <form id="logoutForm" method="post" asp-controller="Auth" asp-action="Logout" style="display:inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background: #dc3545; border: none; color: white; padding: 8px 12px; cursor: pointer;">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </button>
+        </form>
+
     </div>
 
     <!-- Main Content -->
