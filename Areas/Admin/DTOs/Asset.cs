@@ -44,5 +44,6 @@ public class AssetUpdateView
         public int? BlockId { get; set; }
         public int? PropertyTypeId { get; set; }
         public int? StatusId { get; set; }
+        public string? ImagePath { get; set; }
     }
 }

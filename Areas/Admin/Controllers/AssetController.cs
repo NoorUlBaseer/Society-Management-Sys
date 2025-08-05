@@ -238,9 +238,10 @@ namespace SocietyMng.Areas.Admin.Controllers
                 Price= asset.Price,
                 BlockId= asset.BlockId,
                 PropertyTypeId = asset.PropertyTypeId,
-                StatusId = asset.StatusId
+                StatusId = asset.StatusId,
+                ImagePath = asset.ImagePath,
             };
-
+            ViewBag.ExistingImageUrl = asset.ImagePath;
             await PopulateLookupsAsync();
             return View(model);
         }

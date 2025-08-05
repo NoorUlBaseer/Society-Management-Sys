@@ -1,89 +1,201 @@
 ﻿@model SocietyMng.Areas.Admin.DTOs.AssetUpdateView
-
 @{
     ViewData["Title"] = "Edit Asset";
-    Layout = "_AdminLayout";
+    Layout = null;
 }
 
-<div class="container">
-    <h1 class="mt-4">Edit Asset</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0">Asset Information</h4>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #0f1d0f, #2d7330);
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            gap: 200px;
+        }
+
+        .left-form, .right-form {
+            flex: 1;
+        }
+
+        .left-form {
+            width: 700px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            width: 100px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background-color: #D9D9D9;
+            color: black;
+            flex: 1;
+        }
+
+        textarea {
+            height: 100px;
+            border-radius: 25px;
+        }
+
+        .file-upload-box {
+            background: white;
+            color: #000;
+            border-radius: 5px;
+            padding: 40px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .file-upload-box input[type="file"] {
+                display: none;
+            }
+
+        .custom-file-upload {
+            padding: 10px 20px;
+            background-color: #00e3d8;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .submit-btn {
+            margin-top: 30px;
+            width: 100px;
+            background: linear-gradient(to right, #ffaa00, #ff8800);
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-left: 2px solid white;
+            border-bottom: 2px solid white;
+            border-radius: 25px;
+            font-size: 16px;
+            float: right;
+            cursor: pointer;
+        }
+
+        .alert {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        @using (Html.BeginForm("Edit", "Asset", new { area = "Admin" }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Id)
+
+            <div class="form-container">
+                <div class="left-form">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BlockId, "Block")
+                        @Html.DropDownListFor(m => m.BlockId, new SelectList(ViewBag.Blocks as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description"), "-- Select Block --")
+                        @Html.ValidationMessageFor(m => m.BlockId, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Address)
+                        @Html.TextAreaFor(m => m.Address)
+                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Description)
+                        @Html.TextAreaFor(m => m.Description)
+                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PlotNumber)
+                        @Html.TextBoxFor(m => m.PlotNumber)
+                        @Html.ValidationMessageFor(m => m.PlotNumber, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.PropertyTypeId, "Property Type")
+                        @Html.DropDownListFor(m => m.PropertyTypeId, new SelectList(ViewBag.PropertyTypes as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description"), "-- Select Property Type --")
+                        @Html.ValidationMessageFor(m => m.PropertyTypeId, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Price)
+                        @Html.TextBoxFor(m => m.Price, new { type = "number", step = "0.01", min = "0" })
+                        @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                    </div>
+
                 </div>
-                <div class="card-body">
-                    @using (Html.BeginForm("Edit", "Asset", new { area = "Admin" }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.HiddenFor(m => m.Id)
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    @Html.LabelFor(m => m.Description)
-                                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "3", placeholder = "Enter asset description" })
-                                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    @Html.LabelFor(m => m.Address)
-                                    @Html.TextAreaFor(m => m.Address, new { @class = "form-control", rows = "3", placeholder = "Enter complete address" })
-                                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                        </div>
+                <div class="right-form">
+                    <label>Photo</label>
+                    <div class="file-upload-box">
+                        <i class="bi bi-cloud-arrow-up-fill" style="font-size: 3rem;"></i>
+                        <p>Drag and Drop here</p>
+                        <p>or</p>
+                        <img id="previewImage"
+                             src="@ViewBag.ExistingImageUrl"
+                             alt="Preview"
+                             style="max-width: 100%; max-height: 200px; margin-top: 15px; border-radius: 10px;" />
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    @Html.LabelFor(m => m.PlotNumber)
-                                    @Html.TextBoxFor(m => m.PlotNumber, new { @class = "form-control", placeholder = "Enter plot number" })
-                                    @Html.ValidationMessageFor(m => m.PlotNumber, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    @Html.LabelFor(m => m.Price)
-                                    @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", step = "0.01", min = "0", placeholder = "Enter price" })
-                                    @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                        </div>
+                        <label class="custom-file-upload">
+                            Select file
+                            <input type="file" id="ImageFile" name="ImageFile" accept="image/*" onchange="document.getElementById('previewImage').src = window.URL.createObjectURL(this.files[0])" />
+                        </label>
 
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    @Html.LabelFor(m => m.BlockId, "Block")
-                                    @Html.DropDownListFor(m => m.BlockId, new SelectList(ViewBag.Blocks as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description"), "-- Select Block --", new { @class = "form-select" })
-                                    @Html.ValidationMessageFor(m => m.BlockId, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
+                        <p style="font-size: 12px; margin-top: 10px;">Max size: 20 MB. JPG, PNG, GIF only</p>
+                        @Html.ValidationMessage("ImageFile", "", new { @class = "text-danger" })
+                    </div>
 
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    @Html.LabelFor(m => m.PropertyTypeId, "Property Type")
-                                    @Html.DropDownListFor(m => m.PropertyTypeId, new SelectList(ViewBag.PropertyTypes as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description"), "-- Select Property Type --", new { @class = "form-select" })
-                                    @Html.ValidationMessageFor(m => m.PropertyTypeId, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between mt-4">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-1"></i> Save Changes
-                            </button>
-                            <a href="@Url.Action("Index", "Asset", new { area = "Admin" })" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-1"></i> Cancel
-                            </a>
-                        </div>
-                    }
+                    <button type="submit" class="submit-btn">
+                        Save
+                    </button>
                 </div>
             </div>
-        </div>
+        }
     </div>
-</div>
-
-
+</body>
+</html>
