@@ -1,0 +1,129 @@
+﻿@model List<SocietyMng.Data.Entities.Asset>
+@{
+    ViewData["Title"] = "Asset Listing";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Available Properties</h1>
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="row">
+                @foreach (var asset in Model.Where(a => a.Status?.Code == "AVAILABLE"))
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="position-relative">
+                                @if (!string.IsNullOrEmpty(asset.ImagePath))
+                                {
+                                    <img src="@asset.ImagePath"
+                                         class="card-img-top"
+                                         alt="Property Image"
+                                         style="height: 200px; object-fit: cover;"
+                                         onerror="this.src='/images/no-image.png'; this.onerror=null;">
+                                }
+                                else
+                                {
+                                    <div class="bg-light d-flex align-items-center justify-content-center"
+                                         style="height: 200px;">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                }
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-success">@asset.Status?.Description</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">@asset.Description</h5>
+                                <p class="card-text text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i> @asset.Address
+                                </p>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Plot Number:</span>
+                                        <span class="fw-bold">@asset.PlotNumber</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Block:</span>
+                                        <span class="badge bg-info">@asset.Block?.Description</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Type:</span>
+                                        <span class="badge bg-secondary">@asset.PropertyType?.Description</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Price:</span>
+                                        <span class="fw-bold text-success">@asset.Price.ToString("C")</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <a href="@Url.Action("Book", "Booking", new { area = "Buyer", assetId = asset.Id })"
+                                   class="btn btn-primary w-100">
+                                    <i class="fas fa-calendar-check me-1"></i> Book This Property
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (!Model.Any(a => a.Status?.Code == "AVAILABLE"))
+                {
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-home fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No Available Properties</h4>
+                        <p class="text-muted">There are currently no properties available for booking.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+
+        .card-img-top {
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .list-group-item {
+            padding: 0.75rem 0;
+            border-color: rgba(0,0,0,0.05);
+        }
+
+        .badge {
+            font-size: 0.75em;
+            padding: 0.35em 0.65em;
+        }
+    </style>
+}
