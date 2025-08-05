@@ -30,12 +30,13 @@
         </div>
 
         <!-- Browse Assets -->
+        <!-- Browse Assets -->
         <div class="col-md-3">
             <div class="card text-white bg-info mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Available Assets</h5>
                     <p class="card-text">Browse assets to book</p>
-                    <a href="@Url.Action("AssetListings", "Buyer")" class="btn btn-light">Browse Assets</a>
+                    <a href="@Url.Action("AssetListing", "Buyer", new { area = "Buyer" })" class="btn btn-light">Browse Assets</a>
                 </div>
             </div>
         </div>

@@ -9,10 +9,12 @@ namespace SocietyMng.Services
     public class BuyerService : IBuyerService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<BuyerService> _logger;
 
-        public BuyerService(AppDbContext context)
+        public BuyerService(AppDbContext context, ILogger<BuyerService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<Profile> GetProfileAsync(int userId)
@@ -81,6 +83,18 @@ namespace SocietyMng.Services
             {
                 return false;
             }
+        }
+
+        public async Task<List<Asset>> GetAllAssetsAsync()
+        {
+            _logger.LogDebug("Fetching all assets from database");
+            var assets = await _context.Assets
+                .Include(a => a.Block)
+                .Include(a => a.PropertyType)
+                .Include(a => a.Status)
+                .ToListAsync();
+            _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
+            return assets;
         }
     }
 }

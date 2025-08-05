@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SocietyMng.Areas.Buyer.DTOs;
+using SocietyMng.Data;
 using SocietyMng.Services;
 using SocietyMng.Services.Interfaces;
 using System.Security.Claims;
@@ -12,10 +14,12 @@ namespace SocietyMng.Areas.Buyer.Controllers
     public class BuyerController : Controller
     {
         private readonly IBuyerService _buyerService;
+        private readonly AppDbContext _context; 
 
-        public BuyerController(IBuyerService buyerService)
+        public BuyerController(IBuyerService buyerService, AppDbContext context)
         {
             _buyerService = buyerService;
+            _context = context;
         }
 
         public async Task<IActionResult> Dashboard()
@@ -40,14 +44,31 @@ namespace SocietyMng.Areas.Buyer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Profile(Profile model)
+        public async Task<IActionResult> Profile(Profile model, string newPassword, string confirmNewPassword)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var success = await _buyerService.UpdateProfileAsync(model);
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                if (newPassword != confirmNewPassword)
+                {
+                    TempData["Error"] = "New password and confirmation password do not match";
+                    return View(model);
+                }
+            }
+
+            var profileToUpdate = new Profile
+            {
+                Id = model.Id,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                NewPassword = model.NewPassword
+            };
+
+            var success = await _buyerService.UpdateProfileAsync(profileToUpdate);
             if (success)
             {
                 TempData["Success"] = "Profile updated successfully";
@@ -69,7 +90,7 @@ namespace SocietyMng.Areas.Buyer.Controllers
 
             if (success)
             {
-                return RedirectToAction("Logout", "Account", new { area = "" });
+                return RedirectToAction("Landing","Auth", new { area = "" });
             }
             else
             {
@@ -84,10 +105,10 @@ namespace SocietyMng.Areas.Buyer.Controllers
             return View();
         }
 
-        public async Task<IActionResult> AssetListings()
+        public async Task<IActionResult> AssetListing()
         {
-            // Implementation for browsing assets
-            return View();
+            var assets = await _buyerService.GetAllAssetsAsync();
+            return View(assets);
         }
 
         public async Task<IActionResult> MyComplaints()

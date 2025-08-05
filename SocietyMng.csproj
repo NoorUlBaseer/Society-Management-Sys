@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Buyer\Views\Asset\" />
     <Folder Include="Services\Storage\" />
     <Folder Include="Services\Notification\" />
   </ItemGroup>

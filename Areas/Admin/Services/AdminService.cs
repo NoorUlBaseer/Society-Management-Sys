@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SocietyMng.Areas.Admin.DTOs;
+using SocietyMng.Configurations;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;
-using SocietyMng.Configurations;
-using Microsoft.Extensions.Options;
 
 namespace SocietyMng.Services
 {
@@ -12,12 +13,14 @@ namespace SocietyMng.Services
         private readonly AppDbContext _context;
         private readonly ILogger<AdminService> _logger;
         private readonly AppSettings _appSettings;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AdminService(AppDbContext context, ILogger<AdminService> logger, IOptions<AppSettings> appSets)
+        public AdminService(AppDbContext context, ILogger<AdminService> logger, IOptions<AppSettings> appSets, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _logger = logger;
             _appSettings = appSets.Value;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // User Management
@@ -157,17 +160,84 @@ namespace SocietyMng.Services
             _logger.LogDebug("Deleting asset ID: {AssetId}", id);
 
             var asset = await _context.Assets.FindAsync(id);
-            if (asset != null)
-            {
-                _context.Assets.Remove(asset);
-                await _context.SaveChangesAsync();
-                _logger.LogInformation("Successfully deleted asset ID: {AssetId}", id);
-
-            }
-            else
+            if (asset == null)
             {
                 _logger.LogWarning("Asset with ID: {AssetId} not found for deletion", id);
                 throw new KeyNotFoundException($"Asset with ID {id} not found");
+            }
+
+            var imagePath = asset.ImagePath;
+
+            try
+            {
+                // rmv from db first
+                _context.Assets.Remove(asset);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully deleted asset ID: {AssetId} from database", id);
+
+                //then rmv associated file existing
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    await DeleteImageFileAsync(imagePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting asset ID: {AssetId}", id);
+                throw;
+            }
+        }
+
+        private async Task DeleteImageFileAsync(string imagePath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(imagePath))
+                {
+                    _logger.LogDebug("No image path provided for deletion");
+                    return;
+                }
+
+                // converting web patht to physical, rmv /
+                var relativePath = imagePath.TrimStart('/');
+
+                // /->\ for windows path
+                relativePath = relativePath.Replace('/', Path.DirectorySeparatorChar);
+
+                var physicalPath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+
+                _logger.LogDebug("Attempting to delete image file: {PhysicalPath}", physicalPath);
+
+                if (File.Exists(physicalPath))
+                {
+                    await Task.Run(() => File.Delete(physicalPath));
+                    _logger.LogInformation("Successfully deleted image file: {PhysicalPath}", physicalPath);
+                }
+                else
+                {
+                    _logger.LogWarning("Image file not found for deletion: {PhysicalPath}", physicalPath);
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Access denied when trying to delete image file: {ImagePath}", imagePath);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                _logger.LogError(ex, "Directory not found when trying to delete image file: {ImagePath}", imagePath);
+            }
+            catch (FileNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "File not found when trying to delete image file: {ImagePath}", imagePath);
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError(ex, "IO error when trying to delete image file: {ImagePath}", imagePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error when trying to delete image file: {ImagePath}", imagePath);
             }
         }
 
