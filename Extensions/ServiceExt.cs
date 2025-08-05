@@ -33,6 +33,7 @@ namespace SocietyMng.Extensions
                 .AddCookie(options =>
                 {
                     options.LoginPath = "/Auth/Login";
+                    options.LogoutPath = "/Auth/Logout";
                     options.AccessDeniedPath = "/Auth/AccessDenied";
                     options.ReturnUrlParameter = "returnUrl";
                     options.ExpireTimeSpan = TimeSpan.FromHours(3);

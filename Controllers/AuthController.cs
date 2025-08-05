@@ -178,11 +178,16 @@ namespace SocietyMng.Controllers
             }
         }
 
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Login");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+
+            // More explicit redirect with controller specified
+            return RedirectToAction("Landing", "Auth");
         }
 
         private static string HashPassword(string password) =>
