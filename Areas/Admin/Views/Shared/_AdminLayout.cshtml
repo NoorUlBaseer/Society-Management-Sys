@@ -188,11 +188,15 @@
             <span>Listings</span>
         </a>
 
-        <a href="@Url.Action("Logout", "Account", new { area = "Admin" })"
-           class="@(ViewContext.RouteData.Values["action"]?.ToString() == "ManageAssets" ? "active" : "")" style="background: #dc3545;">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Logout</span>
-        </a>
+        <form asp-area="" asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-link text-decoration-none"
+                    style="background: #dc3545; color: white; width: 100%; text-align: left; padding: 10px 20px; margin: 10px 20px 10px 0; border-radius: 0 10px 10px 0;">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </button>
+        </form>
+
     </div>
 
     <!-- Main Content -->

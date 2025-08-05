@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SocietyMng.Areas.Buyer.DTOs;
 using SocietyMng.Data;
 using SocietyMng.Services;
@@ -111,6 +110,7 @@ namespace SocietyMng.Areas.Buyer.Controllers
             return View(assets);
         }
 
+
         public async Task<IActionResult> MyComplaints()
         {
             // Implementation for complaints
@@ -118,3 +118,14 @@ namespace SocietyMng.Areas.Buyer.Controllers
         }
     }
 }
+
+        
+
+//        public async Task<IActionResult> MyComplaints()
+//        {
+//            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+//            var complaints = await _buyerService.GetUserComplaintsAsync(userId);
+//            return View(complaints);
+//        }
+//    }
+//}
