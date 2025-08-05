@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SocietyMng.Areas.Admin.DTOs;
 using SocietyMng.Data.Entities;
 using Microsoft.Extensions.Logging;
-
+//admincontroller
 namespace SocietyMng.Areas.Admin.Controllers
 {
     [Area("Admin")]
