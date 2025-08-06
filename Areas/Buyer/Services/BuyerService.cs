@@ -1,7 +1,9 @@
-﻿using SocietyMng.Areas.Buyer.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using SocietyMng.Areas.Buyer.DTOs;
+using SocietyMng.Configurations;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;
-using Microsoft.EntityFrameworkCore;
 using SocietyMng.Services.Interfaces;
 
 namespace SocietyMng.Services
@@ -10,11 +12,13 @@ namespace SocietyMng.Services
     {
         private readonly AppDbContext _context;
         private readonly ILogger<BuyerService> _logger;
+        private readonly AppSettings _appSetting;
 
-        public BuyerService(AppDbContext context, ILogger<BuyerService> logger)
+        public BuyerService(AppDbContext context, ILogger<BuyerService> logger, IOptions<AppSettings> appSets)
         {
             _context = context;
             _logger = logger;
+            _appSetting = appSets.Value;
         }
 
         public async Task<Profile> GetProfileAsync(int userId)
@@ -45,11 +49,8 @@ namespace SocietyMng.Services
             if (user == null)
                 return false;
 
-            // Update editable fields
             user.Email = profile.Email;
             user.PhoneNumber = profile.PhoneNumber;
-
-            // Update password if provided
             if (!string.IsNullOrEmpty(profile.NewPassword))
             {
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(profile.NewPassword);
@@ -99,13 +100,15 @@ namespace SocietyMng.Services
 
         public async Task<Asset> GetAssetByIdAsync(int assetId)
         {
-            return await _context.Assets
+            _logger.LogDebug("Fetching specific assets from database");
+            var assets = await _context.Assets
                 .Include(a => a.Block)
                 .Include(a => a.PropertyType)
                 .Include(a => a.Status)
-                .Include(a => a.Bookings)
-                    .ThenInclude(b => b.User)
                 .FirstOrDefaultAsync(a => a.Id == assetId);
+            _logger.LogInformation("Retrieved {id} assets", assetId);
+           
+            return assets;
         }
 
         public async Task<BookingResult> BookAssetAsync(int userId, int assetId)
@@ -114,7 +117,6 @@ namespace SocietyMng.Services
 
             try
             {
-                // Check if asset exists and is available
                 var asset = await _context.Assets
                     .Include(a => a.Status)
                     .FirstOrDefaultAsync(a => a.Id == assetId);
@@ -124,13 +126,11 @@ namespace SocietyMng.Services
                     return new BookingResult { Success = false, ErrorMessage = "Asset not found" };
                 }
 
-                // Check if asset is available (assuming status code "AVAILABLE" has Id = 11 based on seed data)
-                if (asset.Status.Code != "AVAILABLE")
+                if (asset.Status.Code != _appSetting.Asset_Status.AVAILABLE)
                 {
                     return new BookingResult { Success = false, ErrorMessage = "Asset is not available for booking" };
                 }
 
-                // Check if user already has a pending/confirmed booking for this asset
                 var existingBooking = await _context.Bookings
                     .FirstOrDefaultAsync(b => b.UserId == userId && b.AssetId == assetId &&
                                         (b.Status == "Pending" || b.Status == "Confirmed"));
@@ -140,28 +140,29 @@ namespace SocietyMng.Services
                     return new BookingResult { Success = false, ErrorMessage = "You already have a booking for this asset" };
                 }
 
-                // Create new booking
                 var booking = new Booking
                 {
                     UserId = userId,
+                    User= await _context.Users.FindAsync(userId),
                     AssetId = assetId,
+                    Asset = asset,
                     BookingDate = DateTime.Now,
                     Status = "Pending",
                     CreatedAt = DateTime.Now
                 };
 
-                _context.Bookings.Add(booking);
+                await _context.Bookings.AddAsync(booking);
+                _logger.LogDebug("Asset added to context. About to save changes.");
 
-                // Update asset status to BOOKED (assuming "BOOKED" has Id = 12 based on seed data)
                 var bookedStatus = await _context.SystemCodeItems
-                    .FirstOrDefaultAsync(s => s.Code == "BOOKED" && s.SystemCode.Code == "Asset_Status");
+                    .FirstOrDefaultAsync(s => s.Code == _appSetting.Asset_Status.BOOKED);
 
                 if (bookedStatus != null)
                 {
                     asset.StatusId = bookedStatus.Id;
                 }
 
-                await _context.SaveChangesAsync();
+                var result= await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
                 _logger.LogInformation("Asset {AssetId} booked successfully by user {UserId}", assetId, userId);
@@ -195,12 +196,10 @@ namespace SocietyMng.Services
                     return new BookingResult { Success = false, ErrorMessage = "Booking is already cancelled" };
                 }
 
-                // Update booking status to cancelled
                 booking.Status = "Cancelled";
 
-                // Update asset status back to AVAILABLE
                 var availableStatus = await _context.SystemCodeItems
-                    .FirstOrDefaultAsync(s => s.Code == "AVAILABLE" && s.SystemCode.Code == "Asset_Status");
+                    .FirstOrDefaultAsync(s => s.Code == _appSetting.Asset_Status.AVAILABLE);
 
                 if (availableStatus != null)
                 {
@@ -235,18 +234,17 @@ namespace SocietyMng.Services
                 .ToListAsync();
         }
 
-        public async Task<List<Complaint>> GetUserComplaintsAsync(int userId)
-        {
-            return await _context.Complaints
-                .Include(c => c.Asset)
-                .Include(c => c.Booking)
-                .Where(c => c.UserId == userId)
-                .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
-        }
+        //public async Task<List<Complaint>> GetUserComplaintsAsync(int userId)
+        //{
+        //    return await _context.Complaints
+        //        .Include(c => c.Asset)
+        //        .Include(c => c.Booking)
+        //        .Where(c => c.UserId == userId)
+        //        .OrderByDescending(c => c.CreatedAt)
+        //        .ToListAsync();
+        //}
     }
 
-    // Result class for booking operations
     public class BookingResult
     {
         public bool Success { get; set; }

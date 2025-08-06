@@ -1,0 +1,35 @@
+﻿@model SocietyMng.Models.BookingViewModel
+
+@{
+    ViewData["Title"] = "Confirm Booking";
+    
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">Confirm Your Booking</h2>
+
+    <form asp-action="Book" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="AssetId" />
+
+        <div class="mb-3">
+            <label asp-for="BookingDate" class="form-label fw-bold">Booking Date</label>
+            <input asp-for="BookingDate" class="form-control" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Booking Status</label>
+            <input class="form-control" value="Pending" readonly />
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="fas fa-check-circle me-1"></i>Confirm Booking
+            </button>
+            <a asp-action="AssetDetails" asp-route-id="@Model.AssetId" class="btn btn-secondary ms-2">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>

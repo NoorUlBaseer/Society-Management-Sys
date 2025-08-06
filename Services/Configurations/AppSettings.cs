@@ -6,6 +6,8 @@
         public Block Blocks { get; set; } = new();
         public FileUploadPaths FileUploadPath { get; set; } = new();
 
+        public AsssetStatus Asset_Status { get; set; } = new();
+
         public class UserRole  
         {
             public string Admin { get; set; } = string.Empty;
@@ -26,6 +28,13 @@
             public string AssetImages { get; set; }
             public string[] AllowedExtensions { get; set; }
             public int MaxFileSizeMB { get; set; }
+        }
+
+        public class AsssetStatus
+        {
+            public string AVAILABLE { get; set; } = string.Empty;
+            public string BOOKED { get; set; } = string.Empty;
+            public string SOLD { get; set; } = string.Empty;
         }
 
     }

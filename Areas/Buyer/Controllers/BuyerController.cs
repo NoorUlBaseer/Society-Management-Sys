@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SocietyMng.Areas.Buyer.DTOs;
 using SocietyMng.Data;
-using SocietyMng.Services;
 using SocietyMng.Services.Interfaces;
 using System.Security.Claims;
 
@@ -98,13 +97,6 @@ namespace SocietyMng.Areas.Buyer.Controllers
             }
         }
 
-        public async Task<IActionResult> MyBookings()
-        {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var bookings = await _buyerService.GetUserBookingsAsync(userId);
-            return View(bookings);
-        }
-
         public async Task<IActionResult> AssetListing()
         {
             var assets = await _buyerService.GetAllAssetsAsync();
@@ -120,6 +112,7 @@ namespace SocietyMng.Areas.Buyer.Controllers
                 TempData["Error"] = "Asset not found";
                 return RedirectToAction("AssetListing");
             }
+
             return View(asset);
         }
 
@@ -128,7 +121,6 @@ namespace SocietyMng.Areas.Buyer.Controllers
         public async Task<IActionResult> BookAsset(int assetId)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
             var result = await _buyerService.BookAssetAsync(userId, assetId);
 
             if (result.Success)
@@ -139,8 +131,16 @@ namespace SocietyMng.Areas.Buyer.Controllers
             else
             {
                 TempData["Error"] = result.ErrorMessage;
-                return RedirectToAction("AssetDetails", new { id = assetId });
+                return RedirectToAction("AssetListing");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyBookings()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var bookings = await _buyerService.GetUserBookingsAsync(userId);
+            return View(bookings);
         }
 
         [HttpPost]
@@ -148,7 +148,6 @@ namespace SocietyMng.Areas.Buyer.Controllers
         public async Task<IActionResult> CancelBooking(int bookingId)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
             var result = await _buyerService.CancelBookingAsync(userId, bookingId);
 
             if (result.Success)
@@ -163,11 +162,78 @@ namespace SocietyMng.Areas.Buyer.Controllers
             return RedirectToAction("MyBookings");
         }
 
-        public async Task<IActionResult> MyComplaints()
+        //[HttpGet]
+        //public async Task<IActionResult> MyComplaints()
+        //{
+        //    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        //    var complaints = await _buyerService.GetUserComplaintsAsync(userId);
+        //    return View(complaints);
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> CreateComplaint()
+        //{
+        //    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        //    // Get user's bookings to allow complaint filing
+        //    var bookings = await _buyerService.GetUserBookingsAsync(userId);
+        //    ViewBag.Bookings = bookings;
+
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> CreateComplaint(int? assetId, int? bookingId, string subject, string description)
+        //{
+        //    if (string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(description))
+        //    {
+        //        TempData["Error"] = "Subject and description are required";
+        //        return RedirectToAction("CreateComplaint");
+        //    }
+
+        //    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        //    try
+        //    {
+        //        var complaint = new Complaint
+        //        {
+        //            UserId = userId,
+        //            AssetId = assetId,
+        //            BookingId = bookingId,
+        //            Description = description,
+                   
+        //            CreatedAt = DateTime.Now
+        //        };
+
+        //        _context.Complaints.Add(complaint);
+        //        await _context.SaveChangesAsync();
+
+        //        TempData["Success"] = "Complaint submitted successfully!";
+        //        return RedirectToAction("MyComplaints");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["Error"] = "Failed to submit complaint. Please try again.";
+        //        return RedirectToAction("CreateComplaint");
+        //    }
+        //}
+
+        [HttpGet]
+        public async Task<IActionResult> BookingDetails(int id)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var complaints = await _buyerService.GetUserComplaintsAsync(userId);
-            return View(complaints);
+            var bookings = await _buyerService.GetUserBookingsAsync(userId);
+            var booking = bookings.FirstOrDefault(b => b.Id == id);
+
+            if (booking == null)
+            {
+                TempData["Error"] = "Booking not found";
+                return RedirectToAction("MyBookings");
+            }
+
+            return View(booking);
         }
+
     }
 }
