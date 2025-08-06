@@ -115,7 +115,7 @@ namespace SocietyMng.Services
             if (asset == null)
                 return BookingResult.Failure("Asset not found.");
 
-            if (asset.Status.Code != _appSetting.Asset_Status.AVAILABLE)
+            if (!string.Equals(asset.Status?.Code, _appSetting.Asset_Status.AVAILABLE, StringComparison.OrdinalIgnoreCase))
                 return BookingResult.Failure("Asset is not available for booking.");
 
             var booking = new Booking
@@ -150,36 +150,56 @@ namespace SocietyMng.Services
 
         public async Task<BookingResult> CancelBookingAsync(int userId, int bookingId)
         {
-            var booking = await _context.Bookings
-                .Include(b => b.Asset)
-                    .ThenInclude(a => a.Status)
-                .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
+            try
+            {
+                var booking = await _context.Bookings
+                    .Include(b => b.Asset)
+                        .ThenInclude(a => a.Status)
+                    .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
 
-            if (booking == null)
-                return BookingResult.Failure("Booking not found for this user.");
+                if (booking == null)
+                {
+                    return BookingResult.Failure("Booking not found or doesn't belong to you.");
+                }
 
-            if (booking.Status == "Cancelled")
-                return BookingResult.Failure("Booking is already cancelled.");
+                if (booking.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+                {
+                    return BookingResult.Failure("Booking is already cancelled.");
+                }
 
-            booking.Status = "Cancelled";
+                // Update booking status
+                booking.Status = "Cancelled";
 
-            var availableStatus = await _context.SystemCodeItems
-                .FirstOrDefaultAsync(sci => sci.SystemCode.Code == "Asset_Status" && sci.Code == _appSetting.Asset_Status.AVAILABLE);
+                // Find available status (case insensitive)
+                var availableStatus = await _context.SystemCodeItems
+                    .Include(sci => sci.SystemCode)
+                    .FirstOrDefaultAsync(sci => sci.SystemCode.Code == "Asset_Status" &&
+                                              sci.Code.Equals(_appSetting.Asset_Status.AVAILABLE, StringComparison.OrdinalIgnoreCase));
 
-            if (availableStatus == null)
-                return BookingResult.Failure("Unable to find AVAILABLE status code.");
+                if (availableStatus == null)
+                {
+                    return BookingResult.Failure("System error: Could not update asset status.");
+                }
 
-            booking.Asset.StatusId = availableStatus.Id;
-            await _context.SaveChangesAsync();
+                // Update asset status
+                booking.Asset.StatusId = availableStatus.Id;
 
-            return BookingResult.SuccessResult(
-                "Booking cancelled successfully.",
-                booking.Id,
-                booking.BookingDate,
-                booking.Asset.Id,
-                booking.Asset.Description,
-                availableStatus.Code
-            );
+                await _context.SaveChangesAsync();
+
+                return BookingResult.SuccessResult(
+                    "Booking cancelled successfully.",
+                    booking.Id,
+                    booking.BookingDate,
+                    booking.Asset.Id,
+                    booking.Asset.Description,
+                    availableStatus.Code
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in CancelBookingAsync");
+                return BookingResult.Failure($"An error occurred: {ex.Message}");
+            }
         }
 
         public async Task<List<Booking>> GetUserBookingsAsync(int userId)

@@ -1,24 +1,50 @@
 ﻿@model SocietyMng.Data.Entities.Asset
-
 @{
     ViewData["Title"] = "Asset Details";
 }
 
-<h2>Asset Details</h2>
+<!-- Debug: Show what URL the form will submit to -->
+<div class="alert alert-info">
+    <small>Debug: Form will submit to: @Url.Action("Book", "Buyer", new { area = "Buyer" })</small>
+</div>
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<h2>Asset Details</h2>
 <div>
     <p><strong>Description:</strong> @Model.Description</p>
     <p><strong>Block:</strong> @Model.Block?.Description</p>
     <p><strong>Type:</strong> @Model.PropertyType?.Description</p>
     <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
     <p><strong>Status:</strong> @Model.Status?.Code</p>
+    <p><strong>Asset ID:</strong> @Model.Id</p>
 </div>
 
-<form asp-action="Book" method="post">
+<form asp-area="Buyer" asp-controller="Buyer" asp-action="Book" method="post" onsubmit="console.log('Form submitting...'); return true;">
+    @Html.AntiForgeryToken()
     <input type="hidden" name="id" value="@Model.Id" />
-    <button type="submit" class="btn btn-primary" @(Model.Status?.Code != "AVAILABLE" ? "disabled" : "")>
+    <button type="submit" class="btn btn-primary"
+            onclick="console.log('Button clicked, Asset ID: @Model.Id');"
         Book Asset
     </button>
 </form>
 
-<a asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
+<a asp-area="Buyer" asp-controller="Buyer" asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
+
+<!-- Alternative form for testing -->
+<hr />
+<h4>Alternative Test Form:</h4>
+<form action="/Buyer/Buyer/Book" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-warning">
+        Test Book Asset (Direct URL)
+    </button>
+</form>
