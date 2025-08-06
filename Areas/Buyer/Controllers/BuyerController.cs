@@ -162,38 +162,44 @@ namespace SocietyMng.Areas.Buyer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int bookingId)
+        
         {
+            _logger.LogInformation("Cancel method called with bookingId: {BookingId}", bookingId);
+
             if (bookingId <= 0)
             {
                 _logger.LogWarning("Invalid booking ID: {BookingId}", bookingId);
-                return BadRequest();
+                TempData["Error"] = "Invalid booking ID provided.";
+                return RedirectToAction(nameof(MyBookings));
             }
-
-            // Simplified user ID parsing
             if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
             {
                 _logger.LogError("Could not parse valid user ID from claims");
-                TempData["Error"] = "User identification error. Please log in again.";
-                return RedirectToAction(nameof(MyBookings));
+                TempData["Error"] = "Authentication error. Please log in again.";
+                return RedirectToAction("Landing", "Auth", new { area = "" });
             }
 
             try
             {
+                _logger.LogInformation("Attempting to cancel booking {BookingId} for user {UserId}", bookingId, userId);
+
                 var result = await _buyerService.CancelBookingAsync(userId, bookingId);
 
                 if (!result.Success)
                 {
+                    _logger.LogWarning("Failed to cancel booking {BookingId}: {Message}", bookingId, result.Message);
                     TempData["Error"] = result.Message;
                 }
                 else
                 {
+                    _logger.LogInformation("Successfully cancelled booking {BookingId} for user {UserId}", bookingId, userId);
                     TempData["Success"] = result.Message;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error cancelling booking {BookingId} for user {UserId}", bookingId, userId);
-                TempData["Error"] = "An unexpected error occurred while cancelling the booking.";
+                _logger.LogError(ex, "Exception occurred while cancelling booking {BookingId} for user {UserId}", bookingId, userId);
+                TempData["Error"] = "An unexpected error occurred while cancelling the booking. Please try again.";
             }
 
             return RedirectToAction(nameof(MyBookings));

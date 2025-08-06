@@ -14,6 +14,11 @@ public interface IAdminService
     Task DeleteAssetAsync(int assetId);
     Task<List<Asset>> GetAllAssetsAsync();
 
+    //Booking Management
+    Task<List<BookedAssetView>> GetAllBookedAssetsAsync();
+    Task<bool> VerifyBookingAsync(int bookingId);
+    Task<bool> RejectBookingAsync(int bookingId);
+
 
     // Staff Management
     //Task<List<Staff>> GetAllStaffAsync();

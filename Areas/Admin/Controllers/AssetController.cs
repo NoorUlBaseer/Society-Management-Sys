@@ -33,7 +33,7 @@ namespace SocietyMng.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var assets= await _adminService.GetAllAssetsAsync();
+            var assets = await _adminService.GetAllAssetsAsync();
             return View(assets);
         }
 
@@ -42,7 +42,7 @@ namespace SocietyMng.Areas.Admin.Controllers
         {
             var asset = await _context.Assets
                 .Include(a => a.Block)
-                .Include (a => a.PropertyType)
+                .Include(a => a.PropertyType)
                 .Include(a => a.Status)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
@@ -64,7 +64,7 @@ namespace SocietyMng.Areas.Admin.Controllers
                 await PopulateLookupsAsync();
                 ViewBag.MaxFileSizeMB = _appSettings.FileUploadPath.MaxFileSizeMB;
 
-               
+
 
                 return View();
             }
@@ -85,7 +85,7 @@ namespace SocietyMng.Areas.Admin.Controllers
                 _logger.LogDebug("Processing Create Asset POST request");
                 ModelState.Remove("ImagePath");
 
-               
+
                 if (ImageFile == null || ImageFile.Length == 0)
                 {
                     _logger.LogWarning("No image file provided");
@@ -160,7 +160,7 @@ namespace SocietyMng.Areas.Admin.Controllers
 
                     _logger.LogInformation("Saving file to: {FilePath}", fullFilePath);
 
-                   
+
                     using (var fileStream = new FileStream(fullFilePath, FileMode.Create))
                     {
                         await ImageFile.CopyToAsync(fileStream);
@@ -199,7 +199,7 @@ namespace SocietyMng.Areas.Admin.Controllers
                     ViewBag.MaxFileSizeMB = _appSettings.FileUploadPath.MaxFileSizeMB;
                     return View(model);
                 }
-              
+
                 await _adminService.AddAssetAsync(model);
                 _logger.LogInformation("Asset created successfully with ImagePath: {ImagePath}", model.ImagePath);
 
@@ -235,8 +235,8 @@ namespace SocietyMng.Areas.Admin.Controllers
                 Description = asset.Description,
                 Address = asset.Address,
                 PlotNumber = asset.PlotNumber,
-                Price= asset.Price,
-                BlockId= asset.BlockId,
+                Price = asset.Price,
+                BlockId = asset.BlockId,
                 PropertyTypeId = asset.PropertyTypeId,
                 StatusId = asset.StatusId,
                 ImagePath = asset.ImagePath,
@@ -258,7 +258,7 @@ namespace SocietyMng.Areas.Admin.Controllers
                 return View(model);
             }
             var success = await _adminService.UpdateAssetAsync(id, model);
-            if (success== null)
+            if (success == null)
             {
                 TempData["Error"] = "Failed to update asset.";
                 return View(model);
@@ -273,7 +273,7 @@ namespace SocietyMng.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            
+
             await _adminService.DeleteAssetAsync(id);
             TempData["SuccessMessage"] = "Asset deleted successfully!";
             _logger.LogWarning("Successfully deleted Asset ID: {id}", id);
@@ -311,5 +311,83 @@ namespace SocietyMng.Areas.Admin.Controllers
                 ViewBag.Statuses = new List<SocietyMng.Data.Entities.SystemCodeItem>();
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> BookedAssets()
+        {
+            try
+            {
+                var bookedAssets = await _adminService.GetAllBookedAssetsAsync();
+                return View(bookedAssets);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching booked assets");
+                TempData["Error"] = "An error occurred while fetching booked assets.";
+                return RedirectToAction("Index");
+            }
+        }
+        
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyBooking(int bookingId)
+        {
+            try
+            {
+                _logger.LogInformation("Admin attempting to verify booking ID: {BookingId}", bookingId);
+
+                var result = await _adminService.VerifyBookingAsync(bookingId);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Booking verified successfully! Asset has been marked as sold.";
+                    _logger.LogInformation("Successfully verified booking ID: {BookingId}", bookingId);
+                }
+                else
+                {
+                    TempData["Error"] = "Failed to verify booking. Booking may not exist.";
+                    _logger.LogWarning("Failed to verify booking ID: {BookingId}", bookingId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while verifying booking ID: {BookingId}", bookingId);
+                TempData["Error"] = "An error occurred while verifying the booking. Please try again.";
+            }
+
+            return RedirectToAction("BookedAssets");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectBooking(int bookingId)
+        {
+            try
+            {
+                _logger.LogInformation("Admin attempting to reject booking ID: {BookingId}", bookingId);
+
+                var result = await _adminService.RejectBookingAsync(bookingId);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Booking rejected successfully! Asset is now available for booking.";
+                    _logger.LogInformation("Successfully rejected booking ID: {BookingId}", bookingId);
+                }
+                else
+                {
+                    TempData["Error"] = "Failed to reject booking. Booking may not exist.";
+                    _logger.LogWarning("Failed to reject booking ID: {BookingId}", bookingId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while rejecting booking ID: {BookingId}", bookingId);
+                TempData["Error"] = "An error occurred while rejecting the booking. Please try again.";
+            }
+
+            return RedirectToAction("BookedAssets");
+        }
+
     }
 }

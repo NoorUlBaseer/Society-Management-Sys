@@ -1,0 +1,132 @@
+﻿@model List<SocietyMng.Areas.Admin.DTOs.BookedAssetView>
+
+@{
+    ViewData["Title"] = "Booked Assets - Debug";
+}
+
+<h2>Booked Assets Management (Debug Mode)</h2>
+
+<!-- Debug Information -->
+<div class="alert alert-info">
+    <h4>Debug Information</h4>
+    <p><strong>Current Route:</strong> Area=@ViewContext.RouteData.Values["area"], Controller=@ViewContext.RouteData.Values["controller"], Action=@ViewContext.RouteData.Values["action"]</p>
+    <p><strong>Model Count:</strong> @(Model?.Count ?? 0)</p>
+    <p><strong>Base URL:</strong> @Context.Request.Scheme://@Context.Request.Host</p>
+
+    <!-- Test buttons -->
+    <div class="mt-2">
+        <h5>Route Testing:</h5>
+        <form method="post" action="/Admin/Asset/VerifyBooking" style="display: inline;">
+            <input type="hidden" name="bookingId" value="999" />
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-info btn-sm">Test Verify Route (Direct URL)</button>
+        </form>
+
+        <form method="post" asp-area="Admin" asp-controller="Asset" asp-action="VerifyBooking" style="display: inline;">
+            <input type="hidden" name="bookingId" value="999" />
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-warning btn-sm">Test Verify Route (Tag Helper)</button>
+        </form>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Asset</th>
+                <th>Customer</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr>
+                    <td><strong>#@booking.BookingId</strong></td>
+                    <td>@booking.BookingDate.ToString("dd MMM yyyy")</td>
+                    <td>
+                        <span class="badge @(booking.BookingStatus.ToLower() == "pending" ? "badge-warning" : "badge-info")">
+                            @booking.BookingStatus
+                        </span>
+                    </td>
+                    <td>@booking.AssetDescription</td>
+                    <td>@booking.UserName</td>
+                    <td>
+                        @if (booking.BookingStatus.ToLower() == "pending")
+                        {
+                            <!-- Method 1: Direct URL -->
+                            <form method="post" action="/Admin/Asset/VerifyBooking" style="display: inline;">
+                                <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Verify booking @booking.BookingId?')">
+                                    ✓ Verify (Direct)
+                                </button>
+                            </form>
+
+                            <!-- Method 2: Tag Helpers -->
+                            <form asp-area="Admin" asp-controller="Asset" asp-action="VerifyBooking" method="post" style="display: inline;">
+                                <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-info btn-sm" onclick="return confirm('Verify booking @booking.BookingId with tag helper?')">
+                                    ✓ Verify (Tag)
+                                </button>
+                            </form>
+
+                            <!-- Method 3: Url.Action -->
+                            <form method="post" action="@Url.Action("RejectBooking", "Asset", new { area = "Admin" })" style="display: inline;">
+                                <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject booking @booking.BookingId?')">
+                                    ✗ Reject
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Processed</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">
+        <h4>No Bookings Found</h4>
+        <p>Model is @(Model == null ? "null" : "empty")</p>
+
+        <!-- Create a test booking if none exist -->
+        <p><strong>For testing purposes, you can manually add a booking to your database:</strong></p>
+        <pre>
+    INSERT INTO Bookings (UserId, AssetId, BookingDate, Status, CreatedAt)
+    VALUES (1, 1, GETDATE(), 'Pending', GETDATE())
+            </pre>
+    </div>
+}
+
+<!-- Show generated URLs -->
+<div class="mt-4 p-3 bg-light">
+    <h5>Generated Action URLs:</h5>
+    <ul>
+        <li><strong>VerifyBooking (Tag Helper):</strong> <code>@Url.Action("VerifyBooking", "Asset", new { area = "Admin" })</code></li>
+        <li><strong>RejectBooking (Tag Helper):</strong> <code>@Url.Action("RejectBooking", "Asset", new { area = "Admin" })</code></li>
+        <li><strong>Direct URL:</strong> <code>/Admin/Asset/VerifyBooking</code></li>
+    </ul>
+</div>

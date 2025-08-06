@@ -74,7 +74,8 @@ namespace SocietyMng.Services
             try
             {
                 var defaultStatus = await _context.SystemCodeItems
-           .FirstOrDefaultAsync(s => s.SystemCode.Code == "Asset_Status" && s.Code == "Available");
+                    .Include(s => s.SystemCode)
+                    .FirstOrDefaultAsync(s => s.SystemCode.Code == "Asset_Status" && s.Code == "Available");
 
                 if (defaultStatus == null)
                 {
@@ -86,7 +87,7 @@ namespace SocietyMng.Services
                     Description = model.Description,
                     Address = model.Address,
                     PlotNumber = model.PlotNumber,
-                    ImagePath = model.ImagePath, 
+                    ImagePath = model.ImagePath,
                     Price = model.Price,
                     BlockId = model.BlockId,
                     PropertyTypeId = model.PropertyTypeId,
@@ -199,7 +200,7 @@ namespace SocietyMng.Services
                     return;
                 }
 
-                // converting web patht to physical, rmv /
+                // converting web path to physical, rmv /
                 var relativePath = imagePath.TrimStart('/');
 
                 // /->\ for windows path
@@ -241,81 +242,129 @@ namespace SocietyMng.Services
             }
         }
 
-        //    // Staff Management
-        //    public async Task<List<Staff>> GetAllStaffAsync()
-        //    {
-        //        _logger.LogDebug("Fetching all staff members from database");
-        //        var staff = await _context.Staff.ToListAsync();
-        //        _logger.LogInformation("Retrieved {StaffCount} staff members", staff.Count);
-        //        return staff;
-        //    }
+        public async Task<List<BookedAssetView>> GetAllBookedAssetsAsync()
+        {
+            _logger.LogDebug("Fetching all booked assets from database");
 
-        //    public async Task AddStaffAsync(StaffView model)
-        //    {
-        //        _logger.LogDebug("Adding new staff member: {StaffName}", model.FullName);
-        //        var staff = new Staff
-        //        {
-        //            FullName = model.FullName,
-        //            Email = model.Email,
-        //            ContactNumber = model.ContactNumber,
-        //            Position = model.Position,
-        //            Salary = model.Salary,
-        //            HireDate = model.HireDate,
-        //            IsActive = model.IsActive,
-        //            BankAccount = model.BankAccount
-        //        };
+            var bookedAssets = await _context.Bookings
+                .Include(b => b.Asset)
+                    .ThenInclude(a => a.Block)
+                .Include(b => b.Asset)
+                    .ThenInclude(a => a.PropertyType)
+                .Include(b => b.Asset)
+                    .ThenInclude(a => a.Status)
+                .Include(b => b.User)
+                .Where(b => b.Status != "Cancelled")
+                .Select(b =>
+                new BookedAssetView
+                {
+                    BookingId = b.Id,
+                    BookingDate = b.BookingDate,
+                    BookingStatus = b.Status,
+                    AssetId = b.Asset.Id,
+                    AssetDescription = b.Asset.Description,
+                    AssetBlock = b.Asset.Block.Description,
+                    AssetType = b.Asset.PropertyType.Description,
+                    AssetPrice = b.Asset.Price,
+                    UserId = b.User.Id,
+                    UserName = b.User.FullName,
+                    UserEmail = b.User.Email,
+                    UserPhone = b.User.PhoneNumber
+                })
+                .OrderByDescending(b => b.BookingDate)
+                .ThenBy(b => b.BookingStatus == "Pending" ? 0 : 1) 
+                .ToListAsync();
 
-        //        await _context.Staff.AddAsync(staff);
-        //        await _context.SaveChangesAsync();
-        //        _logger.LogInformation("Successfully added new staff member ID: {StaffId}, Name: {StaffName}", staff.Id, staff.FullName);
-        //    }
+            _logger.LogInformation("Retrieved {BookingCount} booked assets", bookedAssets.Count);
+            return bookedAssets;
+        }
 
-        //    public async Task UpdateStaffSalaryAsync(SalaryUpdate model)
-        //    {
-        //        if (model == null || model.StaffId <= 0 || model.NewSalary <= 0)
-        //        {
-        //            _logger.LogWarning("Invalid salary update model received");
-        //            throw new ArgumentException("Invalid salary update parameters");
-        //        }
+        public async Task<bool> VerifyBookingAsync(int bookingId)
+        {
+            _logger.LogDebug("Verifying booking ID: {BookingId}", bookingId);
 
-        //        var staff = await _context.Staff.FindAsync(model.StaffId);
-        //        if (staff == null)
-        //        {
-        //            _logger.LogWarning("Staff ID: {StaffId} not found for salary update", model.StaffId);
-        //            throw new KeyNotFoundException($"Staff with ID {model.StaffId} not found");
-        //        }
+            try
+            {
+                var booking = await _context.Bookings
+                    .Include(b => b.Asset)
+                    .FirstOrDefaultAsync(b => b.Id == bookingId);
 
-        //        staff.Salary = model.NewSalary;
-        //        await _context.SaveChangesAsync();
-        //        _logger.LogInformation("Salary updated for {StaffName} to {NewSalary}",
-        //            staff.FullName, model.NewSalary);
-        //    }
+                if (booking == null)
+                {
+                    _logger.LogWarning("Booking ID: {BookingId} not found", bookingId);
+                    return false;
+                }
 
-        //    public async Task ToggleStaffStatusAsync(int staffId)
-        //    {
-        //        _logger.LogDebug("Attempting to toggle status for staff ID: {StaffId}", staffId);
-        //        var staff = await _context.Staff.FindAsync(staffId);
-        //        if (staff != null)
-        //        {
-        //            staff.IsActive = !staff.IsActive;
-        //            await _context.SaveChangesAsync();
-        //            _logger.LogInformation("Staff ID: {StaffId} status changed to {Status}", staffId, staff.IsActive ? "Active" : "Inactive");
-        //        }
-        //        else
-        //        {
-        //            _logger.LogWarning("Staff ID: {StaffId} not found for status toggle", staffId);
-        //        }
-        //    }
+                //getting status 
+                var confirmedStatus = await _context.SystemCodeItems
+                    .Include(s => s.SystemCode)
+                    .FirstOrDefaultAsync(s => s.SystemCode.Code == "Asset_Status" && s.Code == _appSettings.Asset_Status.SOLD);
 
-        //    // Complaint Management
-        //    public async Task<List<Complaint>> GetAllComplaintsAsync()
-        //    {
-        //        _logger.LogDebug("Fetching all complaints from database");
-        //        var complaints = await _context.Complaints
-        //            .Include(c => c.User)
-        //            .ToListAsync();
-        //        _logger.LogInformation("Retrieved {ComplaintCount} complaints", complaints.Count);
-        //        return complaints;
-        //    }
+                if (confirmedStatus == null)
+                {
+                    _logger.LogError("SOLD status not found in SystemCodeItems");
+                    throw new Exception("SOLD status configuration not found");
+                }
+                //on verify-> asset=Sold, booking=Confirmed
+                booking.Status = "Confirmed";
+                booking.Asset.StatusId = confirmedStatus.Id;
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully verified booking ID: {BookingId}. Asset ID: {AssetId} status changed to Sold",
+                    bookingId, booking.Asset.Id);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verifying booking ID: {BookingId}", bookingId);
+                return false;
+            }
+        }
+
+        public async Task<bool> RejectBookingAsync(int bookingId)
+        {
+            _logger.LogDebug("Rejecting booking ID: {BookingId}", bookingId);
+
+            try
+            {
+                var booking = await _context.Bookings
+                    .Include(b => b.Asset)
+                    .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+                if (booking == null)
+                {
+                    _logger.LogWarning("Booking ID: {BookingId} not found", bookingId);
+                    return false;
+                }
+
+                //fetch status
+                var availableStatus = await _context.SystemCodeItems
+                    .Include(s => s.SystemCode)
+                    .FirstOrDefaultAsync(s => s.SystemCode.Code == "Asset_Status" && s.Code == _appSettings.Asset_Status.AVAILABLE);
+
+                if (availableStatus == null)
+                {
+                    _logger.LogError("AVAILABLE status not found in SystemCodeItems");
+                    throw new Exception("AVAILABLE status configuration not found");
+                }
+                // on reject-> Asset= available, booking= rejected
+                booking.Status = "Rejected";
+                booking.Asset.StatusId = availableStatus.Id;
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully rejected booking ID: {BookingId}. Asset ID: {AssetId} status changed to Available",
+                    bookingId, booking.Asset.Id);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error rejecting booking ID: {BookingId}", bookingId);
+                return false;
+            }
+        }
     }
 }
