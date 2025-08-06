@@ -38,40 +38,20 @@ namespace SocietyMng.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model, string? backURL = null)
         {
-            // HARDCODED ADMIN LOGIC JUST FOR TESTING PURPOSES
-            if (model.Email == "admin@local.dev" && model.Password == "admin123")
-            {
-                var adminClaims = new List<Claim>
-                {
-                    new(ClaimTypes.NameIdentifier, "999"), // fake ID
-                    new(ClaimTypes.Email, model.Email),
-                    new(ClaimTypes.Name, "Local Admin"),
-                    new(ClaimTypes.Role, "Admin") // this must match _appSettings.User_Role.Admin
-                };
-
-                var adminAuthProperties = new AuthenticationProperties
-                {
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(3)
-                };
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(new ClaimsIdentity(adminClaims, CookieAuthenticationDefaults.AuthenticationScheme)),
-                    adminAuthProperties
-                );
-
-                return RedirectToAction("Dashboard", "Admin", new { area = "Admin" });
-            }
-
             if (!ModelState.IsValid) return View(model);
 
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == model.Email);
 
-            if (user == null || !VerifyPassword(model.Password, user.PasswordHash))
+            if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Invalid Email or password!");
+                ModelState.AddModelError("Email", "Email not found.");
+                return View(model);
+            }
+            if (!VerifyPassword(model.Password, user.PasswordHash))
+            {
+                ModelState.AddModelError("Password", "Invalid password.");
                 return View(model);
             }
 
