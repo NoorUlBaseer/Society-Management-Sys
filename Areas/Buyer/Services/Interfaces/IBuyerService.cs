@@ -1,6 +1,5 @@
 ﻿using SocietyMng.Areas.Buyer.DTOs;
 using SocietyMng.Data.Entities;
-using SocietyMng.Services;
 
 namespace SocietyMng.Services.Interfaces
 {

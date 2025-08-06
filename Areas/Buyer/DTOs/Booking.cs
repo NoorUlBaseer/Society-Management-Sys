@@ -1,10 +1,9 @@
-﻿namespace SocietyMng.Models
+﻿namespace SocietyMng.Areas.Buyer.DTOs
 {
-    public class BookingViewModel
+    public class AssetBookingConfirmationView
     {
-        public int UserId { get; set; }
         public int AssetId { get; set; }
-        public DateTime BookingDate { get; set; }
-        public string Status { get; set; } = "Pending";
+        public string Description { get; set; }
+        public decimal Price { get; set; }
     }
 }

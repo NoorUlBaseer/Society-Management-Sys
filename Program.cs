@@ -13,6 +13,8 @@ builder.Services.ConfigureAuthentication();
 builder.Services.ConfigureAuthorization();
 builder.Services.ConfigureControllersWithViews();
 builder.Services.ConfigureHttpContextAccessor();
+builder.Services.AddSession();
+builder.Services.AddMvc().AddSessionStateTempDataProvider();
 
 var app = builder.Build();
 
@@ -32,6 +34,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 app.ConfigureMiddleware();
+app.UseSession();
 
 app.Run();
 
