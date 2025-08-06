@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocietyMng.Areas.Buyer.DTOs;
+using SocietyMng.Configurations;
 using SocietyMng.Data;
+using SocietyMng.Data.Entities;
 using SocietyMng.Services.Interfaces;
 using System.Security.Claims;
 
@@ -125,20 +127,36 @@ namespace SocietyMng.Areas.Buyer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Book(int id)
         {
+            _logger.LogInformation("Book method called with id: {Id}", id);
+
             if (id <= 0)
-                return BadRequest();
-
-            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-            var result = await _buyerService.BookAssetAsync(userId, id);
-
-            if (!result.Success)
             {
-                TempData["Error"] = result.Message;
-                return RedirectToAction(nameof(Details), new { id });
+                _logger.LogWarning("Invalid asset id: {Id}", id);
+                return BadRequest();
             }
 
-            TempData["Success"] = result.Message;
-            return RedirectToAction(nameof(MyBookings));
+            try
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                _logger.LogInformation("Booking asset {AssetId} for user {UserId}", id, userId);
+
+                var result = await _buyerService.BookAssetAsync(userId, id);
+
+                if (!result.Success)
+                {
+                    TempData["Error"] = result.Message;
+                    return RedirectToAction("Index");
+                }
+
+                TempData["Success"] = result.Message;
+                return RedirectToAction("MyBookings");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error booking asset {AssetId}", id);
+                TempData["Error"] = "An error occurred while booking the asset";
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
@@ -146,22 +164,43 @@ namespace SocietyMng.Areas.Buyer.Controllers
         public async Task<IActionResult> Cancel(int bookingId)
         {
             if (bookingId <= 0)
+            {
+                _logger.LogWarning("Invalid booking ID: {BookingId}", bookingId);
                 return BadRequest();
+            }
 
-            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
-            var result = await _buyerService.CancelBookingAsync(userId, bookingId);
+            // Simplified user ID parsing
+            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int userId))
+            {
+                _logger.LogError("Could not parse valid user ID from claims");
+                TempData["Error"] = "User identification error. Please log in again.";
+                return RedirectToAction(nameof(MyBookings));
+            }
 
-            if (!result.Success)
-                TempData["Error"] = result.Message;
-            else
-                TempData["Success"] = result.Message;
+            try
+            {
+                var result = await _buyerService.CancelBookingAsync(userId, bookingId);
+
+                if (!result.Success)
+                {
+                    TempData["Error"] = result.Message;
+                }
+                else
+                {
+                    TempData["Success"] = result.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error cancelling booking {BookingId} for user {UserId}", bookingId, userId);
+                TempData["Error"] = "An unexpected error occurred while cancelling the booking.";
+            }
 
             return RedirectToAction(nameof(MyBookings));
         }
-
         public async Task<IActionResult> MyBookings()
         {
-            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var bookings = await _buyerService.GetUserBookingsAsync(userId);
             return View(bookings);
         }
