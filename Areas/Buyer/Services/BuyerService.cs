@@ -152,56 +152,119 @@ namespace SocietyMng.Services
         {
             try
             {
-                var booking = await _context.Bookings
-                    .Include(b => b.Asset)
-                        .ThenInclude(a => a.Status)
-                    .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
+                _logger.LogDebug("Attempting to cancel booking {BookingId} for user {UserId}", bookingId, userId);
+                var strategy = _context.Database.CreateExecutionStrategy();
 
-                if (booking == null)
+                BookingResult result = null;
+
+                await strategy.ExecuteAsync(async () =>
                 {
-                    return BookingResult.Failure("Booking not found or doesn't belong to you.");
-                }
+                    var booking = await _context.Bookings
+                        .Include(b => b.Asset)
+                            .ThenInclude(a => a.Status)
+                            .ThenInclude(s => s.SystemCode)
+                        .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
 
-                if (booking.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
-                {
-                    return BookingResult.Failure("Booking is already cancelled.");
-                }
+                    if (booking == null)
+                    {
+                        _logger.LogWarning("Booking {BookingId} not found for user {UserId}", bookingId, userId);
+                        result = BookingResult.Failure("Booking not found or doesn't belong to you.");
+                        return;
+                    }
 
-                // Update booking status
-                booking.Status = "Cancelled";
+                 // null checks
+                    if (booking.Asset == null || booking.Asset.Status == null)
+                    {
+                        _logger.LogWarning("Booking {BookingId} has invalid asset or status data", bookingId);
+                        result = BookingResult.Failure("Invalid booking data. Please contact support.");
+                        return;
+                    }
+                    var currentStatus = booking.Status?.Trim() ?? string.Empty;
 
-                // Find available status (case insensitive)
-                var availableStatus = await _context.SystemCodeItems
-                    .Include(sci => sci.SystemCode)
-                    .FirstOrDefaultAsync(sci => sci.SystemCode.Code == "Asset_Status" &&
-                                              sci.Code.Equals(_appSetting.Asset_Status.AVAILABLE, StringComparison.OrdinalIgnoreCase));
+                    if (currentStatus.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _logger.LogWarning("Booking {BookingId} is already cancelled", bookingId);
+                        result = BookingResult.Failure("Booking is already cancelled.");
+                        return;
+                    }
 
-                if (availableStatus == null)
-                {
-                    return BookingResult.Failure("System error: Could not update asset status.");
-                }
+                    if (currentStatus.Equals("Confirmed", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _logger.LogWarning("Attempted to cancel confirmed booking {BookingId}", bookingId);
+                        result = BookingResult.Failure("Cannot cancel a confirmed booking. Please contact support.");
+                        return;
+                    }
 
-                // Update asset status
-                booking.Asset.StatusId = availableStatus.Id;
+                    if (currentStatus.Equals("Rejected", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _logger.LogWarning("Attempted to cancel rejected booking {BookingId}", bookingId);
+                        result = BookingResult.Failure("This booking has already been rejected by the admin.");
+                        return;
+                    }
 
-                await _context.SaveChangesAsync();
+                    if (!currentStatus.Equals("Pending", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _logger.LogWarning("Attempted to cancel booking {BookingId} with status {Status}", bookingId, booking.Status);
+                        result = BookingResult.Failure($"Cannot cancel booking with status: {booking.Status}");
+                        return;
+                    }
 
-                return BookingResult.SuccessResult(
-                    "Booking cancelled successfully.",
-                    booking.Id,
-                    booking.BookingDate,
-                    booking.Asset.Id,
-                    booking.Asset.Description,
-                    availableStatus.Code
-                );
+                    using var transaction = await _context.Database.BeginTransactionAsync();
+                    try
+                    {
+                        booking.Status = "Cancelled";
+                        //case sensitivity handled
+                        var availableStatus = await _context.SystemCodeItems
+                            .Include(sci => sci.SystemCode)
+                            .Where(sci => sci.SystemCode.Code == "Asset_Status" &&
+                                         sci.Code.ToUpper() == _appSetting.Asset_Status.AVAILABLE.ToUpper())
+                            .FirstOrDefaultAsync();
+
+                        if (availableStatus == null)
+                        {
+                            _logger.LogError("Could not find AVAILABLE status in SystemCodeItems");
+                            result = BookingResult.Failure("System error: Could not update asset status. Please contact support.");
+                            return;
+                        }
+                        booking.Asset.StatusId = availableStatus.Id;
+
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
+                        _logger.LogInformation("Successfully cancelled booking {BookingId} for user {UserId}. Asset {AssetId} is now available.",
+                            bookingId, userId, booking.Asset.Id);
+
+                        result = BookingResult.SuccessResult(
+                            "Booking cancelled successfully. The asset is now available for other buyers.",
+                            booking.Id,
+                            booking.BookingDate,
+                            booking.Asset.Id,
+                            booking.Asset.Description,
+                            availableStatus.Code
+                        );
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        await transaction.RollbackAsync();
+                        _logger.LogError(ex, "Concurrency conflict while cancelling booking {BookingId}", bookingId);
+                        result = BookingResult.Failure("This booking was modified by another process. Please refresh and try again.");
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        _logger.LogError(ex, "Database error while cancelling booking {BookingId}", bookingId);
+                        result = BookingResult.Failure("A database error occurred while cancelling the booking. Please try again.");
+                    }
+                });
+
+                return result ?? BookingResult.Failure("An unexpected error occurred during cancellation.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in CancelBookingAsync");
-                return BookingResult.Failure($"An error occurred: {ex.Message}");
+                _logger.LogError(ex, "Unexpected error in CancelBookingAsync for booking {BookingId} and user {UserId}", bookingId, userId);
+                return BookingResult.Failure($"An unexpected error occurred: {ex.Message}");
             }
         }
-
         public async Task<List<Booking>> GetUserBookingsAsync(int userId)
         {
             return await _context.Bookings
@@ -216,185 +279,3 @@ namespace SocietyMng.Services
         }
     }
 }
-
-//public async Task<List<Asset>> GetAllAssetsAsync()
-//{
-//    _logger.LogDebug("Fetching all assets from database");
-//    var assets = await _context.Assets
-//        .Include(a => a.Block)
-//        .Include(a => a.PropertyType)
-//        .Include(a => a.Status)
-//        .ToListAsync();
-//    _logger.LogInformation("Retrieved {AssetCount} assets", assets.Count);
-//    return assets;
-//}
-
-//        public async Task<Asset> GetAssetByIdAsync(int assetId)
-//        {
-//            _logger.LogDebug("Fetching specific assets from database");
-//            var assets = await _context.Assets
-//                .Include(a => a.Block)
-//                .Include(a => a.PropertyType)
-//                .Include(a => a.Status)
-//                .FirstOrDefaultAsync(a => a.Id == assetId);
-//            _logger.LogInformation("Retrieved {id} assets", assetId);
-
-//            return assets;
-//        }
-
-//        public async Task<BookingResult> BookAssetAsync(int userId, int assetId)
-//        {
-//            _logger.LogInformation("BOOKING STARTED - User: {UserId}, Asset: {AssetId}", userId, assetId);
-
-//            using var transaction = await _context.Database.BeginTransactionAsync();
-//            try
-//            {
-//                // 1. Retrieve asset with detailed logging
-//                var asset = await _context.Assets
-//                    .Include(a => a.Status)
-//                    .FirstOrDefaultAsync(a => a.Id == assetId);
-
-//                _logger.LogDebug("Asset details - ID: {Id}, Name: {Name}, Status: {StatusCode} ({StatusDesc})",
-//                    asset?.Id, asset?.Id, asset?.Status?.Code, asset?.Status?.Description);
-
-//                if (asset == null)
-//                {
-//                    _logger.LogError("ASSET NOT FOUND - Asset ID: {AssetId}", assetId);
-//                    return new BookingResult { Success = false, ErrorMessage = "Asset not found" };
-//                }
-
-//                // 2. Check asset availability
-//                _logger.LogDebug("Checking availability - Current: {Current}, Required: {Required}",
-//                    asset.Status?.Code, _appSetting.Asset_Status.AVAILABLE);
-
-//                if (asset.Status.Code != _appSetting.Asset_Status.AVAILABLE)
-//                {
-//                    _logger.LogWarning("ASSET UNAVAILABLE - Current status: {Status}", asset.Status.Code);
-//                    return new BookingResult
-//                    {
-//                        Success = false,
-//                        ErrorMessage = $"Asset is not available (Status: {asset.Status.Description})"
-//                    };
-//                }
-
-//                // 3. Check for existing bookings
-//                var existingBooking = await _context.Bookings
-//                    .FirstOrDefaultAsync(b => b.UserId == userId && b.AssetId == assetId &&
-//                                        (b.Status == "Pending" || b.Status == "Confirmed"));
-
-//                _logger.LogDebug("Existing booking check - Found: {HasExisting}", existingBooking != null);
-
-//                if (existingBooking != null)
-//                {
-//                    _logger.LogWarning("DUPLICATE BOOKING - Existing ID: {BookingId}", existingBooking.Id);
-//                    return new BookingResult
-//                    {
-//                        Success = false,
-//                        ErrorMessage = "You already have an active booking for this asset"
-//                    };
-//                }
-
-//                // 4. Create new booking
-//                var booking = new Booking
-//                {
-//                    UserId = userId,
-//                    AssetId = assetId,
-//                    BookingDate = DateTime.Now,
-//                    Status = "Pending",
-//                    CreatedAt = DateTime.Now
-//                };
-
-//                _logger.LogInformation("Creating new booking record...");
-//                await _context.Bookings.AddAsync(booking);
-
-//                // 5. Update asset status
-//                var bookedStatus = await _context.SystemCodeItems
-//                    .FirstOrDefaultAsync(s => s.Code == _appSetting.Asset_Status.BOOKED);
-
-//                _logger.LogDebug("Updating asset status to: {Status}", bookedStatus?.Code);
-
-//                if (bookedStatus != null)
-//                {
-//                    asset.StatusId = bookedStatus.Id;
-//                }
-
-//                // 6. Save changes
-//                _logger.LogInformation("Saving changes to database...");
-//                await _context.SaveChangesAsync();
-//                await transaction.CommitAsync();
-
-//                _logger.LogInformation("BOOKING SUCCESSFUL - Booking ID: {BookingId}", booking.Id);
-//                return new BookingResult { Success = true, BookingId = booking.Id };
-//            }
-//            catch (Exception ex)
-//            {
-//                await transaction.RollbackAsync();
-//                _logger.LogError(ex, "BOOKING FAILED - User: {UserId}, Asset: {AssetId}", userId, assetId);
-//                return new BookingResult
-//                {
-//                    Success = false,
-//                    ErrorMessage = "A system error occurred while processing your booking"
-//                };
-//            }
-//        }
-//        public async Task<BookingResult> CancelBookingAsync(int userId, int bookingId)
-//        {
-//            using var transaction = await _context.Database.BeginTransactionAsync();
-
-//            try
-//            {
-//                var booking = await _context.Bookings
-//                    .Include(b => b.Asset)
-//                    .FirstOrDefaultAsync(b => b.Id == bookingId && b.UserId == userId);
-
-//                if (booking == null)
-//                {
-//                    return new BookingResult { Success = false, ErrorMessage = "Booking not found" };
-//                }
-
-//                if (booking.Status == "Cancelled")
-//                {
-//                    return new BookingResult { Success = false, ErrorMessage = "Booking is already cancelled" };
-//                }
-
-//                booking.Status = "Cancelled";
-
-//                var availableStatus = await _context.SystemCodeItems
-//                    .FirstOrDefaultAsync(s => s.Code == _appSetting.Asset_Status.AVAILABLE);
-
-//                if (availableStatus != null)
-//                {
-//                    booking.Asset.StatusId = availableStatus.Id;
-//                }
-
-//                await _context.SaveChangesAsync();
-//                await transaction.CommitAsync();
-
-//                _logger.LogInformation("Booking {BookingId} cancelled successfully by user {UserId}", bookingId, userId);
-//                return new BookingResult { Success = true };
-//            }
-//            catch (Exception ex)
-//            {
-//                await transaction.RollbackAsync();
-//                _logger.LogError(ex, "Error cancelling booking {BookingId} for user {UserId}", bookingId, userId);
-//                return new BookingResult { Success = false, ErrorMessage = "An error occurred while cancelling the booking" };
-//            }
-//        }
-
-//        public async Task<List<Booking>> GetUserBookingsAsync(int userId)
-//        {
-//            return await _context.Bookings
-//                .Include(b => b.Asset)
-//                    .ThenInclude(a => a.Block)
-//                .Include(b => b.Asset)
-//                    .ThenInclude(a => a.PropertyType)
-//                .Include(b => b.Asset)
-//                    .ThenInclude(a => a.Status)
-//                .Where(b => b.UserId == userId)
-//                .OrderByDescending(b => b.CreatedAt)
-//                .ToListAsync();
-//        }
-
-
-//    }
-

@@ -3,152 +3,270 @@
     ViewData["Title"] = "My Bookings";
 }
 
-<h2>My Bookings</h2>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">My Bookings</h3>
+                </div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Success"]
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    }
 
-@if (Model == null || !Model.Any())
-{
-    <div class="alert alert-info">
-        <h4>No bookings found</h4>
-        <p>You haven't made any bookings yet. <a asp-action="Index" class="alert-link">Browse available assets</a> to make your first booking.</p>
-    </div>
-}
-else
-{
-    <div class="mb-3">
-        <span class="badge bg-primary">Total Bookings: @Model.Count()</span>
-        <span class="badge bg-success">Active: @Model.Count(b => b.Status != "Cancelled")</span>
-        <span class="badge bg-danger">Cancelled: @Model.Count(b => b.Status == "Cancelled")</span>
-    </div>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No Bookings Found</h4>
+                            <p class="text-muted">You haven't made any bookings yet.</p>
+                            <a asp-area="Buyer" asp-controller="Buyer" asp-action="Index" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Browse Available Assets
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-3">
+                            <span class="badge badge-primary">Total Bookings: @Model.Count()</span>
+                            <span class="badge badge-warning">Pending: @Model.Count(b => b.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase))</span>
+                            <span class="badge badge-success">Confirmed: @Model.Count(b => b.Status.Equals("Confirmed", StringComparison.OrdinalIgnoreCase))</span>
+                            <span class="badge badge-danger">Cancelled: @Model.Count(b => b.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))</span>
+                        </div>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Booking ID</th>
-                    <th>Asset</th>
-                    <th>Block</th>
-                    <th>Type</th>
-                    <th>Price</th>
-                    <th>Booking Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var booking in Model.OrderByDescending(b => b.BookingDate))
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Asset Details</th>
+                                        <th>Price</th>
+                                        <th>Booking Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var booking in Model.OrderByDescending(b => b.BookingDate))
+                                    {
+                                        <tr class="@(booking.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) ? "table-secondary" : "")">
+                                            <td>
+                                                <strong>#@booking.Id</strong>
+                                            </td>
+                                            <td>
+                                                @if (booking.Asset != null)
+                                                {
+                                                    <div>
+                                                        <strong>@booking.Asset.Description</strong>
+                                                        <br />
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-building"></i> @(booking.Asset.Block?.Description ?? "N/A") |
+                                                            <i class="fas fa-home"></i> @(booking.Asset.PropertyType?.Description ?? "N/A")
+                                                        </small>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-warning">Asset information unavailable (ID: @booking.AssetId)</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (booking.Asset?.Price != null)
+                                                {
+                                                    <strong class="text-success">PKR @booking.Asset.Price.ToString("N0")</strong>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">N/A</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @booking.BookingDate.ToString("dd MMM yyyy")
+                                                <br />
+                                                <small class="text-muted">@booking.BookingDate.ToString("hh:mm tt")</small>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var statusLower = booking.Status.ToLower();
+                                                    var statusClass = statusLower switch
+                                                    {
+                                                        "confirmed" => "badge badge-success",
+                                                        "pending" => "badge badge-warning",
+                                                        "cancelled" => "badge badge-danger",
+                                                        "rejected" => "badge badge-danger",
+                                                        _ => "badge badge-secondary"
+                                                    };
+                                                }
+                                                <span class="@statusClass">@booking.Status</span>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var isPending = booking.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase);
+                                                    var isCancelled = booking.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase);
+                                                    var isConfirmed = booking.Status.Equals("Confirmed", StringComparison.OrdinalIgnoreCase);
+                                                    var isRejected = booking.Status.Equals("Rejected", StringComparison.OrdinalIgnoreCase);
+                                                }
+
+                                                @if (isPending)
+                                                {
+                                                    <div class="btn-group" role="group">
+                                                        <!-- Cancel Button - Only show for Pending bookings -->
+                                                        <form method="post" action="@Url.Action("Cancel", "Buyer", new { area = "Buyer" })" style="display: inline;">
+                                                            <input type="hidden" name="bookingId" value="@booking.Id" />
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-times"></i> Cancel
+                                                            </button>
+                                                        </form>
+
+                                                        @if (booking.Asset != null)
+                                                        {
+                                                            <a asp-area="Buyer" asp-controller="Buyer" asp-action="Details"
+                                                               asp-route-id="@booking.AssetId"
+                                                               class="btn btn-info btn-sm ml-1">
+                                                                <i class="fas fa-eye"></i> View Asset
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                }
+                                                else if (isConfirmed)
+                                                {
+                                                    <div class="btn-group" role="group">
+                                                        <span class="badge badge-success">
+                                                            <i class="fas fa-check-circle"></i> Confirmed
+                                                        </span>
+                                                        @if (booking.Asset != null)
+                                                        {
+                                                            <a asp-area="Buyer" asp-controller="Buyer" asp-action="Details"
+                                                               asp-route-id="@booking.AssetId"
+                                                               class="btn btn-info btn-sm ml-1">
+                                                                <i class="fas fa-eye"></i> View Asset
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                }
+                                                else if (isCancelled)
+                                                {
+                                                    <span class="text-muted">
+                                                        <i class="fas fa-times-circle"></i> Cancelled by You
+                                                    </span>
+                                                }
+                                                else if (isRejected)
+                                                {
+                                                    <span class="text-danger">
+                                                        <i class="fas fa-times-circle"></i> Rejected by Admin
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <!-- For any other status -->
+                                                    @if (booking.Asset != null)
+                                                    {
+                                                        <a asp-area="Buyer" asp-controller="Buyer" asp-action="Details"
+                                                           asp-route-id="@booking.AssetId"
+                                                           class="btn btn-info btn-sm">
+                                                            <i class="fas fa-eye"></i> View Asset
+                                                        </a>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+
+                @if (Model != null && Model.Any())
                 {
-                    <tr class="@(booking.Status == "Cancelled" ? "table-secondary" : "")">
-                        <td>
-                            <strong>#@booking.Id</strong>
-                        </td>
-                        <td>
-                            @if (booking.Asset != null)
-                            {
-                                <div>
-                                    @booking.Asset.Description
-                                    <br />
-                                    <small class="text-muted">ID: @booking.AssetId</small>
-                                </div>
-                            }
-                            else
-                            {
-                                <span class="text-warning">Asset information unavailable (ID: @booking.AssetId)</span>
-                            }
-                        </td>
-                        <td>
-                            @(booking.Asset?.Block?.Description ?? "N/A")
-                        </td>
-                        <td>
-                            @(booking.Asset?.PropertyType?.Description ?? "N/A")
-                        </td>
-                        <td>
-                            @if (booking.Asset?.Price != null)
-                            {
-                                @booking.Asset.Price.ToString("C")
-                            }
-                            else
-                            {
-                                <span class="text-muted">N/A</span>
-                            }
-                        </td>
-                        <td>
-                            <div>
-                                @booking.BookingDate.ToString("MMM dd, yyyy")
-                                <br />
-                                <small class="text-muted">@booking.BookingDate.ToString("HH:mm")</small>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-muted">
+                                    Showing @Model.Count() bookings
+                                </small>
                             </div>
-                        </td>
-                        <td>
-                            @{
-                                var statusClass = booking.Status switch
-                                {
-                                    "Confirmed" => "badge bg-success",
-                                    "Pending" => "badge bg-warning text-dark",
-                                    "Cancelled" => "badge bg-danger",
-                                    _ => "badge bg-secondary"
-                                };
-                            }
-                            <span class="@statusClass">@booking.Status</span>
-                        </td>
-                        <td>
-                            @if (booking.Status != "Cancelled" && booking.Status != "Completed")
-                            {
-                                <form asp-area="Buyer" asp-controller="Buyer" asp-action="Cancel" method="post"
-                                      class="d-inline" onsubmit="return confirmCancel()">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="bookingId" value="@booking.Id" />
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-times"></i> Cancel
-                                    </button>
-                                </form>
-
-                                @if (booking.Asset != null)
-                                {
-                                    <a asp-area="Buyer" asp-controller="Buyer" asp-action="Details"
-                                       asp-route-id="@booking.AssetId" class="btn btn-info btn-sm ms-1">
-                                        <i class="fas fa-eye"></i> View Asset
-                                    </a>
-                                }
-                            }
-                            else if (booking.Status == "Cancelled")
-                            {
-                                <span class="text-muted small">Cancelled</span>
-                            }
-                        </td>
-                    </tr>
+                            <div class="col-md-6 text-right">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> Last updated: @DateTime.Now.ToString("dd MMM yyyy, hh:mm tt")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
                 }
-            </tbody>
-        </table>
+            </div>
+        </div>
     </div>
-}
+</div>
 
-<div class="mt-3">
+<div class="mt-3 text-center">
     <a asp-area="Buyer" asp-controller="Buyer" asp-action="Index" class="btn btn-primary">
         <i class="fas fa-search"></i> Browse Assets
     </a>
     <a asp-area="Buyer" asp-controller="Buyer" asp-action="Dashboard" class="btn btn-secondary">
-        <i class="fas fa-dashboard"></i> Dashboard
+        <i class="fas fa-tachometer-alt"></i> Dashboard
     </a>
 </div>
 
 @section Scripts {
-        script>
-                                        function confirmCancel() {
-                                            return confirm('Are you sure you want to cancel this booking?');
-                                        }
+    <script>
+        // Auto-hide success/error messages after 5 seconds
+        window.setTimeout(function() {
+            $(".alert").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove();
+            });
+        }, 5000);
 
-                                        // Auto-hide success/error messages after 5 seconds
-                                        setTimeout(function() {
-                                            $('.alert').fadeOut('slow');
-                                        }, 5000);
+        // Add loading state to cancel buttons
+        $('form button[type="submit"]').on('click', function() {
+            var $btn = $(this);
+            var originalText = $btn.html();
+
+            // Only add loading state if the user confirms the action
+            setTimeout(function() {
+                if ($btn.closest('form').data('confirmed') !== false) {
+                    $btn.html('<i class="fas fa-spinner fa-spin"></i> Cancelling...').prop('disabled', true);
+                }
+            }, 100);
+
+            // Re-enable after form submission (in case of validation errors)
+            setTimeout(function() {
+                $btn.html(originalText).prop('disabled', false);
+            }, 3000);
+        });
+
+         // Handle cancel button click
+            $('form[action*="Cancel"]').on('submit', function(e) {
+                if (!confirm('Are you sure you want to cancel this booking?\n\nThis action cannot be undone.')) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Show loading state
+                var $btn = $(this).find('button[type="submit"]');
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> Cancelling...').prop('disabled', true);
+
+                return true;
+            });
+        });
     </script>
+
 }
