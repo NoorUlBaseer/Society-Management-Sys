@@ -15,12 +15,15 @@ namespace SocietyMng.Models.Auth
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]
+        [StringLength(11, MinimumLength = 6)]
         [RegularExpression(@"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$")]
         public string PhoneNumber { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [StringLength(100, MinimumLength = 6)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[*@#]).{8,}$",
+        ErrorMessage = "Password must be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character (*, @, or #)")]
+        [StringLength(15, MinimumLength = 6)]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
@@ -39,7 +42,7 @@ namespace SocietyMng.Models.Auth
             return new List<SelectListItem>
             {
                 new SelectListItem { Value = "Buyer", Text = "Buyer" },
-                new SelectListItem { Value = "Sales", Text = "Sales" }               
+                new SelectListItem { Value = "Sales", Text = "Seller" }               
             };
         }
         public IEnumerable<SelectListItem> GenderOptions { get; set; } = new List<SelectListItem>

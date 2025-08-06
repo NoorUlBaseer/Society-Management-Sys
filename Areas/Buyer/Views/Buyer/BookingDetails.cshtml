@@ -1,0 +1,33 @@
+﻿
+@model SocietyMng.Data.Entities.Booking
+
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="card mb-4">
+    <div class="card-header">
+        Booking #@Model.Id
+    </div>
+    <div class="card-body">
+        <p><strong>Asset:</strong> @Model.Asset.Description</p>
+        <p><strong>Price:</strong> @Model.Asset.Price.ToString("C")</p>
+        <p><strong>Booking Date:</strong> @Model.BookingDate.ToString("yyyy-MM-dd HH:mm")</p>
+        <p><strong>Status:</strong> @Model.Status</p>
+    </div>
+</div>
+
+@if (Model.Status == "Pending")
+{
+    <form asp-action="CancelBooking" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="bookingId" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger">Cancel Booking</button>
+    </form>
+}
+else
+{
+    <p class="text-muted">This booking cannot be modified.</p>
+}

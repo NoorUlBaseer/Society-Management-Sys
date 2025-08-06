@@ -1,0 +1,27 @@
+﻿@model SocietyMng.Areas.Buyer.DTOs.AssetBookingConfirmationView
+
+@{
+    ViewData["Title"] = "Confirm Your Booking";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="card p-4 mb-4">
+    <h4>@Model.Description</h4>
+    <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+</div>
+
+<form asp-action="BookAsset" method="post">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.AssetId)
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="confirm" required>
+        <label class="form-check-label" for="confirm">
+            I confirm that I want to book this asset.
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+    <a asp-action="AssetDetails" asp-route-id="@Model.AssetId" class="btn btn-secondary">Back to Details</a>
+</form>

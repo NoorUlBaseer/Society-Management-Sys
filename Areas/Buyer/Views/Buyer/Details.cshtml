@@ -1,0 +1,24 @@
+﻿@model SocietyMng.Data.Entities.Asset
+
+@{
+    ViewData["Title"] = "Asset Details";
+}
+
+<h2>Asset Details</h2>
+
+<div>
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Block:</strong> @Model.Block?.Description</p>
+    <p><strong>Type:</strong> @Model.PropertyType?.Description</p>
+    <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+    <p><strong>Status:</strong> @Model.Status?.Code</p>
+</div>
+
+<form asp-action="Book" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-primary" @(Model.Status?.Code != "AVAILABLE" ? "disabled" : "")>
+        Book Asset
+    </button>
+</form>
+
+<a asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
