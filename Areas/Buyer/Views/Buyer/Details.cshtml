@@ -2,49 +2,96 @@
 @{
     ViewData["Title"] = "Asset Details";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - CivicNest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kokoro&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            min-height: 100vh;
+        }
 
-<!-- Debug: Show what URL the form will submit to -->
-<div class="alert alert-info">
-    <small>Debug: Form will submit to: @Url.Action("Book", "Buyer", new { area = "Buyer" })</small>
-</div>
+        body {
+            background: linear-gradient(to bottom, black, #408350);
+            color: white;
+            position: relative;
+            font-family: 'Kokoro', sans-serif !important;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
+        h1, .display-4 {
+            font-family: 'Julius Sans One', sans-serif !important;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
 
-<h2>Asset Details</h2>
-<div>
-    <p><strong>Description:</strong> @Model.Description</p>
-    <p><strong>Block:</strong> @Model.Block?.Description</p>
-    <p><strong>Type:</strong> @Model.PropertyType?.Description</p>
-    <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
-    <p><strong>Status:</strong> @Model.Status?.Code</p>
-    <p><strong>Asset ID:</strong> @Model.Id</p>
-</div>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
 
-<form asp-area="Buyer" asp-controller="Buyer" asp-action="Book" method="post" onsubmit="console.log('Form submitting...'); return true;">
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="id" value="@Model.Id" />
-    <button type="submit" class="btn btn-primary"
-            onclick="console.log('Button clicked, Asset ID: @Model.Id');"
-        Book Asset
-    </button>
-</form>
+    <h2>Asset Details</h2>
+    <div class="col-md-4">
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath"
+                 alt="Asset Image"
+                 class="img-fluid rounded shadow-sm"
+                 onerror="this.src='/images/no-image.png'; this.onerror=null;" />
+        }
+        else
+        {
+            <div class="bg-light d-flex align-items-center justify-content-center"
+                 style="width:100%;height:200px;border:1px solid #ddd;">
+                <i class="fas fa-image fa-3x text-muted"></i>
+            </div>
+        }
+    </div>
+    <div>
+        <p><strong>Description:</strong> @Model.Description</p>
+        <p><strong>Block:</strong> @Model.Block?.Description</p>
+        <p><strong>Type:</strong> @Model.PropertyType?.Description</p>
+        <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+        <p><strong>Status:</strong> @Model.Status?.Code</p>
+        <p><strong>Asset ID:</strong> @Model.Id</p>
+    </div>
 
-<a asp-area="Buyer" asp-controller="Buyer" asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
+    <form asp-area="Buyer" asp-controller="Buyer" asp-action="Book" method="post" onsubmit="console.log('Form submitting...'); return true;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-primary"
+                onclick="console.log('Button clicked, Asset ID: @Model.Id');"
+            Book Asset
+        </button>
+    </form>
 
-<!-- Alternative form for testing -->
-<hr />
-<h4>Alternative Test Form:</h4>
-<form action="/Buyer/Buyer/Book" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="id" value="@Model.Id" />
-    <button type="submit" class="btn btn-warning">
-        Test Book Asset (Direct URL)
-    </button>
-</form>
+    <a asp-area="Buyer" asp-controller="Buyer" asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
+
+    <!-- Alternative form for testing -->
+    <hr />
+    <h4>Alternative Test Form:</h4>
+    <form action="/Buyer/Buyer/Book" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-warning">
+            Test Book Asset (Direct URL)
+        </button>
+    </form>
+</body>
+</html>
