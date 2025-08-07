@@ -4,30 +4,66 @@
 @{
     ViewData["Title"] = "Booking Details";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - CivicNest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kokoro&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            min-height: 100vh;
+        }
 
-<h2>@ViewData["Title"]</h2>
+        body {
+            background: linear-gradient(to bottom, black, #408350);
+            color: white;
+            position: relative;
+            font-family: 'Kokoro', sans-serif !important;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
-<div class="card mb-4">
-    <div class="card-header">
-        Booking #@Model.Id
+        h1, .display-4 {
+            font-family: 'Julius Sans One', sans-serif !important;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            Booking #@Model.Id
+        </div>
+        <div class="card-body">
+            <p><strong>Asset:</strong> @Model.Asset.Description</p>
+            <p><strong>Price:</strong> @Model.Asset.Price.ToString("C")</p>
+            <p><strong>Booking Date:</strong> @Model.BookingDate.ToString("yyyy-MM-dd HH:mm")</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+        </div>
     </div>
-    <div class="card-body">
-        <p><strong>Asset:</strong> @Model.Asset.Description</p>
-        <p><strong>Price:</strong> @Model.Asset.Price.ToString("C")</p>
-        <p><strong>Booking Date:</strong> @Model.BookingDate.ToString("yyyy-MM-dd HH:mm")</p>
-        <p><strong>Status:</strong> @Model.Status</p>
-    </div>
-</div>
 
-@if (Model.Status == "Pending")
-{
-    <form asp-action="CancelBooking" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="bookingId" value="@Model.Id" />
-        <button type="submit" class="btn btn-danger">Cancel Booking</button>
-    </form>
-}
-else
-{
-    <p class="text-muted">This booking cannot be modified.</p>
-}
+    @if (Model.Status == "Pending")
+    {
+        <form asp-action="CancelBooking" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="bookingId" value="@Model.Id" />
+            <button type="submit" class="btn btn-danger">Cancel Booking</button>
+        </form>
+    }
+    else
+    {
+        <p class="text-muted">This booking cannot be modified.</p>
+    }
+</body>
+</html>
