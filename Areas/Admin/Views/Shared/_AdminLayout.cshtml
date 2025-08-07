@@ -168,6 +168,44 @@
             font-style: italic;
         }
 
+        .logout-button {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            margin: 10px 20px 10px 0;
+            border-radius: 0 10px 10px 0;
+            background-color: #dc3545;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            width: 100%;
+            font-family: inherit;
+            font-size: 1rem;
+            white-space: nowrap;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+            .logout-button:hover {
+                background-color: #b02a37;
+                color: #fff;
+            }
+
+        .sidebar.collapsed .logout-button {
+            justify-content: center;
+            padding: 10px;
+        }
+
+            .sidebar.collapsed .logout-button span {
+                display: none;
+            }
+
+        .logout-button i {
+            font-size: 1.2rem;
+            min-width: 1.5rem;
+            text-align: center;
+        }
+
+
     </style>
 </head>
 <body>
@@ -209,27 +247,23 @@
             <span>Listings</span>
         </a>
 
-        <form id="logoutForm" method="post" asp-controller="Auth" asp-action="Logout" style="display:inline;">
+        <form method="post" action="/auth/logout" style="display:inline;">
             @Html.AntiForgeryToken()
-            <button type="submit" style="background: #dc3545; border: none; color: white; padding: 8px 12px; cursor: pointer;">
+            <button type="submit" class="logout-button">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>
             </button>
         </form>
+
 
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
         <main role="main">
-            <h1 class="mt-4">Dashboard</h1>
 
             @RenderBody()
         </main>
-
-        <footer class="mt-auto">
-            &copy; @DateTime.Now.Year - Society Management System
-        </footer>
     </div>
 
     <script>

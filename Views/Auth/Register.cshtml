@@ -64,7 +64,7 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            max-height: 40vh;
+            max-height: 70vh;
             opacity: 0.8;
             z-index: 1;
         }
@@ -147,7 +147,7 @@
                     <div class="form-group mb-2">
                         <div class="position-relative">
                             <input asp-for="Password" type="@(Model.ShowPassword ? "text" : "password")" class="form-control pe-5" id="passwordInput" placeholder="Password" />
-                            <i class="bi bi-eye" id="passwordToggleIcon1" style="cursor: pointer; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); font-size: 1.2rem;"></i>
+                            <i class="bi bi-eye" id="passwordToggleIcon1" style="cursor: pointer; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); font-size: 1.2rem; color: black;"></i>
                         </div>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
@@ -155,7 +155,7 @@
                     <div class="form-group mb-2">
                         <div class="position-relative">
                             <input asp-for="ConfirmPassword" type="@(Model.ShowPassword ? "text" : "password")" class="form-control pe-5" id="confirmPasswordInput" placeholder="Confirm Password" />
-                            <i class="bi bi-eye" id="passwordToggleIcon2" style="cursor: pointer; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); font-size: 1.2rem;"></i>
+                            <i class="bi bi-eye" id="passwordToggleIcon2" style="cursor: pointer; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); font-size: 1.2rem; color: black;"></i>
                         </div>
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>

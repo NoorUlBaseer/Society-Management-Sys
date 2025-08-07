@@ -64,7 +64,7 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            max-height: 40vh;
+            max-height: 70vh;
             opacity: 0.8;
         }
 
@@ -102,14 +102,6 @@
                 position: relative;
             }
 
-        .eye-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: gray;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
@@ -134,7 +126,7 @@
                             <div class="form-group mb-3">
                                 <div class="position-relative">
                                     <input asp-for="Password" type="@(Model?.ShowPassword ?? false ? "text" : "password")" class="form-control pe-5" id="passwordInput" placeholder="Password" />
-                                    <i class="bi bi-eye" id="passwordToggleIcon" style="cursor: pointer; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); font-size: 1.2rem;"></i>
+                                    <i class="bi bi-eye" id="passwordToggleIcon" style="cursor: pointer; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); font-size: 1.2rem; color: black;"></i>
                                 </div>
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>

@@ -3,47 +3,15 @@
     Layout = "_AdminLayout";
 }
 
+<h1 class="mt-4">Dashboard</h1>
+
 <div class="container">
-
-    <div class="row mt-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Users</h5>
-                    <p class="card-text">Manage system users</p>
-                    <a href="@Url.Action("ManageUsers")" class="btn btn-light">Go to Users</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Create Asset</h5>
-                    <p class="card-text">Add new property</p>
-                    <a href="@Url.Action("CreateAsset")" class="btn btn-light">Create Asset</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Complaints</h5>
-                    <p class="card-text">View and resolve complaints</p>
-                    <a href="@Url.Action("ManageComplaints")" class="btn btn-light">Go to Complaints</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Assets</h5>
-                    <p class="card-text">Manage properties/assets</p>
-                    <a href="@Url.Action("ManageAssets")" class="btn btn-light">Asset Listing</a>
-                </div>
-            </div>
+    <div class="row justify-content-center">
+        <!-- Top Chart (Full Width) -->
+        <div class="col-md-10">
+            <img src="~/images/chart1.png" alt="Total Users Chart" class="img-fluid w-100 mb-4" />
         </div>
     </div>
+
 </div>
+

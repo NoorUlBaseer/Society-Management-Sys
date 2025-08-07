@@ -1,166 +1,164 @@
 ﻿@model List<SocietyMng.Areas.Admin.DTOs.BookedAssetView>
-
 @{
-    ViewData["Title"] = "Booked Assets - Debug";
+    ViewData["Title"] = "Booked Assets";
+    Layout = "_AdminLayout";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] - CivicNest</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Kokoro&display=swap" rel="stylesheet">
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            min-height: 100vh;
+<h1 class="mt-4">Manage Bookings</h1>
+
+<div class="poppins-font">
+    <div class="container">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         }
 
-        body {
-            background: linear-gradient(to bottom, black, #408350);
-            color: black;
-            position: relative;
-            font-family: 'Kokoro', sans-serif !important;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         }
 
-        h1, .display-4 {
-            font-family: 'Julius Sans One', sans-serif !important;
-            font-size: 2rem;
-        }
-    </style>
-</head>
-<body>
 
-    <h2>Booked Assets Management</h2>
+        <div class="container d-flex justify-content-center">
+            <div class="table-responsive m-4 p-5 rounded-5" style="max-width: 900px; width: 100%; background-color: #ffffff;">
 
-    <!-- Debug Information -->
-    @* <div class="alert alert-info">
-        <p><strong>Current Route:</strong> Area=@ViewContext.RouteData.Values["area"], Controller=@ViewContext.RouteData.Values["controller"], Action=@ViewContext.RouteData.Values["action"]</p>
-        <p><strong>Model Count:</strong> @(Model?.Count ?? 0)</p>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="m-0 text-black">Booked Assets Management</h2>
+                </div>
 
-        <!-- Test buttons -->
-        <div class="mt-2">
-            <h5>Route Testing:</h5>
-            <form method="post" action="/Admin/Asset/VerifyBooking" style="display: inline;">
-                <input type="hidden" name="bookingId" value="999" />
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-info btn-sm">Test Verify Route (Direct URL)</button>
-            </form>
+                <table id="bookingTable" class="table w-100">
+                    <thead class="bg-white">
+                        <tr class="text-center">
+                            <th class="fw-normal text-secondary rounded-top-start px-3 py-2">ID</th>
+                            <th class="fw-normal text-secondary px-3 py-2">Date</th>
+                            <th class="fw-normal text-secondary px-3 py-2">Status</th>
+                            <th class="fw-normal text-secondary px-3 py-2">Asset</th>
+                            <th class="fw-normal text-secondary px-3 py-2">Customer</th>
+                            <th class="fw-normal text-secondary rounded-top-end px-3 py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model)
+                        {
+                            <tr class="text-center">
+                                <td class="px-3 py-2"><strong>#@booking.BookingId</strong></td>
+                                <td class="px-3 py-2">@booking.BookingDate.ToString("dd MMM yyyy")</td>
+                                <td class="px-3 py-2">
+                                    <span class="badge @(booking.BookingStatus.ToLower() == "pending" ? "bg-warning text-dark" : "bg-info")">
+                                        @booking.BookingStatus
+                                    </span>
+                                </td>
+                                <td class="px-3 py-2">@booking.AssetDescription</td>
+                                <td class="px-3 py-2">@booking.UserName</td>
+                                <td class="px-3 py-2">
+                                    @if (booking.BookingStatus.ToLower() == "pending")
+                                    {
+                                        <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                            <form method="post" action="/Admin/Asset/VerifyBooking">
+                                                <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                                @Html.AntiForgeryToken()
+                                                <button type="button" class="btn btn-success btn-sm confirm-action" data-id="@booking.BookingId" data-action="verify">
+                                                    ✓ Verify
+                                                </button>
+                                            </form>
 
-            <form method="post" asp-area="Admin" asp-controller="Asset" asp-action="VerifyBooking" style="display: inline;">
-                <input type="hidden" name="bookingId" value="999" />
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-warning btn-sm">Test Verify Route (Tag Helper)</button>
-            </form>
-        </div>
-    </div> *@
+                                            <form method="post" action="@Url.Action("RejectBooking", "Asset", new { area = "Admin" })">
+                                                <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                                                @Html.AntiForgeryToken()
+                                                <button type="button" class="btn btn-danger btn-sm confirm-action" data-id="@booking.BookingId" data-action="reject">
+                                                    ✗ Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Processed</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
-
-    @if (Model != null && Model.Any())
-    {
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Asset</th>
-                    <th>Customer</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var booking in Model)
+                @if (!Model.Any())
                 {
-                    <tr>
-                        <td><strong>#@booking.BookingId</strong></td>
-                        <td>@booking.BookingDate.ToString("dd MMM yyyy")</td>
-                        <td>
-                            <span class="badge @(booking.BookingStatus.ToLower() == "pending" ? "badge-warning" : "badge-info")">
-                                @booking.BookingStatus
-                            </span>
-                        </td>
-                        <td>@booking.AssetDescription</td>
-                        <td>@booking.UserName</td>
-                        <td>
-                            @if (booking.BookingStatus.ToLower() == "pending")
-                            {
-                                <!-- Method 1: Direct URL -->
-                                <form method="post" action="/Admin/Asset/VerifyBooking" style="display: inline;">
-                                    <input type="hidden" name="bookingId" value="@booking.BookingId" />
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Verify booking @booking.BookingId?')">
-                                        ✓ Verify (Direct)
-                                    </button>
-                                </form>
-
-                                <!-- Method 2: Tag Helpers -->
-                                <form asp-area="Admin" asp-controller="Asset" asp-action="VerifyBooking" method="post" style="display: inline;">
-                                    <input type="hidden" name="bookingId" value="@booking.BookingId" />
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-info btn-sm" onclick="return confirm('Verify booking @booking.BookingId with tag helper?')">
-                                        ✓ Verify (Tag)
-                                    </button>
-                                </form>
-
-                                <!-- Method 3: Url.Action -->
-                                <form method="post" action="@Url.Action("RejectBooking", "Asset", new { area = "Admin" })" style="display: inline;">
-                                    <input type="hidden" name="bookingId" value="@booking.BookingId" />
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Reject booking @booking.BookingId?')">
-                                        ✗ Reject
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <span class="text-muted">Processed</span>
-                            }
-                        </td>
-                    </tr>
+                    <div class="alert alert-warning mt-4">
+                        <h4>No Bookings Found</h4>
+                    </div>
                 }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <div class="alert alert-warning">
-            <h4>No Bookings Found</h4>
-            <p>Model is @(Model == null ? "null" : "empty")</p>
 
-            <!-- Create a test booking if none exist -->
-            <p><strong>For testing purposes, you can manually add a booking to your database:</strong></p>
-            <pre>
-        INSERT INTO Bookings (UserId, AssetId, BookingDate, Status, CreatedAt)
-        VALUES (1, 1, GETDATE(), 'Pending', GETDATE())
-                </pre>
+            </div>
         </div>
-    }
+    </div>
+</div>
 
-    @* <!-- Show generated URLs -->
-    <div class="mt-4 p-3 bg-light">
-        <h5>Generated Action URLs:</h5>
-        <ul>
-            <li><strong>VerifyBooking (Tag Helper):</strong> <code>@Url.Action("VerifyBooking", "Asset", new { area = "Admin" })</code></li>
-            <li><strong>RejectBooking (Tag Helper):</strong> <code>@Url.Action("RejectBooking", "Asset", new { area = "Admin" })</code></li>
-            <li><strong>Direct URL:</strong> <code>/Admin/Asset/VerifyBooking</code></li>
-        </ul>
-    </div> *@
-    </body>
-    </html>
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header p-5">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-5">
+                Are you sure you want to <span id="confirmActionType"></span> booking #<span id="confirmBookingId"></span>?
+            </div>
+            <div class="modal-footer p-5">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmBtn">Yes, Proceed</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#bookingTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "columnDefs": [
+                    { "orderable": false, "targets": "_all" }
+                ],
+                "info": true,
+                "lengthChange": false,
+                "pageLength": 10,
+                "language": {
+                    "emptyTable": "No bookings found",
+                    "paginate": {
+                        "previous": "<",
+                        "next": ">"
+                    },
+                    "search": "",
+                    "searchPlaceholder": "Search bookings..."
+                }
+            });
+
+            let actionForm;
+
+        $(document).on('click', '.confirm-action', function () {
+                actionForm = $(this).closest('form');
+                const bookingId = $(this).data('id');
+                const actionType = $(this).data('action');
+                console.log("Booking ID:", bookingId, "Action:", actionType);
+                $('#confirmBookingId').text(bookingId);
+                $('#confirmActionType').text(actionType);
+
+                const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                modal.show();
+            });
+
+            $('#confirmBtn').on('click', function () {
+                if (actionForm) {
+                    actionForm.submit();
+                }
+            });
+        });
+    </script>
+}
