@@ -18,7 +18,7 @@ namespace SocietyMng.Models.Auth
 
         [Required(ErrorMessage = "Phone number is required")]
         [StringLength(11, MinimumLength = 6)]
-        [RegularExpression(@"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$")]
+        [RegularExpression(@"^(?!0+$)\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$")]
         public string PhoneNumber { get; set; }
 
         [Required]
