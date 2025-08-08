@@ -10,13 +10,20 @@
     <div class="container">
         @if (TempData["SuccessMessage"] != null)
         {
-            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         }
 
         @if (TempData["ErrorMessage"] != null)
         {
-            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         }
+
 
         <div class="container d-flex justify-content-center">
             <div class="table-responsive m-4 p-5 rounded-5" style="max-width: 900px; width: 100%; background-color: #ffffff; color: black;">
@@ -81,9 +88,15 @@
                                         @using (Html.BeginForm("ToggleUserStatus", "Admin", new { area = "Admin" }, FormMethod.Post))
                                         {
                                             @Html.Hidden("userId", user.Id)
-                                            <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-danger" : "btn-success")" style="min-width: 80px;">
+                                            <button type="submit"
+                                                    class="btn btn-sm fw-bold"
+                                                    style="min-width: 80px;
+                                                    background-color: @(user.IsActive ? "#ffe5e5" : "#e6ffed");
+                                                    color: @(user.IsActive ? "#b30000" : "#007f00");
+                                                    border: 1px solid @(user.IsActive ? "#b30000" : "#007f00");">
                                                 @(user.IsActive ? "Block" : "Unblock")
                                             </button>
+
                                         }
 
                                     </div>

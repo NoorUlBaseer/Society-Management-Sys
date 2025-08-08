@@ -82,7 +82,15 @@
             border-color: #666;
             border-radius: 30px;
             padding-right: 2.5rem;
+            color: white;
         }
+
+            .form-control:focus {
+                background-color: #D9D9D980 !important;
+                color: white !important;
+                border-color: #666 !important;
+                box-shadow: none !important;
+            }
 
         .btn-primary {
             background-color: #D9D9D9;
@@ -132,7 +140,7 @@
 
                     <div class="form-group mb-2">
                         <select asp-for="Gender" asp-items="Model.GenderOptions" class="form-control">
-                            <option value="">Select Gender</option>
+                            <option value="" disabled selected>--Select Gender--</option>
                         </select>
                         <span asp-validation-for="Gender" class="text-danger"></span>
                     </div>
@@ -193,6 +201,14 @@
             input.type = isPassword ? 'text' : 'password';
             this.classList.toggle('bi-eye');
             this.classList.toggle('bi-eye-slash');
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const genderSelect = document.querySelector('select[name="Gender"]');
+            if (genderSelect) {
+                genderSelect.value = "";
+            }
         });
     </script>
 </body>

@@ -15,21 +15,48 @@
             </div>
         }
 
-        @if (TempData["Error"] != null)
+        @if (TempData["ErrorMessage"] != null)
         {
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                @TempData["Error"]
+                @TempData["ErrorMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
 
 
+
         <div class="container d-flex justify-content-center">
             <div class="table-responsive m-4 p-5 rounded-5" style="max-width: 900px; width: 100%; background-color: #ffffff;">
+                <h2 class="my-2 text-black">Booked Assets (@Model.Count)</h2>
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="m-0 text-black">Booked Assets Management</h2>
+                <div class="d-flex justify-content-end align-items-center mb-3 flex-wrap gap-3">
+
+                    <div class="d-flex align-items-center gap-3 p-2 rounded" style="background-color: #f9f9f9; color: black;">
+                        <div id="customSearchWrapper" class="d-flex align-items-center"></div>
+
+                        <div class="d-flex align-items-center px-0">
+                            <label class="me-2 fw-bold text-black-50 m-0" for="sortSelect">Sort by:</label>
+                            <select id="sortSelect" class="form-select form-select-sm border-0 px-5 bg-transparent" style="width: auto; box-shadow: none;">
+                                <option value="">None</option>
+                                <option value="0-asc">ID ↑</option>
+                                <option value="0-desc">ID ↓</option>
+                                <option value="1-asc">Date ↑</option>
+                                <option value="1-desc">Date ↓</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="fw-bold text-black-50 m-0" for="statusFilter">Filter by:</label>
+                            <select id="statusFilter" class="form-select form-select-sm border-0 px-4 bg-transparent" style="width: auto; box-shadow: none;">
+                                <option value="">All</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
+
 
                 <table id="bookingTable" class="table w-100">
                     <thead class="bg-white">
@@ -49,9 +76,10 @@
                                 <td class="px-3 py-2"><strong>#@booking.BookingId</strong></td>
                                 <td class="px-3 py-2">@booking.BookingDate.ToString("dd MMM yyyy")</td>
                                 <td class="px-3 py-2">
-                                    <span class="badge @(booking.BookingStatus.ToLower() == "pending" ? "bg-warning text-dark" : "bg-info")">
+                                    <span class="px-3 py-1 rounded-pill d-inline-block" style="background-color: #59A3D0; color: black; min-width: 100px; text-align: center;">
                                         @booking.BookingStatus
                                     </span>
+
                                 </td>
                                 <td class="px-3 py-2">@booking.AssetDescription</td>
                                 <td class="px-3 py-2">@booking.UserName</td>
@@ -119,34 +147,72 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#bookingTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "ordering": true,
-                "columnDefs": [
-                    { "orderable": false, "targets": "_all" }
-                ],
-                "info": true,
-                "lengthChange": false,
-                "pageLength": 10,
-                "language": {
-                    "emptyTable": "No bookings found",
-                    "paginate": {
-                        "previous": "<",
-                        "next": ">"
-                    },
-                    "search": "",
-                    "searchPlaceholder": "Search bookings..."
+        const table = $('#bookingTable').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            columnDefs: [
+                { orderable: false, targets: [2, 3, 4, 5] },
+                {
+                    targets: 2, // Booking Status column
+                    render: function (data, type, row) {
+                        // Strip HTML so DataTables sees only the text
+                        const div = document.createElement("div");
+                        div.innerHTML = data;
+                        return div.textContent.trim();
+                    }
+                }
+            ],
+            info: true,
+            lengthChange: false,
+            pageLength: 10,
+            language: {
+                emptyTable: "No bookings found",
+                paginate: {
+                    previous: "<",
+                    next: ">"
+                },
+                search: "",
+                searchPlaceholder: "Search bookings..."
+            }
+        });
+
+
+            // 🔍 Custom search box
+            let searchBox = $('#bookingTable_filter input');
+            let searchLabel = $('#bookingTable_filter label');
+            let searchWrapper = $('#customSearchWrapper');
+            searchBox.addClass('form-control form-control-sm bg-light text-dark border-0');
+            searchBox.wrap('<div class="input-group"></div>');
+            searchBox.before('<span class="input-group-text bg-white"><i class="bi bi-search"></i></span>');
+            searchWrapper.append(searchBox.closest('.input-group'));
+            searchLabel.remove();
+
+            $('#sortSelect').on('change', function () {
+                const val = $(this).val();
+                if (!val) {
+                    table.order([]).draw();
+                    return;
+                }
+
+                const [colIndex, dir] = val.split('-');
+                table.order([parseInt(colIndex), dir]).draw();
+            });
+
+            $('#statusFilter').on('change', function () {
+                const selected = $(this).val();
+                if (selected === "") {
+                    table.column(2).search('').draw();  // Column 2 = Booking Status
+                } else {
+                    table.column(2).search('^' + selected + '$', true, false).draw();
                 }
             });
 
             let actionForm;
-
-        $(document).on('click', '.confirm-action', function () {
+            $(document).on('click', '.confirm-action', function () {
                 actionForm = $(this).closest('form');
                 const bookingId = $(this).data('id');
                 const actionType = $(this).data('action');
-                console.log("Booking ID:", bookingId, "Action:", actionType);
                 $('#confirmBookingId').text(bookingId);
                 $('#confirmActionType').text(actionType);
 
@@ -159,6 +225,9 @@
                     actionForm.submit();
                 }
             });
+                    table.rows().every(function () {
+            console.log(this.data()[2]); // Check what text is seen in the status column
+        });
         });
     </script>
 }

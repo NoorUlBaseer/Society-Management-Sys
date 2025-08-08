@@ -4,7 +4,24 @@
     Layout = "_AdminLayout";
 }
 <h1 class="mt-4">Manage Assets</h1>
+<div class="poppins-font">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+</div>
 <div class="container d-flex justify-content-end poppins-font">
     <div class="mt-4 mb-2 me-5">
         <a href="@Url.Action("Create", "Asset", new { area = "Admin" })"
@@ -23,12 +40,12 @@
             <h2 class="m-0 text-black">All Assets (@Model.Count)</h2>
         </div>
         <div class="mb-3 d-flex justify-content-end">
-            <div class="d-flex align-items-center gap-3 flex-wrap p-2 rounded" style="background-color: #f9f9f9;">
+            <div class="d-flex align-items-center gap-3 flex-wrap p-2 rounded" style="background-color: #f9f9f9; color: black;">
                 <div id="customSearchWrapper" class="d-flex align-items-center"></div>
 
                 <div class="d-flex align-items-center px-2">
                     <label class="me-2 fw-bold text-black-50 m-0" for="sortSelect">Sort by:</label>
-                    <select id="sortSelect" class="form-select form-select-sm border-0 p-0 bg-transparent" style="width: auto; box-shadow: none;">
+                    <select id="sortSelect" class="form-select form-select-sm border-0 px-5 bg-transparent" style="width: auto; box-shadow: none;">
                         <option value="">None</option>
                         <option value="2-asc">Address ↑</option>
                         <option value="2-desc">Address ↓</option>
@@ -41,7 +58,7 @@
 
                 <div class="d-flex align-items-center gap-2">
                     <label class="fw-bold text-black-50 m-0" for="propertyTypeFilter">Filter by:</label>
-                    <select id="propertyTypeFilter" class="form-select form-select-sm border-0 p-4 bg-transparent" style="width: auto; box-shadow: none;">
+                    <select id="propertyTypeFilter" class="form-select form-select-sm border-0 px-5 bg-transparent" style="width: auto; box-shadow: none;">
                         <option value="">All</option>
                         <option value="Apartment">Apartment</option>
                         <option value="Commercial">Commercial</option>
