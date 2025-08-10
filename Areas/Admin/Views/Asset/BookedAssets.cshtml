@@ -23,14 +23,11 @@
             </div>
         }
 
-
-
         <div class="container d-flex justify-content-center">
             <div class="table-responsive m-4 p-5 rounded-5" style="max-width: 900px; width: 100%; background-color: #ffffff;">
                 <h2 class="my-2 text-black">Booked Assets (@Model.Count)</h2>
 
                 <div class="d-flex justify-content-end align-items-center mb-3 flex-wrap gap-3">
-
                     <div class="d-flex align-items-center gap-3 p-2 rounded" style="background-color: #f9f9f9; color: black;">
                         <div id="customSearchWrapper" class="d-flex align-items-center"></div>
 
@@ -50,13 +47,12 @@
                             <select id="statusFilter" class="form-select form-select-sm border-0 px-4 bg-transparent" style="width: auto; box-shadow: none;">
                                 <option value="">All</option>
                                 <option value="Pending">Pending</option>
-                                <option value="Approved">Approved</option>
+                                <option value="Confirmed">Confirmed</option>
                                 <option value="Rejected">Rejected</option>
                             </select>
                         </div>
                     </div>
                 </div>
-
 
                 <table id="bookingTable" class="table w-100">
                     <thead class="bg-white">
@@ -72,14 +68,25 @@
                     <tbody>
                         @foreach (var booking in Model)
                         {
-                            <tr class="text-center">
-                                <td class="px-3 py-2"><strong>#@booking.BookingId</strong></td>
-                                <td class="px-3 py-2">@booking.BookingDate.ToString("dd MMM yyyy")</td>
+                            <tr class="text-center booking-row" style="cursor: pointer;"
+                                data-booking-id="@booking.BookingId"
+                                data-booking-date="@booking.BookingDate.ToString("dd MMM yyyy")"
+                                data-booking-status="@booking.BookingStatus"
+                                data-asset-id="@booking.AssetId"
+                                data-asset-description="@booking.AssetDescription"
+                                data-asset-block="@booking.AssetBlock"
+                                data-asset-type="@booking.AssetType"
+                                data-asset-price="@booking.AssetPrice.ToString("C")"
+                                data-user-id="@booking.UserId"
+                                data-user-name="@booking.UserName"
+                                data-user-email="@booking.UserEmail"
+                                data-user-phone="@booking.UserPhone">
+                                <td class="px-3 py-2" data-order="@booking.BookingId"><strong>#@booking.BookingId</strong></td>
+                                <td class="px-3 py-2" data-order="@booking.BookingDate.Ticks">@booking.BookingDate.ToString("dd MMM yyyy")</td>
                                 <td class="px-3 py-2">
-                                    <span class="px-3 py-1 rounded-pill d-inline-block" style="background-color: #59A3D0; color: black; min-width: 100px; text-align: center;">
+                                    <span class="px-3 py-1 rounded-pill d-inline-block @GetStatusBadgeClass(booking.BookingStatus)" style="min-width: 100px; text-align: center;">
                                         @booking.BookingStatus
                                     </span>
-
                                 </td>
                                 <td class="px-3 py-2">@booking.AssetDescription</td>
                                 <td class="px-3 py-2">@booking.UserName</td>
@@ -120,12 +127,121 @@
                         <h4>No Bookings Found</h4>
                     </div>
                 }
-
             </div>
         </div>
     </div>
 </div>
 
+<!-- Booking Details Modal -->
+<div class="modal fade" id="bookingDetailsModal" tabindex="-1" aria-labelledby="bookingDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white" style="border-radius: 2rem; border: 3px solid #ffffff;">
+            <div class="modal-header px-5 py-4 border-0">
+                <h5 class="modal-title" id="bookingDetailsModalLabel">Booking Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-5 py-4">
+                <div class="row g-4">
+                    <!-- Booking Information -->
+                    <div class="col-lg-6">
+                        <div class="card bg-secondary text-white h-100">
+                            <div class="card-header bg-primary">
+                                <h6 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Booking Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-5">Booking ID:</dt>
+                                    <dd class="col-sm-7">#<span id="modalBookingId"></span></dd>
+                                    <dt class="col-sm-5">Date:</dt>
+                                    <dd class="col-sm-7" id="modalBookingDate"></dd>
+                                    <dt class="col-sm-5">Status:</dt>
+                                    <dd class="col-sm-7">
+                                        <span id="modalBookingStatus" class="badge"></span>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Information -->
+                    <div class="col-lg-6">
+                        <div class="card bg-secondary text-white h-100">
+                            <div class="card-header bg-info">
+                                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Customer Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4">ID:</dt>
+                                    <dd class="col-sm-8">#<span id="modalUserId"></span></dd>
+                                    <dt class="col-sm-4">Name:</dt>
+                                    <dd class="col-sm-8" id="modalUserName"></dd>
+                                    <dt class="col-sm-4">Email:</dt>
+                                    <dd class="col-sm-8" id="modalUserEmail"></dd>
+                                    <dt class="col-sm-4">Phone:</dt>
+                                    <dd class="col-sm-8" id="modalUserPhone"></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Asset Information -->
+                    <div class="col-12">
+                        <div class="card bg-secondary text-white">
+                            <div class="card-header bg-success">
+                                <h6 class="mb-0"><i class="fas fa-home me-2"></i>Asset Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <dl class="row">
+                                            <dt class="col-sm-3">Asset ID:</dt>
+                                            <dd class="col-sm-9">#<span id="modalAssetId"></span></dd>
+                                            <dt class="col-sm-3">Description:</dt>
+                                            <dd class="col-sm-9" id="modalAssetDescription"></dd>
+                                            <dt class="col-sm-3">Block:</dt>
+                                            <dd class="col-sm-9" id="modalAssetBlock"></dd>
+                                            <dt class="col-sm-3">Type:</dt>
+                                            <dd class="col-sm-9" id="modalAssetType"></dd>
+                                            <dt class="col-sm-3">Price:</dt>
+                                            <dd class="col-sm-9">
+                                                <span class="fw-bold text-warning" id="modalAssetPrice"></span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons for Pending Bookings -->
+                <div id="modalActionButtons" class="row mt-4" style="display: none;">
+                    <div class="col-12 text-center">
+                        <div class="d-flex gap-3 justify-content-center">
+                            <form method="post" action="/Admin/Asset/VerifyBooking" id="modalVerifyForm">
+                                <input type="hidden" name="bookingId" id="modalVerifyBookingId" />
+                                @Html.AntiForgeryToken()
+                                <button type="button" class="btn btn-success confirm-action" data-action="verify">
+                                    <i class="fas fa-check me-2"></i>Verify Booking
+                                </button>
+                            </form>
+
+                            <form method="post" action="@Url.Action("RejectBooking", "Asset", new { area = "Admin" })" id="modalRejectForm">
+                                <input type="hidden" name="bookingId" id="modalRejectBookingId" />
+                                @Html.AntiForgeryToken()
+                                <button type="button" class="btn btn-danger confirm-action" data-action="reject">
+                                    <i class="fas fa-times me-2"></i>Reject Booking
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content bg-dark text-white">
@@ -147,38 +263,50 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-        const table = $('#bookingTable').DataTable({
-            paging: true,
-            searching: true,
-            ordering: true,
-            columnDefs: [
-                { orderable: false, targets: [2, 3, 4, 5] },
-                {
-                    targets: 2, // Booking Status column
-                    render: function (data, type, row) {
-                        // Strip HTML so DataTables sees only the text
-                        const div = document.createElement("div");
-                        div.innerHTML = data;
-                        return div.textContent.trim();
+            const table = $('#bookingTable').DataTable({
+                paging: true,
+                searching: true,
+                ordering: true,
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [2, 3, 4, 5] // Status, Asset, Customer, Actions columns
+                    },
+                    {
+                        // ID column
+                        targets: 0,
+                        type: 'num'
+                    },
+                    {
+                        // Date column
+                        targets: 1,
+                        type: 'num'
+                    },
+                    {
+                        targets: 2, // Booking Status column
+                        render: function (data, type, row) {
+                            // Strip HTML so DataTables sees only the text
+                            const div = document.createElement("div");
+                            div.innerHTML = data;
+                            return div.textContent.trim();
+                        }
                     }
+                ],
+                info: true,
+                lengthChange: false,
+                pageLength: 10,
+                language: {
+                    emptyTable: "No bookings found",
+                    paginate: {
+                        previous: "<",
+                        next: ">"
+                    },
+                    search: "",
+                    searchPlaceholder: "Search bookings..."
                 }
-            ],
-            info: true,
-            lengthChange: false,
-            pageLength: 10,
-            language: {
-                emptyTable: "No bookings found",
-                paginate: {
-                    previous: "<",
-                    next: ">"
-                },
-                search: "",
-                searchPlaceholder: "Search bookings..."
-            }
-        });
+            });
 
-
-            // 🔍 Custom search box
+            // Custom search box
             let searchBox = $('#bookingTable_filter input');
             let searchLabel = $('#bookingTable_filter label');
             let searchWrapper = $('#customSearchWrapper');
@@ -188,6 +316,7 @@
             searchWrapper.append(searchBox.closest('.input-group'));
             searchLabel.remove();
 
+            // Sorting functionality
             $('#sortSelect').on('change', function () {
                 const val = $(this).val();
                 if (!val) {
@@ -199,25 +328,87 @@
                 table.order([parseInt(colIndex), dir]).draw();
             });
 
+            // Status filtering
             $('#statusFilter').on('change', function () {
                 const selected = $(this).val();
                 if (selected === "") {
-                    table.column(2).search('').draw();  // Column 2 = Booking Status
+                    table.column(2).search('').draw();
                 } else {
-                    table.column(2).search('^' + selected + '$', true, false).draw();
+                    table.column(2).search(selected, false, false).draw();
                 }
+            });
+
+            // Booking row click handler for details modal
+            $(document).on('click', '.booking-row', function (e) {
+                // Don't trigger if clicking on action buttons
+                if ($(e.target).closest('form, button').length > 0) {
+                    return;
+                }
+
+                const row = $(this);
+
+                // Populate booking details
+                $('#modalBookingId').text(row.data('booking-id'));
+                $('#modalBookingDate').text(row.data('booking-date'));
+
+                // Set status badge with appropriate styling
+                const status = row.data('booking-status');
+                const statusBadge = $('#modalBookingStatus');
+                statusBadge.text(status);
+                statusBadge.removeClass('bg-warning bg-success bg-danger');
+
+                if (status.toLowerCase() === 'pending') {
+                    statusBadge.addClass('bg-warning text-dark');
+                } else if (status.toLowerCase() === 'confirmed') {
+                    statusBadge.addClass('bg-success');
+                } else if (status.toLowerCase() === 'rejected') {
+                    statusBadge.addClass('bg-danger');
+                }
+
+                // Populate customer details
+                $('#modalUserId').text(row.data('user-id'));
+                $('#modalUserName').text(row.data('user-name'));
+                $('#modalUserEmail').text(row.data('user-email'));
+                $('#modalUserPhone').text(row.data('user-phone'));
+
+                // Populate asset details
+                $('#modalAssetId').text(row.data('asset-id'));
+                $('#modalAssetDescription').text(row.data('asset-description'));
+                $('#modalAssetBlock').text(row.data('asset-block'));
+                $('#modalAssetType').text(row.data('asset-type'));
+                $('#modalAssetPrice').text(row.data('asset-price'));
+
+                // Show action buttons only for pending bookings
+                if (status.toLowerCase() === 'pending') {
+                    $('#modalActionButtons').show();
+                    $('#modalVerifyBookingId').val(row.data('booking-id'));
+                    $('#modalRejectBookingId').val(row.data('booking-id'));
+                } else {
+                    $('#modalActionButtons').hide();
+                }
+
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
+                modal.show();
             });
 
             let actionForm;
             $(document).on('click', '.confirm-action', function () {
                 actionForm = $(this).closest('form');
-                const bookingId = $(this).data('id');
+                const bookingId = actionForm.find('input[name="bookingId"]').val() || $(this).data('id');
                 const actionType = $(this).data('action');
+
                 $('#confirmBookingId').text(bookingId);
                 $('#confirmActionType').text(actionType);
 
-                const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-                modal.show();
+                const detailsModal = bootstrap.Modal.getInstance(document.getElementById('bookingDetailsModal'));
+                if (detailsModal) {
+                    detailsModal.hide();
+                }
+
+                
+                const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                confirmModal.show();
             });
 
             $('#confirmBtn').on('click', function () {
@@ -225,9 +416,32 @@
                     actionForm.submit();
                 }
             });
-                    table.rows().every(function () {
-            console.log(this.data()[2]); // Check what text is seen in the status column
+
+
+            $('#bookingTable_filter').hide();
         });
-        });
+
+       
+        function getStatusBadgeClass(status) {
+            switch(status.toLowerCase()) {
+                case 'pending': return 'bg-warning text-dark';
+                case 'confirmed': return 'bg-success';
+                case 'rejected': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
     </script>
+}
+
+@functions {
+    public string GetStatusBadgeClass(string status)
+    {
+        return status?.ToLower() switch
+        {
+            "pending" => "bg-warning text-dark",
+            "confirmed" => "bg-success",
+            "rejected" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
 }

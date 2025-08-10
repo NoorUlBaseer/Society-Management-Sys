@@ -62,7 +62,7 @@
                         <option value="">All</option>
                         <option value="Apartment">Apartment</option>
                         <option value="Commercial">Commercial</option>
-                        <option value="Land / Plot">Land / Plot</option>
+                        <option value="Land/Plot">Land / Plot</option>
                     </select>
                 </div>
 
@@ -304,7 +304,6 @@
                 if (selected === "") {
                     table.column(3).search('').draw();
                 } else {
-                    // Search within the badge content
                     table.column(3).search(selected, false, false).draw();
                 }
             });
