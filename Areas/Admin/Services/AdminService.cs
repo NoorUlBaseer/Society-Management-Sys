@@ -160,7 +160,10 @@ namespace SocietyMng.Services
         {
             _logger.LogDebug("Deleting asset ID: {AssetId}", id);
 
-            var asset = await _context.Assets.FindAsync(id);
+            var asset = await _context.Assets
+                .Include(a => a.Bookings) // Include related bookings
+                .FirstOrDefaultAsync(a => a.Id == id);
+
             if (asset == null)
             {
                 _logger.LogWarning("Asset with ID: {AssetId} not found for deletion", id);
@@ -171,13 +174,22 @@ namespace SocietyMng.Services
 
             try
             {
-                // rmv from db first
+                // First delete all related bookings
+                if (asset.Bookings != null && asset.Bookings.Any())
+                {
+                    _context.Bookings.RemoveRange(asset.Bookings);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("Deleted {BookingCount} bookings related to asset ID: {AssetId}",
+                        asset.Bookings.Count, id);
+                }
+
+                // Then remove the asset
                 _context.Assets.Remove(asset);
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Successfully deleted asset ID: {AssetId} from database", id);
 
-                //then rmv associated file existing
+                // Finally remove associated file if exists
                 if (!string.IsNullOrEmpty(imagePath))
                 {
                     await DeleteImageFileAsync(imagePath);
