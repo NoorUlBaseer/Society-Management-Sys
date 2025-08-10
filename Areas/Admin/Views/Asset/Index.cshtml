@@ -46,13 +46,13 @@
                 <div class="d-flex align-items-center px-2">
                     <label class="me-2 fw-bold text-black-50 m-0" for="sortSelect">Sort by:</label>
                     <select id="sortSelect" class="form-select form-select-sm border-0 px-5 bg-transparent" style="width: auto; box-shadow: none;">
-                        <option value="">None</option>
-                        <option value="2-asc">Address ↑</option>
-                        <option value="2-desc">Address ↓</option>
-                        <option value="4-asc">Price ↑</option>
-                        <option value="4-desc">Price ↓</option>
-                        <option value="8-asc">Date Added ↑</option>
-                        <option value="8-desc">Date Added ↓</option>
+                            <option value="">None</option>
+                            <option value="1-asc">Address ↑</option>
+                            <option value="1-desc">Address ↓</option>
+                            <option value="2-asc">Price ↑</option>
+                            <option value="2-desc">Price ↓</option>
+                            <option value="5-asc">Date Added ↑</option>
+                            <option value="5-desc">Date Added ↓</option>
                     </select>
                 </div>
 
@@ -221,13 +221,13 @@
 @section Scripts {
     <script>
 
-        $(document).ready(function () {
+                $(document).ready(function () {
             var table = $('#assetTable').DataTable({
                 paging: true,
                 searching: true,
                 ordering: true,
                 columnDefs: [
-                    { orderable: false, targets: [0] }
+                    { orderable: false, targets: [0, 6] } // Disable sorting for # and Actions column
                 ],
                 info: true,
                 lengthChange: false,
@@ -243,6 +243,7 @@
                 }
             });
 
+            // Correct Sort Mapping
             $('#sortSelect').on('change', function () {
                 const val = $(this).val();
                 if (!val) {
@@ -254,6 +255,7 @@
                 table.order([parseInt(colIndex), dir]).draw();
             });
 
+            // Move search box to custom wrapper
             let searchBox = $('#assetTable_filter input');
             let searchLabel = $('#assetTable_filter label');
             let searchWrapper = $('#customSearchWrapper');
@@ -264,19 +266,19 @@
 
             searchWrapper.append(searchBox.closest('.input-group'));
             searchLabel.remove();
+
+            // Correct Filter by Property Type
             $('#propertyTypeFilter').on('change', function () {
                 var selected = $(this).val();
 
                 if (selected === "") {
-                    // Clear filter
-                    table.column(3).search('').draw();  // Column 3 is "Property Type"
+                    table.column(3).search('').draw();
                 } else {
-                    // Apply filter
-                    table.column(3).search('^' + selected + '$', true, false).draw();
+                    table.column(3).search('^' + selected + '$', true, false).draw(); // exact match
                 }
             });
-
         });
+
 
         // Debug: Log image errors
         document.addEventListener('DOMContentLoaded', function() {
