@@ -20,11 +20,18 @@ namespace SocietyMng.Areas.Admin.Controllers
             _logger = logger;
         }
 
-        public IActionResult Dashboard()
+        [HttpGet]
+        public async Task<IActionResult> Dashboard()
         {
-            _logger.LogInformation("Admin dashboard accessed");
+            var stats = await _adminService.GetAssetStatisticsAsync();
+
+            ViewBag.TotalAssets = stats.totalAssets;
+            ViewBag.BookedAssets = stats.bookedAssets;
+            ViewBag.SoldAssets = stats.soldAssets;
+
             return View();
         }
+
 
         #region User Management
 

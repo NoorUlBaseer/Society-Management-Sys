@@ -3,12 +3,60 @@
     Layout = "_AdminLayout";
 }
 
-<h1 class="mt-4">Dashboard</h1>
+<h1 class="mt-4 ">Dashboard</h1>
 
-<div class="container">
-    <div class="row justify-content-center">
-
+<!-- Row 1: Centered Total Assets -->
+<div class="row justify-content-center my-4">
+    <div class="col-md-4">
+        <div class="card text-center p-4 shadow-sm">
+            <h5>Total Assets</h5>
+            <h2>@ViewBag.TotalAssets</h2>
+        </div>
     </div>
-
 </div>
 
+<!-- Row 2: Centered Booked & Sold Assets -->
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card text-center p-4 shadow-sm">
+            <h5>Booked Assets</h5>
+            <canvas id="bookedChart" height="150"></canvas>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center p-4 shadow-sm">
+            <h5>Sold Assets</h5>
+            <canvas id="soldGauge" height="150"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Booked Assets Pie
+        new Chart(document.getElementById("bookedChart"), {
+            type: 'doughnut',
+            data: {
+                labels: ['Booked', 'Available'],
+                datasets: [{
+                    data: [@ViewBag.BookedAssets, @ViewBag.TotalAssets - @ViewBag.BookedAssets],
+                    backgroundColor: ['#4e73df', '#e5e5e5']
+                }]
+            }
+        });
+
+        // Sold Assets Doughnut
+        new Chart(document.getElementById("soldGauge"), {
+            type: 'doughnut',
+            data: {
+                labels: ['Sold', 'Remaining'],
+                datasets: [{
+                    data: [@ViewBag.SoldAssets, @ViewBag.TotalAssets - @ViewBag.SoldAssets],
+                    backgroundColor: ['#1cc88a', '#e5e5e5']
+                }]
+            }
+        });
+    </script>
+}
