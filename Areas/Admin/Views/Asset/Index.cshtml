@@ -74,18 +74,19 @@
             <table id="assetTable" class="table w-100">
                 <thead class="bg-white">
                     <tr class="text-center">
-                        <th class="fw-normal text-secondary px-3 py-2">ID</th>
-
+                        <th class="fw-normal text-secondary px-3 py-2">#</th> <!-- Changed from ID to # -->
                         <th class="fw-normal text-start text-secondary px-3 py-2">Address</th>
                         <th class="fw-normal text-secondary px-3 py-2">Price</th>
                         <th class="fw-normal text-secondary px-3 py-2">Property Type</th>
                         <th class="fw-normal text-secondary px-3 py-2">Status</th>
                         <th class="fw-normal text-secondary px-3 py-2">Date Added</th>
                         <th class="fw-normal text-secondary px-3 py-2"></th>
-
                     </tr>
                 </thead>
                 <tbody>
+                    @{
+                        int counter = 1; // Initialize counter
+                    }
                     @foreach (var asset in Model)
                     {
                         <tr class="text-center asset-row"
@@ -99,13 +100,12 @@
                             data-status="@asset.Status?.Description"
                             data-date="@asset.DateUploaded.ToString("dd/MM/yyyy")"
                             data-image="@asset.ImagePath">
-                            <td>@asset.Id</td>
+                            <td>@counter</td> <!-- Display counter instead of asset.Id -->
                             <td class="text-start">
                                 <small>
                                     @(asset.Address ?? "") - Plot #: @(asset.PlotNumber ?? "") - @(asset.Block?.Description ?? "")
                                 </small>
                             </td>
-
                             <td>
                                 <span class="fw-bold text-success">
                                     @asset.Price.ToString("C").Replace("+", "")
@@ -129,6 +129,7 @@
                                 </button>
                             </td>
                         </tr>
+                        counter++;
                     }
                 </tbody>
             </table>
