@@ -108,7 +108,7 @@
 
                             <td>
                                 <span class="fw-bold text-success">
-                                    @asset.Price.ToString("C")
+                                    @asset.Price.ToString("C").Replace("+", "")
                                 </span>
                             </td>
                             <td>
