@@ -378,5 +378,27 @@ namespace SocietyMng.Services
                 return false;
             }
         }
+
+        public async Task<(int totalAssets, int bookedAssets, int soldAssets)> GetAssetStatisticsAsync()
+        {
+            var totalAssets = await _context.Assets.CountAsync();
+
+            var bookedAssets = await _context.Bookings
+                .Where(b => b.Status != "Cancelled")
+                .Select(b => b.AssetId)
+                .Distinct()
+                .CountAsync();
+
+            var soldStatus = await _context.SystemCodeItems
+                .Include(s => s.SystemCode)
+                .Where(s => s.SystemCode.Code == "Asset_Status" && s.Code == _appSettings.Asset_Status.SOLD)
+                .Select(s => s.Id)
+                .FirstOrDefaultAsync();
+
+            var soldAssets = await _context.Assets.CountAsync(a => a.StatusId == soldStatus);
+
+            return (totalAssets, bookedAssets, soldAssets);
+        }
+
     }
 }
