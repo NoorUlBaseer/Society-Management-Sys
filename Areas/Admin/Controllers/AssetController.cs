@@ -389,5 +389,52 @@ namespace SocietyMng.Areas.Admin.Controllers
             return RedirectToAction("BookedAssets");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> BookingDetails(int id)
+        {
+            try
+            {
+                var booking = await _context.Bookings
+                    .Include(b => b.Asset)
+                        .ThenInclude(a => a.Block)
+                    .Include(b => b.Asset)
+                        .ThenInclude(a => a.PropertyType)
+                    .Include(b => b.Asset)
+                        .ThenInclude(a => a.Status)
+                    .Include(b => b.User)
+                    .Where(b => b.Id == id)
+                    .Select(b => new BookedAssetView
+                    {
+                        BookingId = b.Id,
+                        BookingDate = b.BookingDate,
+                        BookingStatus = b.Status,
+                        AssetId = b.Asset.Id,
+                        AssetDescription = b.Asset.Description,
+                        AssetBlock = b.Asset.Block.Description,
+                        AssetType = b.Asset.PropertyType.Description,
+                        AssetPrice = b.Asset.Price,
+                        UserId = b.User.Id,
+                        UserName = b.User.FullName,
+                        UserEmail = b.User.Email,
+                        UserPhone = b.User.PhoneNumber
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (booking == null)
+                {
+                    TempData["ErrorMessage"] = "Booking not found!";
+                    return RedirectToAction("BookedAssets");
+                }
+
+                return View(booking);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching booking details for ID: {BookingId}", id);
+                TempData["ErrorMessage"] = "An error occurred while fetching booking details.";
+                return RedirectToAction("BookedAssets");
+            }
+        }
+
     }
 }
