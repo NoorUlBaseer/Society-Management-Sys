@@ -46,13 +46,13 @@
                 <div class="d-flex align-items-center px-2">
                     <label class="me-2 fw-bold text-black-50 m-0" for="sortSelect">Sort by:</label>
                     <select id="sortSelect" class="form-select form-select-sm border-0 px-5 bg-transparent" style="width: auto; box-shadow: none;">
-                            <option value="">None</option>
-                            <option value="1-asc">Address ↑</option>
-                            <option value="1-desc">Address ↓</option>
-                            <option value="2-asc">Price ↑</option>
-                            <option value="2-desc">Price ↓</option>
-                            <option value="5-asc">Date Added ↑</option>
-                            <option value="5-desc">Date Added ↓</option>
+                        <option value="">None</option>
+                        <option value="1-asc">Address ↑</option>
+                        <option value="1-desc">Address ↓</option>
+                        <option value="2-asc">Price ↑</option>
+                        <option value="2-desc">Price ↓</option>
+                        <option value="5-asc">Date Added ↑</option>
+                        <option value="5-desc">Date Added ↓</option>
                     </select>
                 </div>
 
@@ -74,7 +74,7 @@
             <table id="assetTable" class="table w-100">
                 <thead class="bg-white">
                     <tr class="text-center">
-                        <th class="fw-normal text-secondary px-3 py-2">#</th> <!-- Changed from ID to # -->
+                        <th class="fw-normal text-secondary px-3 py-2">#</th>
                         <th class="fw-normal text-start text-secondary px-3 py-2">Address</th>
                         <th class="fw-normal text-secondary px-3 py-2">Price</th>
                         <th class="fw-normal text-secondary px-3 py-2">Property Type</th>
@@ -85,7 +85,7 @@
                 </thead>
                 <tbody>
                     @{
-                        int counter = 1; // Initialize counter
+                        int counter = 1;
                     }
                     @foreach (var asset in Model)
                     {
@@ -100,15 +100,15 @@
                             data-status="@asset.Status?.Description"
                             data-date="@asset.DateUploaded.ToString("dd/MM/yyyy")"
                             data-image="@asset.ImagePath">
-                            <td>@counter</td> <!-- Display counter instead of asset.Id -->
+                            <td>@counter</td>
                             <td class="text-start">
                                 <small>
                                     @(asset.Address ?? "") - Plot #: @(asset.PlotNumber ?? "") - @(asset.Block?.Description ?? "")
                                 </small>
                             </td>
-                            <td>
+                            <td data-order="@asset.Price">
                                 <span class="fw-bold text-success">
-                                    @asset.Price.ToString("C").Replace("+", "")
+                                    Rs. @asset.Price.ToString("N2")
                                 </span>
                             </td>
                             <td>
@@ -117,7 +117,7 @@
                             <td>
                                 <span class="badge bg-success">@asset.Status?.Description</span>
                             </td>
-                            <td>
+                            <td data-order="@asset.DateUploaded.Ticks">
                                 <small>@asset.DateUploaded.ToString("dd/MM/yyyy")</small>
                             </td>
                             <td>
@@ -220,14 +220,27 @@
 
 @section Scripts {
     <script>
-
-                $(document).ready(function () {
+        $(document).ready(function () {
+            // Initialize DataTable with proper configuration
             var table = $('#assetTable').DataTable({
                 paging: true,
                 searching: true,
                 ordering: true,
                 columnDefs: [
-                    { orderable: false, targets: [0, 6] } // Disable sorting for # and Actions column
+                    {
+                        orderable: false,
+                        targets: [0, 6] // # column and Actions column
+                    },
+                    {
+                        // Price column - extract numeric value from data-order attribute
+                        targets: 2,
+                        type: 'num'
+                    },
+                    {
+                        // Date column - use data-order attribute (ticks) for sorting
+                        targets: 5,
+                        type: 'num'
+                    }
                 ],
                 info: true,
                 lengthChange: false,
@@ -240,13 +253,30 @@
                     },
                     search: "",
                     searchPlaceholder: "Search assets..."
+                },
+                // Custom sorting for data-order attributes
+                createdRow: function(row, data, dataIndex) {
+                    // Price column
+                    var priceCell = $(row).find('td:eq(2)');
+                    var priceValue = priceCell.attr('data-order');
+                    if (priceValue) {
+                        priceCell.attr('data-sort', parseFloat(priceValue));
+                    }
+
+                    // Date column
+                    var dateCell = $(row).find('td:eq(5)');
+                    var dateValue = dateCell.attr('data-order');
+                    if (dateValue) {
+                        dateCell.attr('data-sort', parseInt(dateValue));
+                    }
                 }
             });
 
-            // Correct Sort Mapping
+            // Custom sorting implementation
             $('#sortSelect').on('change', function () {
                 const val = $(this).val();
                 if (!val) {
+                    // Clear all sorting
                     table.order([]).draw();
                     return;
                 }
@@ -267,18 +297,22 @@
             searchWrapper.append(searchBox.closest('.input-group'));
             searchLabel.remove();
 
-            // Correct Filter by Property Type
+            // Property type filter
             $('#propertyTypeFilter').on('change', function () {
                 var selected = $(this).val();
 
                 if (selected === "") {
                     table.column(3).search('').draw();
                 } else {
-                    table.column(3).search('^' + selected + '$', true, false).draw(); // exact match
+                    // Search within the badge content
+                    table.column(3).search(selected, false, false).draw();
                 }
             });
-        });
 
+            // Hide original DataTable elements
+            $('#assetTable_filter').hide();
+            $('#assetTable_paginate').appendTo('#assetTable_wrapper');
+        });
 
         // Debug: Log image errors
         document.addEventListener('DOMContentLoaded', function() {
@@ -293,7 +327,6 @@
             });
         });
 
-
         let deleteAssetForm;
 
         $(document).on('click', '.asset-row', function (e) {
@@ -301,6 +334,7 @@
                 $(e.target).closest("form").length > 0 ||
                 $(e.target).closest(".open-delete-modal").length > 0
             ) return;
+
             const assetRow = $(this);
             $('#modalAssetId').text(assetRow.data('id'));
             $('#modalAssetDescription').text(assetRow.data('description'));
@@ -332,7 +366,6 @@
             }
         }
 
-
         $('#deleteAssetConfirmBtn').on('click', function () {
             if (deleteAssetForm) {
                 deleteAssetForm.submit();
@@ -340,7 +373,6 @@
         });
 
         $(document).on('click', '.open-delete-modal', function () {
-            debugger
             const assetId = $(this).data('asset-id');
             $('#modalDeleteAssetId').val(assetId);
 
@@ -355,7 +387,6 @@
             const assetId = $('#modalAssetId').text();
             window.location.href = `/Admin/Asset/Edit/${assetId}`;
         });
-
 
     </script>
 }
