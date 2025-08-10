@@ -61,7 +61,7 @@
                 <table id="userTable" class="table w-100">
                     <thead class="bg-white">
                         <tr class="text-center" style="text-align: center !important;">
-                            <th class="fw-normal text-secondary rounded-top-start px-3 py-2">ID</th>
+                            <th class="fw-normal text-secondary rounded-top-start px-3 py-2">#</th>
                             <th class="fw-normal text-secondary px-3 py-2">Name</th>
                             <th class="fw-normal text-secondary px-3 py-2">Email</th>
                             <th class="fw-normal text-secondary px-3 py-2">Role</th>
@@ -72,13 +72,16 @@
                     </thead>
 
                     <tbody>
+                        @{
+                            int counter = 1; // Initialize counter
+                        }
                         @foreach (var user in Model)
                         {
                             <tr class="text-center user-row" style="cursor: pointer;"
                                 data-phone="@user.PhoneNumber"
                                 data-gender="@user.Gender"
                                 data-status="@(user.IsActive ? "Active" : "Blocked")">
-                                <td class="px-3 py-2">@user.Id</td>
+                                <td class="px-3 py-2">@counter</td> <!-- Display counter instead of user.Id -->
                                 <td class="px-3 py-2">@user.FullName</td>
                                 <td class="px-3 py-2">@user.Email</td>
                                 <td class="px-3 py-2">@user.Role?.Description</td>
@@ -91,16 +94,13 @@
                                             <button type="submit"
                                                     class="btn btn-sm fw-bold"
                                                     style="min-width: 80px;
-                                                    background-color: @(user.IsActive ? "#ffe5e5" : "#e6ffed");
-                                                    color: @(user.IsActive ? "#b30000" : "#007f00");
-                                                    border: 1px solid @(user.IsActive ? "#b30000" : "#007f00");">
+                                        background-color: @(user.IsActive ? "#ffe5e5" : "#e6ffed");
+                                        color: @(user.IsActive ? "#b30000" : "#007f00");
+                                        border: 1px solid @(user.IsActive ? "#b30000" : "#007f00");">
                                                 @(user.IsActive ? "Block" : "Unblock")
                                             </button>
-
                                         }
-
                                     </div>
-
                                 </td>
                                 <td>
                                     <button type="button"
@@ -111,6 +111,7 @@
                                     </button>
                                 </td>
                             </tr>
+                            counter++; // Increment counter
                         }
                     </tbody>
                 </table>
