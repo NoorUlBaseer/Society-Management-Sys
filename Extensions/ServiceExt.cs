@@ -69,9 +69,7 @@ namespace SocietyMng.Extensions
         {
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IBuyerService, BuyerService>();
-            //services.AddScoped<IBookingService, BookingService>();
-            //services.AddScoped<IComplaintService, ComplaintService>();
-            //services.AddScoped<IPropertyTypeService, PropertyTypeService>();
+           
         }     
         public static void ConfigureControllersWithViews(this IServiceCollection services)
         {

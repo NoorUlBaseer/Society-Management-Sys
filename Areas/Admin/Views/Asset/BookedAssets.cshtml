@@ -76,7 +76,7 @@
                                 data-asset-description="@booking.AssetDescription"
                                 data-asset-block="@booking.AssetBlock"
                                 data-asset-type="@booking.AssetType"
-                                data-asset-price="@booking.AssetPrice.ToString("C")"
+                                data-asset-price="Rs. @booking.AssetPrice.ToString("N2")"
                                 data-user-id="@booking.UserId"
                                 data-user-name="@booking.UserName"
                                 data-user-email="@booking.UserEmail"
@@ -204,7 +204,7 @@
                                             <dd class="col-sm-9" id="modalAssetType"></dd>
                                             <dt class="col-sm-3">Price:</dt>
                                             <dd class="col-sm-9">
-                                                <span class="fw-bold text-warning" id="modalAssetPrice"></span>
+                                                <span class="fw-bold text-warning">Rs. <span id="modalAssetPrice"></span></span>
                                             </dd>
                                         </dl>
                                     </div>
