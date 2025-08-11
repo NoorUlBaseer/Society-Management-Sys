@@ -41,7 +41,7 @@
             data: {
                 labels: ['Booked', 'Available'],
                 datasets: [{
-                    data: [@ViewBag.BookedAssets, @ViewBag.TotalAssets - @ViewBag.BookedAssets],
+                    data: [@ViewBag.BookedAssets, @ViewBag.TotalAssets -( @ViewBag.BookedAssets+@ViewBag.SoldAssets)],
                     backgroundColor: ['#4e73df', '#e5e5e5']
                 }]
             }
@@ -53,7 +53,7 @@
             data: {
                 labels: ['Sold', 'Remaining'],
                 datasets: [{
-                    data: [@ViewBag.SoldAssets, @ViewBag.TotalAssets - @ViewBag.SoldAssets],
+                    data: [@ViewBag.SoldAssets, @ViewBag.TotalAssets - (@ViewBag.SoldAssets+@ViewBag.BookedAssets)],
                     backgroundColor: ['#1cc88a', '#e5e5e5']
                 }]
             }

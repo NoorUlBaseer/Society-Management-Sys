@@ -13,6 +13,7 @@ namespace SocietyMng.Services.Interfaces
         Task<BookingResult> BookAssetAsync(int userId, int assetId);
         Task<BookingResult> CancelBookingAsync(int userId, int bookingId);
         Task<List<Booking>> GetUserBookingsAsync(int userId);
+        Task<(long minPrice, long maxPrice)> GetPriceRangeAsync();
         //Task<List<Complaint>> GetUserComplaintsAsync(int userId);
     }
 }

@@ -277,5 +277,17 @@ namespace SocietyMng.Services
                     .ThenInclude(a => a.Status)
                 .ToListAsync();
         }
+
+        public async Task<(long minPrice, long maxPrice)> GetPriceRangeAsync()
+        {
+            if (!await _context.Assets.AnyAsync())
+            {
+                return (0, 100000000);
+            }
+
+            var minPrice = (long)await _context.Assets.MinAsync(a => a.Price);
+            var maxPrice = (long)await _context.Assets.MaxAsync(a => a.Price);
+            return (minPrice, maxPrice);
+        }
     }
 }
