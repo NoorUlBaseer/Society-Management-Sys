@@ -112,7 +112,7 @@
         }
 
             .form-control:focus {
-                background-color: ActiveBorder !important;
+                background-color: #D9D9D980 !important;
                 color: white !important;
                 border-color: #666 !important;
                 box-shadow: none !important;
@@ -200,12 +200,12 @@
 
         $(document).ready(function () {
             @if (ViewData.ModelState.ContainsKey(string.Empty) &&
-                                                                ViewData.ModelState[string.Empty].Errors.Any(e => e.ErrorMessage.Contains("blocked")))
+                                                                                                                                ViewData.ModelState[string.Empty].Errors.Any(e => e.ErrorMessage.Contains("blocked")))
             {
-                        <text>
-                            var blockedModal = new bootstrap.Modal(document.getElementById('blockedAccountModal'));
-                            blockedModal.show();
-                        </text>
+                            <text>
+                                var blockedModal = new bootstrap.Modal(document.getElementById('blockedAccountModal'));
+                                blockedModal.show();
+                            </text>
             }
         });
     </script>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SocietyMng.Areas.Admin.DTOs
+namespace SocietyMng.Areas.Admin.ModelView
 {
     public class AssetCreateView
     {

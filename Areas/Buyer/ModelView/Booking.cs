@@ -1,4 +1,4 @@
-﻿namespace SocietyMng.Areas.Buyer.DTOs
+﻿namespace SocietyMng.Areas.Buyer.ModelView
 {
     public class AssetBookingConfirmationView
     {

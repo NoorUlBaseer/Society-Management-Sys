@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SocietyMng.Areas.Admin.DTOs;
+using SocietyMng.Areas.Admin.ModelView;
 using SocietyMng.Data.Entities;
 using Microsoft.Extensions.Logging;
 
