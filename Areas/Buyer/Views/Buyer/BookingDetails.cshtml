@@ -1,5 +1,4 @@
-﻿
-@model SocietyMng.Data.Entities.Booking
+﻿@model SocietyMng.Data.Entities.Booking
 
 @{
     ViewData["Title"] = "Booking Details";
@@ -26,45 +25,110 @@
         body {
             background: linear-gradient(to bottom, black, #408350);
             color: white;
-            position: relative;
             font-family: 'Kokoro', sans-serif !important;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
 
-        h1, .display-4 {
+        h2 {
             font-family: 'Julius Sans One', sans-serif !important;
             font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .booking-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 900px;
+            margin: 40px auto;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .booking-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        .booking-details p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-cancel {
+            background-color: #c0392b;
+            color: white;
+            border-radius: 30px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-cancel:hover {
+                background-color: #e74c3c;
+            }
+
+        .status-badge {
+            font-size: 1rem;
+            padding: 5px 12px;
+            border-radius: 15px;
+        }
+
+        .status-pending {
+            background-color: #f1c40f;
+            color: black;
+        }
+
+        .status-confirmed {
+            background-color: #2ecc71;
+        }
+
+        .status-cancelled {
+            background-color: #e74c3c;
         }
     </style>
 </head>
 <body>
 
-    <h2>@ViewData["Title"]</h2>
+    <div class="booking-container">
+        <h2>@ViewData["Title"]</h2>
 
-    <div class="card mb-4">
-        <div class="card-header">
-            Booking #@Model.Id
+        <div class="booking-header">
+            <i class="bi bi-calendar-check"></i> Booking #@Model.Id
         </div>
-        <div class="card-body">
+
+        <div class="booking-details">
             <p><strong>Asset:</strong> @Model.Asset.Description</p>
             <p><strong>Price:</strong> @Model.Asset.Price.ToString("C")</p>
             <p><strong>Booking Date:</strong> @Model.BookingDate.ToString("yyyy-MM-dd HH:mm")</p>
-            <p><strong>Status:</strong> @Model.Status</p>
+            <p>
+                <strong>Status:</strong>
+                <span class="status-badge
+                    @(Model.Status == "Pending" ? "status-pending" :
+                                            Model.Status == "Confirmed" ? "status-confirmed" : "status-cancelled")">
+                    @Model.Status
+                </span>
+            </p>
         </div>
+
+        @if (Model.Status == "Pending")
+        {
+            <form asp-action="CancelBooking" method="post" class="mt-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="bookingId" value="@Model.Id" />
+                <button type="submit" class="btn btn-cancel">
+                    <i class="bi bi-x-circle"></i> Cancel Booking
+                </button>
+            </form>
+        }
+        else
+        {
+            <p class="text-muted mt-4">This booking cannot be modified.</p>
+        }
     </div>
 
-    @if (Model.Status == "Pending")
-    {
-        <form asp-action="CancelBooking" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="bookingId" value="@Model.Id" />
-            <button type="submit" class="btn btn-danger">Cancel Booking</button>
-        </form>
-    }
-    else
-    {
-        <p class="text-muted">This booking cannot be modified.</p>
-    }
 </body>
 </html>
