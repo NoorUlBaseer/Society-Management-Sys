@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using SocietyMng.Areas.Buyer.DTOs;
+using SocietyMng.Areas.Buyer.ModelView;
 using SocietyMng.Configurations;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;

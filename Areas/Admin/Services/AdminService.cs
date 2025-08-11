@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using SocietyMng.Areas.Admin.DTOs;
+using SocietyMng.Areas.Admin.ModelView;
 using SocietyMng.Configurations;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;

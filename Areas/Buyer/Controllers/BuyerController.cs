@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SocietyMng.Areas.Buyer.DTOs;
+using SocietyMng.Areas.Buyer.ModelView;
 using SocietyMng.Configurations;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;

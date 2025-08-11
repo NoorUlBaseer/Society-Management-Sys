@@ -1,4 +1,4 @@
-﻿using SocietyMng.Areas.Admin.DTOs;
+﻿using SocietyMng.Areas.Admin.ModelView;
 using SocietyMng.Data.Entities;
 
 public interface IAdminService

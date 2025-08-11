@@ -1,4 +1,4 @@
-﻿using SocietyMng.Areas.Buyer.DTOs;
+﻿using SocietyMng.Areas.Buyer.ModelView;
 using SocietyMng.Data.Entities;
 
 namespace SocietyMng.Services.Interfaces
