@@ -93,11 +93,19 @@ namespace SocietyMng.Controllers
             return RedirectToLocal(backURL);
         }
 
+
         [HttpGet]
         public async Task<IActionResult> Register()
         {
             var model = new RegisterModel();
             return View(model);
+        }
+        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> IsPhoneNumberAvailable(string phoneNumber)
+        {
+            var isAvailable = !await _context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber);
+            return Json(isAvailable);
         }
 
         [HttpPost]
@@ -109,6 +117,11 @@ namespace SocietyMng.Controllers
             if (await _context.Users.AnyAsync(u => u.Email == model.Email))
             {
                 ModelState.AddModelError("Email", "Email already registered");
+                return View(model);
+            }
+            if (await _context.Users.AnyAsync(u => u.PhoneNumber == model.PhoneNumber))
+            {
+                ModelState.AddModelError("PhoneNumber", "Phone number already registered");
                 return View(model);
             }
 

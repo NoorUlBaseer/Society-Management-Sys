@@ -3,97 +3,178 @@
     Layout = "_Layout";
 }
 
-<div class="container mt-5">
- 
-    <div class="hero-section text-center mb-5">
-        <h2 class="mb-4">Your trusted gateway to modern society living.</h2>
-        <p class="lead mb-5">
-            Discover available plots and homes, manage your property bookings, and stay updated with the latest announcements, all in one place.
-        </p>
-        <hr class="mx-auto" style="width: 50%; border-color: rgba(255,255,255,0.3);">
-        <a href="@Url.Action("Index", "Buyer", new { area = "Buyer" })" class="btn get-started-btn btn-lg mt-3">Explore Properties</a>
+<div class="container-fluid hero-wrap">
+    <div class="row align-items-center hero-row">  
+        <div class="col-lg-8 hero-content">
+            <h2>Your trusted gateway to modern society living.</h2>
+            <p class="lead">
+                Discover available plots and homes, manage your property bookings, and stay updated with the latest announcements, all in one place.
+            </p>
+            <a href="@Url.Action("Index", "Buyer", new { area = "Buyer" })" class="btn get-started-btn btn-lg">Get Started</a>
+        </div>
     </div>
-
-    <div class="text-center mt-5">
-        <h3 class="mb-4">Get Started</h3>
-        <div class="row justify-content-center mt-4">
-            <div class="col-md-4 mb-4">
-                <div class="glass-card">
-                    <div class="card-body">
-                        <h4 class="card-title">400+ Listings</h4>
-                    </div>
+    <div class="row text-right oops">
+        <!-- Right Column (Cards) -->
+        <div class="col-lg-6 cards-column">
+            <div class="cards-wrapper">
+                <div class="feature-card">
+                    <div class="card-inner">400+ Listings</div>
                 </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="glass-card">
-                    <div class="card-body">
-                        <h4 class="card-title">Residential & Commercial Plots</h4>
-                    </div>
+                <div class="feature-card">
+                    <div class="card-inner">Residential &amp; Commercial Plots</div>
                 </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="glass-card">
-                    <div class="card-body">
-                        <h4 class="card-title">Modern Infrastructure & Community Facilities</h4>
-                    </div>
+                <div class="feature-card">
+                    <div class="card-inner">Modern Infrastructure &amp; Community Facilities</div>
                 </div>
             </div>
         </div>
-        @* <div class="text-center mt-5 pt-5">
-            <img src="~/images/back.jpg" alt="Modern Community Living" class="img-fluid bottom-image">
-        </div> *@
     </div>
-      
-    </div>
+</div>
 
-    <style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-            padding: 20px;
-            transition: all 0.3s ease;
-            min-height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-            .glass-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.3);
-                background: rgba(255, 255, 255, 0.15);
-            }
-
-            .glass-card .card-title {
-                margin: 0;
-                font-weight: 500;
-            }
-
-    .hero-section h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1.5rem;
+<style>
+    .hero-wrap {
+        padding: 3.2rem 2rem;
+        margin-top: 120px;
+        color: #fff;
     }
 
-    .hero-section p {
-        font-size: 1.25rem;
-        max-width: 800px;
-        margin: 0 auto 2rem;
+    .hero-row {
+        min-height: 360px;
+        align-items: flex-start !important;
     }
 
-    .card-title {
+    /* LEFT column (text) */
+    .hero-content h2 {
+        font-size: 2.4rem;
+        font-weight: 600;
+        line-height: 1.12;
+        margin-bottom: 0.6rem;
+        color: #ffffff;
+    }
+
+    .hero-content .lead {
+        font-size: 1.05rem;
+        max-width: 520px;
+        margin-bottom: 1.25rem;
+        color: rgba(255,255,255,0.88);
+    }
+
+    .navbar {
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .navbar-brand {
+        font-family: 'Julius Sans One', sans-serif;
+        color: white !important;
         font-size: 1.5rem;
-        font-weight: normal;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+    .get-started-btn {
+        background: linear-gradient(180deg,#ffb256,#ff9900);
+        color: #fff;
+        border-radius: 28px;
+        padding: 10px 28px;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(255,153,0,0.12);
+        border: 0;
+        margin-bottom: 30px;
     }
 
-        .bottom-image {
-            max-width: 100%;
-            height: auto;
-            margin-top: 50px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        .get-started-btn:hover {
+            transform: translateY(-2px);
         }
+
+    .cards-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 100%;
+    }
+
+    .cards-wrapper {
+        display: flex;
+        gap: 18px;
+        justify-content: flex-end;
+        padding-right: 1rem;
+        margin-top: 40px;
+    }
+
+    .feature-card {
+        width: 230px;
+        height: 210px;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.12);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+        padding: 16px;
+    }
+    .oops{
+        justify-content: flex-end;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255,255,255,0.11);
+            box-shadow: 0 16px 46px rgba(0,0,0,0.55);
+        }
+
+        .feature-card .card-inner {
+            text-align: center;
+            font-size: 0.95rem;
+            line-height: 1.2;
+            font-weight: 600;
+            color: #ffffff;
+            max-width: 180px;
+        }
+
+    /* Responsive adjustments */
+    @@media (max-width: 992px) {
+        .hero-row {
+            flex-direction: column;
+        }
+
+        .cards-wrapper {
+            justify-content: center;
+            padding-right: 0;
+            margin-top: 30px;
+        }
+
+        .hero-content {
+            text-align: center;
+        }
+
+            .hero-content .lead {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+        .get-started-btn {
+            display: block;
+            margin: 0 auto 30px auto;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .cards-wrapper {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .feature-card {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
 </style>

@@ -25,7 +25,12 @@
         }
 
         .navbar {
-            background: transparent;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
             .navbar .btn-nav {
@@ -63,7 +68,7 @@
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand text-white fw-bold" href="@Url.Action("Index", "Home")">CIVICNEST</a>
+            <a class="navbar-brand text-white " href="@Url.Action("Dashboard", "Buyer", new { area = "Buyer" })">CIVICNEST</a>
             <div class="ms-auto">
                 <a href="@Url.Action("AboutUs", "Buyer", new { area = "Buyer" })" class="btn btn-nav">About</a>
 

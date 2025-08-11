@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace SocietyMng.Models.Auth
@@ -17,8 +18,9 @@ namespace SocietyMng.Models.Auth
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]
-        [StringLength(11, MinimumLength = 6)]
-        [RegularExpression(@"^(?!0+$)\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$")]
+        [StringLength(11, MinimumLength = 6, ErrorMessage = "Phone number must be between 6-11 digits")]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Phone number must contain only digits")]
+        [Remote("IsPhoneNumberAvailable", "Auth", ErrorMessage = "Phone number already registered")]
         public string PhoneNumber { get; set; }
 
         [Required]

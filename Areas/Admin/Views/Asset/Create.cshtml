@@ -56,6 +56,18 @@
             width: 100px;
         }
 
+        .description-group {
+            margin-bottom: 35px;
+        }
+
+        .description-error {
+            position: absolute;
+            bottom: -18px;
+            left: 0;
+            font-size: 12px;
+            color: #dc3545;
+        }
+
         input[type="text"],
         input[type="number"],
         textarea,
@@ -68,6 +80,13 @@
             color: black;
             flex: 1;
         }
+
+            input.is-invalid,
+            textarea.is-invalid,
+            select.is-invalid {
+                border: 2px solid #dc3545;
+                background-color: #f8d7da;
+            }
 
         textarea {
             height: 100px;
@@ -93,7 +112,6 @@
                 position: relative;
                 top: 0;
             }
-
 
         .file-upload-box {
             background: white;
@@ -139,9 +157,18 @@
             cursor: pointer;
         }
 
-
         .alert {
             color: red;
+            background-color: rgba(220, 53, 69, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .validation-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
         }
 
         /* Remove default checkbox appearance */
@@ -176,11 +203,12 @@
                     transform: rotate(45deg);
                 }
 
+
     </style>
 </head>
 <body>
     <div class="container">
-        @using (Html.BeginForm("Create", "Asset", new { area = "Admin" }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Create", "Asset", new { area = "Admin" }, FormMethod.Post, true, new { enctype = "multipart/form-data", id = "assetForm" }))
         {
             @Html.AntiForgeryToken()
 
@@ -205,50 +233,50 @@
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.BlockId, "Block")
-                        @Html.DropDownListFor(m => m.BlockId, new SelectList(ViewBag.Blocks as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description"), "-- Select Block --")
-                        @Html.ValidationMessageFor(m => m.BlockId, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(m => m.BlockId, new SelectList(ViewBag.Blocks as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description", Model?.BlockId), "-- Select Block --", new { id = "BlockId" })
+                        @Html.ValidationMessageFor(m => m.BlockId, "", new { @class = "validation-error" })
+                        <div class="validation-error" id="BlockId-error" style="display: none;"></div>
                     </div>
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.Address)
-                        @Html.TextBoxFor(m => m.Address)
-                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(m => m.Address, new { id = "Address", placeholder = "e.g., Block-A/123, Street-5/456", value = Model?.Address })
+                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "validation-error" })
+                        <div class="validation-error" id="Address-error" style="display: none;"></div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group description-group">
                         @Html.LabelFor(m => m.Description)
-                        @Html.TextAreaFor(m => m.Description)
-                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
-                    </div>
+                        @Html.TextAreaFor(m => m.Description, new {
+                        id = "Description",
+                                        placeholder = "Description must start with alphabets",
+                                        @value = Model?.Description
+                                        })
+                                       
+                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "validation-error" })
+                    <div class="validation-error" id="Description-error" style="display: none;"></div>
+                </div>
+
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.PlotNumber)
-                        @Html.TextBoxFor(m => m.PlotNumber)
-                        @Html.ValidationMessageFor(m => m.PlotNumber, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(m => m.PlotNumber, new { id = "PlotNumber", placeholder = "Enter digits only (e.g., 123)", value = Model?.PlotNumber })
+                        @Html.ValidationMessageFor(m => m.PlotNumber, "", new { @class = "validation-error" })
+                        <div class="validation-error" id="PlotNumber-error" style="display: none;"></div>
                     </div>
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.PropertyTypeId, "Property Type")
-                        @Html.DropDownListFor(m => m.PropertyTypeId, new SelectList(ViewBag.PropertyTypes as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description"), "-- Select Property Type --")
-                        @Html.ValidationMessageFor(m => m.PropertyTypeId, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="form-group">
-                        <label>Type</label>
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="radio" name="Type" value="Rent" checked /> Rent
-                            </label>
-                            <label>
-                                <input type="radio" name="Type" value="Sell" /> Sell
-                            </label>
-                        </div>
+                        @Html.DropDownListFor(m => m.PropertyTypeId, new SelectList(ViewBag.PropertyTypes as List<SocietyMng.Data.Entities.SystemCodeItem>, "Id", "Description", Model?.PropertyTypeId), "-- Select Property Type --", new { id = "PropertyTypeId" })
+                        @Html.ValidationMessageFor(m => m.PropertyTypeId, "", new { @class = "validation-error" })
+                        <div class="validation-error" id="PropertyTypeId-error" style="display: none;"></div>
                     </div>
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.Price)
-                        @Html.TextBoxFor(m => m.Price, new { type = "number", step = "0.01", min = "0" })
-                        @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(m => m.Price, new { type = "number", step = "1", min = "10000", max = "100000000", id = "Price", placeholder = "10,000 - 100,000,000", value = Model?.Price })
+                        @Html.ValidationMessageFor(m => m.Price, "", new { @class = "validation-error" })
+                        <div class="validation-error" id="Price-error" style="display: none;"></div>
                     </div>
                 </div>
 
@@ -262,17 +290,15 @@
 
                         <label class="custom-file-upload">
                             Select file
-
-
-                            <input type="file" id="ImageFile" name="ImageFile" accept="image/*" onchange="document.getElementById('previewImage').src = window.URL.createObjectURL(this.files[0])" />
-
+                            <input type="file" id="ImageFile" name="ImageFile" accept="image/*" onchange="previewImageFile(this)" />
                         </label>
 
                         @{
                             var maxFileSize = ViewBag.MaxFileSizeMB ?? 20;
                         }
                         <p style="font-size: 12px; margin-top: 10px;">Max size: @maxFileSize MB. JPG, PNG, GIF only</p>
-                        @Html.ValidationMessage("ImageFile", "", new { @class = "text-danger" })
+                        @Html.ValidationMessage("ImageFile", "", new { @class = "validation-error" })
+                        <div class="validation-error" id="ImageFile-error" style="display: none;"></div>
                     </div>
 
                     <button type="submit" class="submit-btn">Add</button>
@@ -280,46 +306,217 @@
             </div>
         }
     </div>
-</body>
-</html>
-@section Scripts {
-    <script>
-        document.getElementById('ImageFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const maxSizeMB = @(ViewBag.MaxFileSizeMB ?? 20); // Default to 20MB
-            const maxSize = maxSizeMB * 1024 * 1024; // Convert MB to bytes
 
-            if (file) {
+    <script>
+        // Validation patterns
+        const validationRules = {
+            Description: {
+                pattern: /^[A-Za-z][A-Za-z0-9\s\-\/.,]*$/,
+                message: "Invalid Description ."
+            },
+            Address: {
+                pattern: /^[A-Za-z][A-Za-z0-9\s\-\/]*$/,
+                message: "invalid Address "
+            },
+            PlotNumber: {
+                pattern: /^\d+$/,
+                message: "Plot number must contain only digits."
+            },
+            Price: {
+                min: 10000,
+                max: 100000000,
+                message: "Price must be between 10,000 and 100,000,000."
+            }
+        };
+
+        function previewImageFile(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const maxSizeMB = @(ViewBag.MaxFileSizeMB ?? 20);
+                const maxSize = maxSizeMB * 1024 * 1024;
+
+                // Check file size
                 if (file.size > maxSize) {
-                    alert('File size exceeds the maximum allowed size of ' + maxSizeMB + ' MB');
-                    this.value = '';
+                    showError('ImageFile', 'File size exceeds the maximum allowed size of ' + maxSizeMB + ' MB');
+                    input.value = '';
                     return;
+                } else {
+                    hideError('ImageFile');
                 }
 
-                // Show selected file name in console (optional)
-                console.log('Selected file:', file.name);
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
             }
-        })
-        // Form validation on submit
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const requiredFields = ['Description', 'Address', 'PlotNumber', 'Price', 'BlockId', 'PropertyTypeId'];
-            let isValid = true;
+        }
 
-            requiredFields.forEach(function(fieldName) {
-                const field = document.querySelector('[name="' + fieldName + '"]');
-                if (field && !field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('is-invalid');
-                } else if (field) {
-                    field.classList.remove('is-invalid');
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + '-error');
+
+            if (field) {
+                field.classList.add('is-invalid');
+            }
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function hideError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + '-error');
+
+            if (field) {
+                field.classList.remove('is-invalid');
+            }
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+        }
+
+        function validateField(fieldId) {
+            const field = document.getElementById(fieldId);
+            const value = field.value.trim();
+            const rule = validationRules[fieldId];
+
+            if (!value) {
+                showError(fieldId, fieldId + ' is required.');
+                return false;
+            }
+
+            if (rule) {
+                if (rule.pattern && !rule.pattern.test(value)) {
+                    showError(fieldId, rule.message);
+                    return false;
+                }
+
+                if (fieldId === 'Price') {
+                    const numValue = parseFloat(value);
+                    if (numValue < rule.min || numValue > rule.max) {
+                        showError(fieldId, rule.message);
+                        return false;
+                    }
+                }
+            }
+
+            hideError(fieldId);
+            return true;
+        }
+
+        function validateDropdown(fieldId) {
+            const field = document.getElementById(fieldId);
+            const value = field.value;
+
+            if (!value || value === '') {
+                showError(fieldId, 'Please select a ' + fieldId.replace('Id', '').toLowerCase() + '.');
+                return false;
+            }
+
+            hideError(fieldId);
+            return true;
+        }
+
+        function validateImageFile() {
+            const field = document.getElementById('ImageFile');
+
+            if (!field.files || field.files.length === 0) {
+                showError('ImageFile', 'Please select an image file.');
+                return false;
+            }
+
+            hideError('ImageFile');
+            return true;
+        }
+
+        // Real-time validation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Text field validations
+            ['Description', 'Address', 'PlotNumber', 'Price'].forEach(function(fieldId) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('blur', function() {
+                        validateField(fieldId);
+                    });
+
+                    field.addEventListener('input', function() {
+                        if (field.classList.contains('is-invalid')) {
+                            validateField(fieldId);
+                        }
+                    });
                 }
             });
 
-            if (!isValid) {
-                e.preventDefault();
-                alert('Please fill in all required fields.');
+            // Dropdown validations
+            ['BlockId', 'PropertyTypeId'].forEach(function(fieldId) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('change', function() {
+                        validateDropdown(fieldId);
+                    });
+                }
+            });
+
+            // Plot number - only digits
+            const plotField = document.getElementById('PlotNumber');
+            if (plotField) {
+                plotField.addEventListener('input', function(e) {
+                    // Remove any non-digit characters
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            }
+
+            // Price field - format number
+            const priceField = document.getElementById('Price');
+            if (priceField) {
+                priceField.addEventListener('input', function(e) {
+                    // Ensure only numbers
+                    let value = this.value.replace(/[^0-9]/g, '');
+                    if (value.length > 0) {
+                        this.value = value;
+                    }
+                });
             }
         });
 
+        // Form submission validation
+        document.getElementById('assetForm').addEventListener('submit', function(e) {
+            let isValid = true;
+
+            // Validate all fields
+            const fieldsToValidate = ['Description', 'Address', 'PlotNumber', 'Price'];
+            fieldsToValidate.forEach(function(fieldId) {
+                if (!validateField(fieldId)) {
+                    isValid = false;
+                }
+            });
+
+            const dropdownsToValidate = ['BlockId', 'PropertyTypeId'];
+            dropdownsToValidate.forEach(function(fieldId) {
+                if (!validateDropdown(fieldId)) {
+                    isValid = false;
+                }
+            });
+
+            if (!validateImageFile()) {
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please correct the validation errors before submitting.');
+
+                // Scroll to first error
+                const firstError = document.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
     </script>
-}
+</body>
+</html>

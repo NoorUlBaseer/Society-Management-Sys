@@ -83,7 +83,7 @@ namespace SocietyMng.Areas.Buyer.Controllers
             }
             else
             {
-                TempData["Error"] = "Failed to update profile";
+                TempData["Error"] = "Failed to update profile. Please check your inputs (email format, phone number format, or ensure new password is different from current password).\";";
             }
 
             return RedirectToAction("Profile");
