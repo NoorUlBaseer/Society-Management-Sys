@@ -1,266 +1,816 @@
-﻿@model IEnumerable<SocietyMng.Data.Entities.Asset>
+﻿@model List<SocietyMng.Data.Entities.Asset>
+@using System.Linq
 
-@{
-    ViewData["Title"] = "Available Assets";
-}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"] - CivicNest</title>
+    <title>Available Assets - CivicNest</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Kokoro&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        html, body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
             height: 100%;
             min-height: 100vh;
-        }
-
-        body {
-            background: linear-gradient(to bottom, black, #408350);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d4a2d 50%, #4a7c59 100%);
             color: white;
-            position: relative;
-            font-family: 'Kokoro', sans-serif !important;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            overflow-x: hidden;
         }
 
-        h1, .display-4 {
-            font-family: 'Julius Sans One', sans-serif !important;
-            font-size: 2rem;
-        }
-
-        .table-responsive {
-            background-color: rgba(255, 255, 255, 0.1);
+        .navbar {
+            background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
-            border-radius: 1rem;
-            padding: 2rem;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .table {
-            color: white;
+        .navbar-brand {
+            font-family: 'Julius Sans One', sans-serif;
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
         }
 
-            .table th {
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .nav-pills {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 5px;
+        }
+
+            .nav-pills .nav-link {
+                color: rgba(255, 255, 255, 0.7);
+                border-radius: 20px;
+                padding: 8px 20px;
+                margin: 0 5px;
+                transition: all 0.3s ease;
+                border: none;
+                background: transparent;
             }
 
-            .table td {
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-            }
+                .nav-pills .nav-link:hover {
+                    color: white;
+                    background: rgba(255, 255, 255, 0.2);
+                }
 
-        .badge {
-            font-size: 0.75em;
-        }
+                .nav-pills .nav-link.active {
+                    background: rgba(74, 124, 89, 0.8);
+                    color: white;
+                }
 
-        .clickable-row {
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
         }
 
-            .clickable-row:hover {
-                background-color: rgba(255, 255, 255, 0.1);
+            .profile-icon:hover {
+                background: rgba(255, 255, 255, 0.3);
             }
 
-        .form-control, .form-select {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .filters-sidebar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
             color: white;
         }
 
-            .form-control:focus, .form-select:focus {
-                background-color: rgba(255, 255, 255, 0.2);
-                color: white;
-                border-color: rgba(255, 255, 255, 0.3);
-                box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+        .filter-group {
+            margin-bottom: 2rem;
+        }
+
+            .filter-group label {
+                display: flex;
+                align-items: center;
+                margin-bottom: 0.75rem;
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 0.95rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
             }
 
-        .input-group-text {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+                .filter-group label:hover {
+                    color: white;
+                }
+
+            .filter-group input[type="radio"],
+            .filter-group input[type="checkbox"] {
+                margin-right: 0.75rem;
+                accent-color: #4a7c59;
+                transform: scale(1.1);
+            }
+
+        .price-range {
+            margin-top: 1rem;
+        }
+
+        .range-slider {
+            position: relative;
+            margin: 1rem 0;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .range-input {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: transparent;
+            outline: none;
+            position: absolute;
+            top: 0;
+            pointer-events: none;
+        }
+
+            .range-input::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: #4a7c59;
+                cursor: pointer;
+                border: 2px solid white;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                pointer-events: all;
+            }
+
+            .range-input::-moz-range-thumb {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: #4a7c59;
+                cursor: pointer;
+                border: 2px solid white;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                pointer-events: all;
+            }
+
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .assets-container {
+            position: relative;
+        }
+
+        .assets-grid {
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.3s ease;
+            margin-bottom: 3rem;
+        }
+
+        .asset-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #333;
+            min-width: 300px;
+            flex-shrink: 0;
+        }
+
+            .asset-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            }
+
+            .asset-card.hidden {
+                display: none;
+            }
+
+        .asset-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .asset-content {
+            padding: 1.25rem;
+        }
+
+        .asset-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .asset-location {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .asset-location i {
+                margin-right: 0.5rem;
+                color: #4a7c59;
+            }
+
+        .asset-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .asset-specs {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .asset-spec {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .asset-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #4a7c59;
+        }
+
+        .asset-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(74, 124, 89, 0.9);
             color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .scroll-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(74, 124, 89, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            font-size: 1.2rem;
+        }
+
+            .scroll-arrow:hover {
+                background: rgba(74, 124, 89, 1);
+                transform: translateY(-50%) scale(1.1);
+            }
+
+            .scroll-arrow.left {
+                left: -25px;
+            }
+
+            .scroll-arrow.right {
+                right: -25px;
+            }
+
+            .scroll-arrow:disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+            }
+
+                .scroll-arrow:disabled:hover {
+                    transform: translateY(-50%) scale(1);
+                    background: rgba(74, 124, 89, 0.9);
+                }
+
+        .assets-viewport {
+            overflow: hidden;
+        }
+
+        .pagination-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .dot.active {
+                background: white;
+                transform: scale(1.2);
+            }
+
+        .alert {
+            background: rgba(74, 124, 89, 0.2);
+            border: 1px solid rgba(74, 124, 89, 0.5);
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: rgba(220, 53, 69, 0.5);
+        }
+
+        .main-container img {
+            display: block;
+            margin: 2rem auto;
+            max-width: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="container d-flex justify-content-center poppins-font">
-        <div class="table-responsive m-4 p-5 rounded-5" style="max-width: 1200px; width: 100%;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h1 class="m-0">Available Assets (@Model.Count())</h1>
-            </div>
 
-            @if (TempData["Success"] != null)
-            {
-                <div class="alert alert-success">@TempData["Success"]</div>
-            }
-            @if (TempData["Error"] != null)
-            {
-                <div class="alert alert-danger">@TempData["Error"]</div>
-            }
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3">
+                <div class="filters-sidebar">
+                    <h3 class="filter-title">Filters</h3>
 
-            <div class="mb-3 d-flex justify-content-end">
-                <div class="d-flex align-items-center gap-3 flex-wrap p-2 rounded" style="background-color: rgba(255, 255, 255, 0.1);">
-                    <div id="customSearchWrapper" class="d-flex align-items-center"></div>
-                    <div class="d-flex align-items-center px-2">
-                        <label class="me-2 fw-bold m-0" for="sortSelect">Sort by:</label>
-                        <select id="sortSelect" class="form-select form-select-sm border-0 p-0 bg-transparent" style="width: auto; box-shadow: none;">
-                            <option value="">None</option>
-                            <option value="1-asc">Description ↑</option>
-                            <option value="1-desc">Description ↓</option>
-                            <option value="2-asc">Block ↑</option>
-                            <option value="2-desc">Block ↓</option>
-                            <option value="4-asc">Price ↑</option>
-                            <option value="4-desc">Price ↓</option>
-                        </select>
+                    <div class="filter-group">
+                        <label>
+                            <input type="radio" name="propertyType" value="all" checked>
+                            All Properties
+                        </label>
+                        <label>
+                            <input type="radio" name="propertyType" value="apartment">
+                            Apartments
+                        </label>
+                        <label>
+                            <input type="radio" name="propertyType" value="commercial">
+                            Commercial
+                        </label>
+                        <label>
+                            <input type="radio" name="propertyType" value="land">
+                            Land/Plot
+                        </label>
                     </div>
-                </div>
-            </div>
-
-            @if (Model.Any())
-            {
-                <table id="assetTable" class="table w-100">
-                    <thead>
-                        <tr class="text-center">
-                            <th class="fw-normal px-3 py-2">Description</th>
-                            <th class="fw-normal px-3 py-2">Block</th>
-                            <th class="fw-normal px-3 py-2">Type</th>
-                            <th class="fw-normal px-3 py-2">Price</th>
-                            <th class="fw-normal px-3 py-2">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var asset in Model)
-                        {
-                            var detailsUrl = Url.Action(
-                            "Details",
-                            "Buyer",
-                            new { area = "Buyer", id = asset.Id }
-                            );
-                            <tr class="text-center clickable-row"
-                                onclick="window.location='@detailsUrl'"
-                                data-id="@asset.Id"
-                                data-description="@asset.Description"
-                                data-address="@asset.Address"
-                                data-plot="@asset.PlotNumber"
-                                data-price="@asset.Price.ToString("C")"
-                                data-block="@asset.Block?.Description"
-                                data-type="@asset.PropertyType?.Description"
-                                data-status="@asset.Status?.Description"
-                                data-date="@asset.DateUploaded.ToString("dd/MM/yyyy")"
-                                data-image="@asset.ImagePath">
-                                <td class="text-start">@asset.Description</td>
-                                <td>@asset.Block?.Description</td>
-                                <td>
-                                    <span class="badge bg-secondary">@asset.PropertyType?.Description</span>
-                                </td>
-                                <td>
-                                    <span class="fw-bold text-success">@asset.Price.ToString("C")</span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-success">@asset.Status?.Code</span>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <div class="text-center py-5">
-                    <i class="fas fa-home fa-3x text-muted mb-3"></i>
-                    <h4 class="text-muted">No Assets Available</h4>
-                </div>
-            }
-        </div>
-    </div>
-
-    <div class="modal fade" id="assetModal" tabindex="-1" aria-labelledby="assetModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content bg-dark text-white" style="border-radius: 5rem;border: 3px solid #ffffff;">
-                <div class="modal-body px-5 py-5">
-                    <div class="row g-5">
-                        <div class="col-md-5 text-center d-flex align-items-center justify-content-center">
-                            <img id="modalAssetImage"
-                                 src=""
-                                 alt="Asset Image"
-                                 class="img-fluid rounded-4 shadow"
-                                 style="max-height: 300px; width: 100%; object-fit: cover;border: 1.5px solid #ffffff;" />
+                    <!-- Price Range -->
+                    <div class="filter-group">
+                        <h4 style="color: white; font-size: 1rem; margin-bottom: 1rem;">Price Range</h4>
+                        <div class="range-slider">
+                            <input type="range" class="range-input" id="minPrice"
+                                   min="@ViewBag.MinPrice"
+                                   max="@ViewBag.MaxPrice"
+                                   value="@ViewBag.MinPrice"
+                                   step="@(Math.Max(100000, (ViewBag.MaxPrice - ViewBag.MinPrice) / 100))">
+                            <input type="range" class="range-input" id="maxPrice"
+                                   min="@ViewBag.MinPrice"
+                                   max="@ViewBag.MaxPrice"
+                                   value="@ViewBag.MaxPrice"
+                                   step="@(Math.Max(100000, (ViewBag.MaxPrice - ViewBag.MinPrice) / 100))">
                         </div>
-
-                        <div class="col-md-7">
-                            <p><span class="modal-label">ID:</span> <span id="modalAssetId"></span></p>
-                            <p><span class="modal-label">Description:</span> <span id="modalAssetDescription"></span></p>
-                            <p><span class="modal-label">Address:</span> <span id="modalAssetAddress"></span></p>
-                            <p><span class="modal-label">Plot No.:</span> <span id="modalAssetPlot"></span></p>
-                            <p><span class="modal-label">Price:</span> <span id="modalAssetPrice"></span></p>
-                            <p><span class="modal-label">Block:</span> <span id="modalAssetBlock"></span></p>
-                            <p><span class="modal-label">Type:</span> <span id="modalAssetType"></span></p>
-                            <p><span class="modal-label">Status:</span> <span id="modalAssetStatus"></span></p>
-                            <p><span class="modal-label">Date Uploaded:</span> <span id="modalAssetDate"></span></p>
+                        <div class="range-values">
+                            <span id="minPriceValue">@ViewBag.MinPrice.ToString("C")</span>
+                            <span id="maxPriceValue">@ViewBag.MaxPrice.ToString("C")</span>
                         </div>
                     </div>
+
                 </div>
             </div>
-        </div>
-    </div>
 
-    @section Scripts {
-        <script>
-            $(document).ready(function () {
-                var table = $('#assetTable').DataTable({
-                    paging: true,
-                    searching: true,
-                    ordering: true,
-                    info: true,
-                    lengthChange: false,
-                    pageLength: 10,
-                    language: {
-                        emptyTable: "No assets found",
-                        paginate: {
-                            previous: "<",
-                            next: ">"
-                        },
-                        search: "",
-                        searchPlaceholder: "Search assets..."
-                    }
-                });
+            <!-- Assets Grid -->
+            <div class="col-lg-9">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="assets-container">
+                        <button class="scroll-arrow left" id="scrollLeft">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
 
-                $('#sortSelect').on('change', function () {
-                    const val = $(this).val();
-                    if (!val) {
-                        table.order([]).draw();
-                        return;
-                    }
+                        <div class="assets-viewport">
+                            <div class="assets-grid" id="assetsGrid" style="width: calc(2 * (300px + 15px));">
+                                <!-- Dynamic Assets from Model -->
+                                @foreach (var asset in Model)
+                                {
+                                    var detailsUrl = Url.Action("Details", "Buyer", new { area = "Buyer", id = asset.Id });
+                                    var propertyType = asset.PropertyType?.Description?.ToLower() ?? "apartment";
+                                    // Convert decimal to long first, then safely convert to int with bounds checking
+                                    var priceAsLong = (long)asset.Price;
+                                    var assetPrice = priceAsLong > int.MaxValue ? int.MaxValue : (int)priceAsLong;
 
-                    const [colIndex, dir] = val.split('-');
-                    table.order([parseInt(colIndex), dir]).draw();
-                });
+                                    <div class="asset-card"
+                                         data-type="@propertyType"
+                                         data-price="@((long)asset.Price)"
+                                         onclick="window.location='@detailsUrl'"
+                                         style="position: relative;">
+                                        <span class="asset-badge">@(asset.Status?.Code ?? "Available")</span>
+                                        <img src="@(asset.ImagePath ?? "/images/default-house.jpg")"
+                                             alt="@asset.Description"
+                                             class="asset-image"
+                                             onerror="this.src='/images/default-house.jpg'; this.onerror=null;">
+                                        <div class="asset-content">
+                                            <h3 class="asset-title">@asset.Description</h3>
+                                            <div class="asset-location">
+                                                <i class="bi bi-geo-alt"></i>
+                                                @(asset.Block?.Description ?? "Location Not Specified")
+                                            </div>
+                                            <div class="asset-details">
+                                                <div class="asset-specs">
+                                                    <div class="asset-spec">
+                                                        @if (propertyType.Contains("commercial"))
+                                                        {
+                                                            <i class="bi bi-building"></i>
+                                                        }
+                                                        else if (propertyType.Contains("house") || propertyType.Contains("villa"))
+                                                        {
+                                                            <i class="bi bi-house-heart"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-house"></i>
+                                                        }
+                                                        @(asset.PropertyType?.Description ?? "Property")
+                                                    </div>
+                                                    @if (asset.PlotNumber != null)
+                                                    {
+                                                        <div class="asset-spec">
+                                                            <i class="bi bi-map"></i>
+                                                            Plot @asset.PlotNumber
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="asset-price">@asset.Price.ToString("C")</div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
 
-                let searchBox = $('#assetTable_filter input');
-                let searchLabel = $('#assetTable_filter label');
-                let searchWrapper = $('#customSearchWrapper');
+                        <button class="scroll-arrow right" id="scrollRight">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
 
-                searchBox.addClass('form-control form-control-sm border-0');
-                searchBox.wrap('<div class="input-group"></div>');
-                searchBox.before('<span class="input-group-text"><i class="bi bi-search"></i></span>');
-
-                searchWrapper.append(searchBox.closest('.input-group'));
-                searchLabel.remove();
-            });
-
-            $(document).on('click', '.clickable-row', function (e) {
-                if ($(e.target).is('a, button, input, select, textarea')) {
-                    return;
+                    <!-- Pagination Dots -->
+                    <div class="pagination-dots" id="paginationDots">
+                        <!-- Dots will be generated dynamically -->
+                    </div>
                 }
-                window.location = $(this).data('href');
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-house" style="font-size: 3rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem;"></i>
+                        <h4 style="color: rgba(255,255,255,0.8);">No Assets Available</h4>
+                        <p style="color: rgba(255,255,255,0.6);">Check back later for new property listings.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <img src="~/images/Illustration.png" />
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        let currentScroll = 0;
+        let maxScroll = 0;
+        let cardWidth = 315; // 300px + 15px gap
+        let visibleCards = 3;
+
+        // Price Range Slider Functionality
+        const minPriceSlider = document.getElementById('minPrice');
+        const maxPriceSlider = document.getElementById('maxPrice');
+        const minPriceValue = document.getElementById('minPriceValue');
+        const maxPriceValue = document.getElementById('maxPriceValue');
+
+                function formatCurrency(value) {
+            value = parseInt(value); // Ensure it's treated as a number
+
+            // For very large numbers (over 1 billion)
+            if (value >= 1000000000) {
+                return '₹' + (value / 1000000000).toFixed(2) + 'B';
+            }
+            // For numbers over 10 million
+            else if (value >= 10000000) {
+                return '₹' + (value / 10000000).toFixed(1) + 'Cr';
+            }
+            // For numbers over 100 thousand
+            else if (value >= 100000) {
+                return '₹' + (value / 100000).toFixed(0) + 'L';
+            }
+            // For numbers over 1 thousand
+            else if (value >= 1000) {
+                return '₹' + (value / 1000).toFixed(0) + 'K';
+            }
+            // For smaller numbers
+            else {
+                return '₹' + value;
+            }
+        }
+
+        function updatePriceRange() {
+            let minVal = parseInt(minPriceSlider.value);
+            let maxVal = parseInt(maxPriceSlider.value);
+
+            // Ensure min doesn't exceed max
+            if (minVal > maxVal) {
+                minVal = maxVal;
+                minPriceSlider.value = minVal;
+            }
+
+            minPriceValue.textContent = formatCurrency(minVal);
+            maxPriceValue.textContent = formatCurrency(maxVal);
+
+            filterAssets();
+        }
+
+        if (minPriceSlider && maxPriceSlider) {
+            minPriceSlider.addEventListener('input', updatePriceRange);
+            maxPriceSlider.addEventListener('input', updatePriceRange);
+            // Initialize price range
+            updatePriceRange();
+        }
+
+        // Scrolling functionality
+        const assetsGrid = document.getElementById('assetsGrid');
+        const scrollLeftBtn = document.getElementById('scrollLeft');
+        const scrollRightBtn = document.getElementById('scrollRight');
+
+        function calculateMaxScroll() {
+            const visibleAssets = document.querySelectorAll('.asset-card:not(.hidden)');
+            const totalCards = visibleAssets.length;
+
+            // Calculate how many cards can fit in viewport
+            const viewportWidth = document.querySelector('.assets-viewport').offsetWidth;
+            visibleCards = Math.floor(viewportWidth / cardWidth);
+            if (visibleCards < 1) visibleCards = 1;
+
+            // Calculate maximum scroll needed
+            maxScroll = Math.max(0, (totalCards - visibleCards) * cardWidth);
+
+            updateScrollButtons();
+            updatePaginationDots();
+        }
+
+        function scrollAssets(direction) {
+            if (direction === 'left' && currentScroll > 0) {
+                currentScroll = Math.max(0, currentScroll - cardWidth);
+            } else if (direction === 'right' && currentScroll < maxScroll) {
+                currentScroll = Math.min(maxScroll, currentScroll + cardWidth);
+            }
+
+            if (assetsGrid) {
+                assetsGrid.style.transform = `translateX(-${currentScroll}px)`;
+            }
+            updateScrollButtons();
+            updatePaginationDots();
+        }
+
+        if (scrollLeftBtn && scrollRightBtn) {
+            scrollLeftBtn.addEventListener('click', () => scrollAssets('left'));
+            scrollRightBtn.addEventListener('click', () => scrollAssets('right'));
+        }
+
+        function updateScrollButtons() {
+            if (scrollLeftBtn && scrollRightBtn) {
+                scrollLeftBtn.disabled = currentScroll <= 0;
+                scrollRightBtn.disabled = currentScroll >= maxScroll;
+            }
+        }
+
+        function updatePaginationDots() {
+            const dotsContainer = document.getElementById('paginationDots');
+            if (!dotsContainer) return;
+
+            const totalVisibleCards = document.querySelectorAll('.asset-card:not(.hidden)').length;
+            const totalPages = Math.max(1, Math.ceil(totalVisibleCards / visibleCards));
+            const currentPage = Math.floor(currentScroll / (cardWidth * visibleCards));
+
+            // Clear existing dots
+            dotsContainer.innerHTML = '';
+
+            // Create new dots
+            for (let i = 0; i < totalPages; i++) {
+                const dot = document.createElement('div');
+                dot.className = `dot ${i === currentPage ? 'active' : ''}`;
+                dot.addEventListener('click', () => {
+                    currentScroll = i * cardWidth * visibleCards;
+                    if (currentScroll > maxScroll) currentScroll = maxScroll;
+                    if (assetsGrid) {
+                        assetsGrid.style.transform = `translateX(-${currentScroll}px)`;
+                    }
+                    updateScrollButtons();
+                    updatePaginationDots();
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+               // Update these variables at the top of the script
+        let currentScroll = 0;
+        let maxScroll = 0;
+        let cardWidth = 315; // 300px + 15px gap
+        let visibleCards = 2; // Changed from 3 to 2
+
+        // Update the filterAssets function to fix property type filtering
+        function filterAssets() {
+            const selectedPropertyType = document.querySelector('input[name="propertyType"]:checked')?.value || 'all';
+            const minPrice = minPriceSlider ? parseInt(minPriceSlider.value) : 0;
+            const maxPrice = maxPriceSlider ? parseInt(maxPriceSlider.value) : 10000000;
+
+            const allCards = document.querySelectorAll('.asset-card');
+            let visibleCount = 0;
+
+            allCards.forEach(card => {
+                const cardType = card.getAttribute('data-type')?.toLowerCase() || '';
+                const cardPrice = parseInt(card.getAttribute('data-price')) || 0;
+
+                let showCard = true;
+
+                // Filter by property type
+                if (selectedPropertyType !== 'all') {
+                    const normalizedSelectedType = selectedPropertyType.toLowerCase();
+                    const normalizedCardType = cardType.toLowerCase();
+
+                    // Check for exact match
+                    if (normalizedCardType !== normalizedSelectedType) {
+                        showCard = false;
+                    }
+                }
+
+                // Filter by price range
+                if (cardPrice < minPrice || cardPrice > maxPrice) {
+                    showCard = false;
+                }
+
+                if (showCard) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
             });
-        </script>
-    }
+
+            // Reset scroll position and recalculate
+            currentScroll = 0;
+            if (assetsGrid) {
+                assetsGrid.style.transform = `translateX(0px)`;
+            }
+
+            // Handle no results case
+            handleNoResults(visibleCount);
+
+            // Recalculate scroll parameters
+            calculateMaxScroll();
+        }
+
+        function handleNoResults(visibleCount) {
+            const assetsViewport = document.querySelector('.assets-viewport');
+            const scrollArrows = document.querySelectorAll('.scroll-arrow');
+            const paginationDots = document.querySelector('.pagination-dots');
+
+            let noResultsMsg = document.getElementById('noResults');
+
+            if (visibleCount === 0) {
+                if (!noResultsMsg) {
+                    noResultsMsg = document.createElement('div');
+                    noResultsMsg.id = 'noResults';
+                    noResultsMsg.className = 'text-center py-5';
+                    noResultsMsg.innerHTML = `
+                        <i class="bi bi-search" style="font-size: 3rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem;"></i>
+                        <h4 style="color: rgba(255,255,255,0.8);">No Properties Found</h4>
+                        <p style="color: rgba(255,255,255,0.6);">Try adjusting your filters to see more results.</p>
+                    `;
+                    if (assetsViewport) {
+                        assetsViewport.appendChild(noResultsMsg);
+                    }
+                }
+                scrollArrows.forEach(arrow => arrow.style.display = 'none');
+                if (paginationDots) paginationDots.style.display = 'none';
+            } else {
+                if (noResultsMsg) {
+                    noResultsMsg.remove();
+                }
+                scrollArrows.forEach(arrow => arrow.style.display = 'flex');
+                if (paginationDots) paginationDots.style.display = 'flex';
+            }
+        }
+
+        // Add event listeners for property type filters
+        function initializeFilters() {
+            const propertyTypeRadios = document.querySelectorAll('input[name="propertyType"]');
+            propertyTypeRadios.forEach(radio => {
+                radio.addEventListener('change', filterAssets);
+            });
+        }
+
+        // Handle window resize
+        function handleResize() {
+            calculateMaxScroll();
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFilters();
+            calculateMaxScroll();
+            updateScrollButtons();
+
+            // Initial filter to ensure everything is displayed correctly
+            setTimeout(filterAssets, 100);
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        if (assetsGrid) {
+            assetsGrid.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            assetsGrid.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+        }
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - scroll right
+                    scrollAssets('right');
+                } else {
+                    // Swipe right - scroll left
+                    scrollAssets('left');
+                }
+            }
+        }
+
+    </script>
 </body>
 </html>

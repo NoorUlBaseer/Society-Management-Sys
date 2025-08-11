@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "About Us";
+    Layout = "_Layout";
+}
+
+<div class="container about-page">
+    <div class="row">
+        <!-- Main Content Column -->
+        <div class="col-lg-7 order-lg-1 order-2">
+            <h2 class="mb-4">About Us</h2>
+
+            <div class="about-content">
+                <p>
+                    CivicNest is a modern, well-planned housing society designed to offer a secure, connected, and high-quality lifestyle to its residents. With over <strong>400+ verified residential and commercial plots</strong>, CivicNest is the ideal choice for individuals and families looking to invest in their future.
+                </p>
+
+                <p>
+                    Our society features state-of-the-art infrastructure, well-developed roads, dedicated green spaces, and reliable access to essential utilities like electricity, water, and gas. We prioritize transparency, convenience, and community by integrating digital tools that allow residents to book plots, submit complaints, and receive real-time updates, all through a secure online platform.
+                </p>
+
+                <p>
+                    Whether you're planning to build your dream home or invest in commercial property, CivicNest offers a trusted and streamlined experience from plot selection to ownership.
+                </p>
+            </div>
+        </div>
+
+        <!-- Image Column -->
+        <div class="col-lg-5 order-lg-2 order-1 mb-4 mb-lg-0">
+            <img src="~/images/img_Aboutus.jpg" alt="CivicNest Community" class="img-fluid about-image rounded-lg">
+        </div>
+    </div>
+
+    <!-- Years of Excellence Section (now below both columns) -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="years-of-excellence text-center py-4">
+                <h3 class="mb-3">25 Years of Excellence</h3>
+                <p class="mb-0 excellence-text">
+                    Building secure, connected communities with trust and innovation since 1999.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .about-page {
+        padding: 80px 20px;
+        color: white;
+    }
+
+        .about-page h1 {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .about-page h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            position: relative;
+            align-content: center;
+            padding-bottom: 10px;
+        }
+
+            .about-page h2:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: #408350;
+            }
+
+    .about-content p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+    }
+
+    .about-content strong {
+        color: white;
+    }
+
+    .years-of-excellence {
+        background: black;
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+        .years-of-excellence h3 {
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+    .excellence-text {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .about-image {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        object-fit: cover;
+        height: 100%;
+        min-height: 350px;
+    }
+
+    @@media (max-width: 992px) {
+        .about-image {
+            min-height: 300px;
+            margin-bottom: 30px;
+        }
+    }
+</style>

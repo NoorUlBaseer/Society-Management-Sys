@@ -28,6 +28,12 @@ namespace SocietyMng.Areas.Buyer.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> AboutUs()
+        {
+            return View();
+        }
+
+
 
         [HttpGet]
         public async Task<IActionResult> Profile()
@@ -104,6 +110,11 @@ namespace SocietyMng.Areas.Buyer.Controllers
         public async Task<IActionResult> Index()
         {
             var assets = await _buyerService.GetAllAssetsAsync();
+            var priceRange = await _buyerService.GetPriceRangeAsync();
+
+            ViewBag.MinPrice = priceRange.minPrice;
+            ViewBag.MaxPrice = priceRange.maxPrice;
+
             return View(assets);
         }
 

@@ -1,6 +1,7 @@
 ﻿@model SocietyMng.Data.Entities.Asset
 @{
     ViewData["Title"] = "Asset Details";
+    Layout = "_Layout";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -13,29 +14,66 @@
     <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Kokoro&display=swap" rel="stylesheet">
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
+        body {
+
+            background: linear-gradient(to bottom, black, #408350);
+            color: black;
+            font-family: 'Kokoro', sans-serif;
             min-height: 100vh;
         }
 
-        body {
-            background: linear-gradient(to bottom, black, #408350);
-            color: white;
-            position: relative;
-            font-family: 'Kokoro', sans-serif !important;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+        .property-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: flex-start;
         }
 
-        h1, .display-4 {
-            font-family: 'Julius Sans One', sans-serif !important;
-            font-size: 2rem;
+        .property-img {
+            flex: 1 1 45%;
         }
+
+            .property-img img {
+                width: 100%;
+                border-radius: 10px;
+                box-shadow: 0px 4px 15px rgba(0,0,0,0.4);
+            }
+
+        .property-details {
+            flex: 1 1 50%;
+        }
+
+        .property-title {
+            font-family: 'Julius Sans One', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .property-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .btn-book {
+            background-color: black;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+        }
+
+            .btn-book:hover {
+                background-color: #222;
+            }
     </style>
 </head>
-<body>
+<body class="container py-5">
 
     @if (TempData["Error"] != null)
     {
@@ -46,52 +84,39 @@
         <div class="alert alert-success">@TempData["Success"]</div>
     }
 
-    <h2>Asset Details</h2>
-    <div class="col-md-4">
-        @if (!string.IsNullOrEmpty(Model.ImagePath))
-        {
-            <img src="@Model.ImagePath"
-                 alt="Asset Image"
-                 class="img-fluid rounded shadow-sm"
-                 onerror="this.src='/images/no-image.png'; this.onerror=null;" />
-        }
-        else
-        {
-            <div class="bg-light d-flex align-items-center justify-content-center"
-                 style="width:100%;height:200px;border:1px solid #ddd;">
-                <i class="fas fa-image fa-3x text-muted"></i>
-            </div>
-        }
+    <div class="property-card">
+        <div class="property-img">
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <img src="@Model.ImagePath" alt="Asset Image"
+                     onerror="this.src='/images/no-image.png'; this.onerror=null;" />
+            }
+            else
+            {
+                <div class="bg-light text-dark d-flex align-items-center justify-content-center"
+                     style="width:100%;height:300px;border-radius:10px;">
+                    <i class="bi bi-image" style="font-size: 3rem;"></i>
+                </div>
+            }
+        </div>
+
+        <div class="property-details">
+            <h3 class="property-title">House # @Model.Id, @Model.Block?.Description</h3>
+            <p>@Model.Description</p>
+            <p><strong>Type:</strong> @Model.PropertyType?.Description</p>
+            <br /><br />
+            <p><strong>Status:</strong> @Model.Status?.Code</p>
+            <div class="property-price">Price: @Model.Price.ToString("C")</div>
+
+            <form asp-area="Buyer" asp-controller="Buyer" asp-action="Book" method="post">
+                @Html.AntiForgeryToken()
+                <p align="right">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn-book mt-3">Book Now</button>
+                </p>
+            </form>
+        </div>
     </div>
-    <div>
-        <p><strong>Description:</strong> @Model.Description</p>
-        <p><strong>Block:</strong> @Model.Block?.Description</p>
-        <p><strong>Type:</strong> @Model.PropertyType?.Description</p>
-        <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
-        <p><strong>Status:</strong> @Model.Status?.Code</p>
-        <p><strong>Asset ID:</strong> @Model.Id</p>
-    </div>
 
-    <form asp-area="Buyer" asp-controller="Buyer" asp-action="Book" method="post" onsubmit="console.log('Form submitting...'); return true;">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="id" value="@Model.Id" />
-        <button type="submit" class="btn btn-primary"
-                onclick="console.log('Button clicked, Asset ID: @Model.Id');"
-                Book Asset
-        </button>
-    </form>
-
-    <a asp-area="Buyer" asp-controller="Buyer" asp-action="Index" class="btn btn-secondary mt-2">Back to List</a>
-
-    <!-- Alternative form for testing -->
-    <hr />
-    <h4>Alternative Test Form:</h4>
-    <form action="/Buyer/Buyer/Book" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="id" value="@Model.Id" />
-        <button type="submit" class="btn btn-warning">
-            Test Book Asset (Direct URL)
-        </button>
-    </form>
 </body>
 </html>
