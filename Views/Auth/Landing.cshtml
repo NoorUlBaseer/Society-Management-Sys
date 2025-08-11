@@ -115,6 +115,11 @@
 
         document.addEventListener('keydown', revealContent);
         document.addEventListener('mousedown', revealContent);
+
+        // Auto-move after 0.5 seconds
+        setTimeout(() => {
+            revealContent();
+        }, 500);
     </script>
 </body>
 </html>
