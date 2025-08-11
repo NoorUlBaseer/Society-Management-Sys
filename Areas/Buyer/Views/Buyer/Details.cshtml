@@ -128,10 +128,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form id="bookingForm" asp-area="Buyer" asp-controller="Buyer" asp-action="Book" asp-route-id="@Model.Id" method="post">
+                    <form action="@Url.Action("Book", "Buyer", new { area = "Buyer", id = Model.Id })" method="post">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-primary">Confirm Booking</button>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -140,7 +141,7 @@
     @section Scripts {
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script>
+        @* <script>
             $(document).ready(function() {
                 $('#bookingForm').on('submit', function(e) {
                     e.preventDefault(); 
@@ -158,7 +159,7 @@
                     });
                 });
             });
-        </script>
+        </script> *@
     }
 </body>
 </html>

@@ -32,7 +32,7 @@
         }
 
         .navbar {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
             padding: 1rem 0;
             position: sticky;
@@ -49,13 +49,13 @@
         }
 
         .nav-pills {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             border-radius: 25px;
             padding: 5px;
         }
 
             .nav-pills .nav-link {
-                color: rgba(255, 255, 255, 0.7);
+                color: rgba(255,255,255,0.7);
                 border-radius: 20px;
                 padding: 8px 20px;
                 margin: 0 5px;
@@ -66,18 +66,18 @@
 
                 .nav-pills .nav-link:hover {
                     color: white;
-                    background: rgba(255, 255, 255, 0.2);
+                    background: rgba(255,255,255,0.2);
                 }
 
                 .nav-pills .nav-link.active {
-                    background: rgba(74, 124, 89, 0.8);
+                    background: rgba(74,124,89,0.8);
                     color: white;
                 }
 
         .profile-icon {
             width: 40px;
             height: 40px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -87,7 +87,7 @@
         }
 
             .profile-icon:hover {
-                background: rgba(255, 255, 255, 0.3);
+                background: rgba(255,255,255,0.3);
             }
 
         .main-container {
@@ -99,9 +99,9 @@
         }
 
         .filters-sidebar {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255,255,255,0.05);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 15px;
             padding: 1.5rem;
             height: fit-content;
@@ -124,7 +124,7 @@
                 display: flex;
                 align-items: center;
                 margin-bottom: 0.75rem;
-                color: rgba(255, 255, 255, 0.9);
+                color: rgba(255,255,255,0.9);
                 font-size: 0.95rem;
                 cursor: pointer;
                 transition: all 0.3s ease;
@@ -134,8 +134,7 @@
                     color: white;
                 }
 
-            .filter-group input[type="radio"],
-            .filter-group input[type="checkbox"] {
+            .filter-group input[type="radio"], .filter-group input[type="checkbox"] {
                 margin-right: 0.75rem;
                 accent-color: #4a7c59;
                 transform: scale(1.1);
@@ -149,7 +148,7 @@
             position: relative;
             margin: 1rem 0;
             height: 6px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             border-radius: 3px;
         }
 
@@ -162,7 +161,6 @@
             outline: none;
             position: absolute;
             top: 0;
-            pointer-events: none;
         }
 
             .range-input::-webkit-slider-thumb {
@@ -174,8 +172,7 @@
                 background: #4a7c59;
                 cursor: pointer;
                 border: 2px solid white;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-                pointer-events: all;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             }
 
             .range-input::-moz-range-thumb {
@@ -185,8 +182,7 @@
                 background: #4a7c59;
                 cursor: pointer;
                 border: 2px solid white;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-                pointer-events: all;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             }
 
         .range-values {
@@ -194,7 +190,7 @@
             justify-content: space-between;
             margin-top: 0.5rem;
             font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255,255,255,0.8);
         }
 
         .assets-container {
@@ -203,37 +199,40 @@
 
         .assets-grid {
             display: flex;
-            gap: 1.5rem;
+            gap: 15px;
             transition: transform 0.3s ease;
             margin-bottom: 3rem;
+            white-space: nowrap;
         }
 
         .asset-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255,255,255,0.95);
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
             cursor: pointer;
             color: #333;
             min-width: 300px;
             flex-shrink: 0;
+            display: inline-block;
+            vertical-align: top;
         }
 
             .asset-card:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             }
 
             .asset-card.hidden {
-                display: none;
+                display: none !important;
             }
 
         .asset-image {
             width: 100%;
             height: 200px;
             object-fit: cover;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
 
         .asset-content {
@@ -290,7 +289,7 @@
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background: rgba(74, 124, 89, 0.9);
+            background: rgba(74,124,89,0.9);
             color: white;
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
@@ -302,7 +301,7 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(74, 124, 89, 0.9);
+            background: rgba(74,124,89,0.9);
             color: white;
             border: none;
             border-radius: 50%;
@@ -318,7 +317,7 @@
         }
 
             .scroll-arrow:hover {
-                background: rgba(74, 124, 89, 1);
+                background: rgba(74,124,89,1);
                 transform: translateY(-50%) scale(1.1);
             }
 
@@ -337,7 +336,7 @@
 
                 .scroll-arrow:disabled:hover {
                     transform: translateY(-50%) scale(1);
-                    background: rgba(74, 124, 89, 0.9);
+                    background: rgba(74,124,89,0.9);
                 }
 
         .assets-viewport {
@@ -355,7 +354,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.3);
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -366,16 +365,16 @@
             }
 
         .alert {
-            background: rgba(74, 124, 89, 0.2);
-            border: 1px solid rgba(74, 124, 89, 0.5);
+            background: rgba(74,124,89,0.2);
+            border: 1px solid rgba(74,124,89,0.5);
             border-radius: 10px;
             color: white;
             margin-bottom: 1.5rem;
         }
 
         .alert-danger {
-            background: rgba(220, 53, 69, 0.2);
-            border-color: rgba(220, 53, 69, 0.5);
+            background: rgba(220,53,69,0.2);
+            border-color: rgba(220,53,69,0.5);
         }
 
         .main-container img {
@@ -447,13 +446,12 @@
                         </button>
 
                         <div class="assets-viewport">
-                            <div class="assets-grid" id="assetsGrid" style="width: calc(2 * (300px + 15px));">
+                            <div class="assets-grid" id="assetsGrid">
                                 <!-- Dynamic Assets from Model -->
                                 @foreach (var asset in Model)
                                 {
                                     var detailsUrl = Url.Action("Details", "Buyer", new { area = "Buyer", id = asset.Id });
                                     var propertyType = asset.PropertyType?.Description?.ToLower() ?? "apartment";
-                                    // Convert decimal to long first, then safely convert to int with bounds checking
                                     var priceAsLong = (long)asset.Price;
                                     var assetPrice = priceAsLong > int.MaxValue ? int.MaxValue : (int)priceAsLong;
 
@@ -511,9 +509,8 @@
                         </button>
                     </div>
 
-                    <!-- Pagination Dots -->
                     <div class="pagination-dots" id="paginationDots">
-                        <!-- Dots will be generated dynamically -->
+                       
                     </div>
                 }
                 else
@@ -536,285 +533,232 @@
 
     <!-- Custom JavaScript -->
     <script>
-        let currentScroll = 0;
-        let maxScroll = 0;
-        let cardWidth = 315; // 300px + 15px gap
-        let visibleCards = 3;
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const cardWidth = 315; 
+            let currentScroll = 0;
+            let maxScroll = 0;
+            let visibleCards = 1; 
+            const minPriceSlider = document.getElementById('minPrice');
+            const maxPriceSlider = document.getElementById('maxPrice');
+            const minPriceValue = document.getElementById('minPriceValue');
+            const maxPriceValue = document.getElementById('maxPriceValue');
+            const assetsGrid = document.getElementById('assetsGrid');
+            const scrollLeftBtn = document.getElementById('scrollLeft');
+            const scrollRightBtn = document.getElementById('scrollRight');
+            const paginationDotsContainer = document.getElementById('paginationDots');
 
-        // Price Range Slider Functionality
-        const minPriceSlider = document.getElementById('minPrice');
-        const maxPriceSlider = document.getElementById('maxPrice');
-        const minPriceValue = document.getElementById('minPriceValue');
-        const maxPriceValue = document.getElementById('maxPriceValue');
+            if (!assetsGrid) return; 
 
-                function formatCurrency(value) {
-            value = parseInt(value); // Ensure it's treated as a number
-
-            // For very large numbers (over 1 billion)
-            if (value >= 1000000000) {
-                return '₹' + (value / 1000000000).toFixed(2) + 'B';
-            }
-            // For numbers over 10 million
-            else if (value >= 10000000) {
-                return '₹' + (value / 10000000).toFixed(1) + 'Cr';
-            }
-            // For numbers over 100 thousand
-            else if (value >= 100000) {
-                return '₹' + (value / 100000).toFixed(0) + 'L';
-            }
-            // For numbers over 1 thousand
-            else if (value >= 1000) {
-                return '₹' + (value / 1000).toFixed(0) + 'K';
-            }
-            // For smaller numbers
-            else {
-                return '₹' + value;
-            }
-        }
-
-        function updatePriceRange() {
-            let minVal = parseInt(minPriceSlider.value);
-            let maxVal = parseInt(maxPriceSlider.value);
-
-            // Ensure min doesn't exceed max
-            if (minVal > maxVal) {
-                minVal = maxVal;
-                minPriceSlider.value = minVal;
+            function formatCurrency(value) {
+                value = Number(value) || 0;
+                if (value >= 1000000000) return '₹' + (value / 1000000000).toFixed(2) + 'B';
+                if (value >= 10000000) return '₹' + (value / 10000000).toFixed(1) + 'Cr';
+                if (value >= 100000) return '₹' + (value / 100000).toFixed(0) + 'L';
+                if (value >= 1000) return '₹' + (value / 1000).toFixed(0) + 'K';
+                return '₹' + value.toString();
             }
 
-            minPriceValue.textContent = formatCurrency(minVal);
-            maxPriceValue.textContent = formatCurrency(maxVal);
+            function updatePriceRange() {
+                if (!minPriceSlider || !maxPriceSlider) return;
+                let minVal = parseInt(minPriceSlider.value);
+                let maxVal = parseInt(maxPriceSlider.value);
+                if (isNaN(minVal)) minVal = 0;
+                if (isNaN(maxVal)) maxVal = Number(maxPriceSlider.max) || 10000000;
 
-            filterAssets();
-        }
+                //  min <= max
+                if (minVal > maxVal) {
+                    minVal = maxVal;
+                    minPriceSlider.value = minVal;
+                }
 
-        if (minPriceSlider && maxPriceSlider) {
-            minPriceSlider.addEventListener('input', updatePriceRange);
-            maxPriceSlider.addEventListener('input', updatePriceRange);
-            // Initialize price range
-            updatePriceRange();
-        }
-
-        // Scrolling functionality
-        const assetsGrid = document.getElementById('assetsGrid');
-        const scrollLeftBtn = document.getElementById('scrollLeft');
-        const scrollRightBtn = document.getElementById('scrollRight');
-
-        function calculateMaxScroll() {
-            const visibleAssets = document.querySelectorAll('.asset-card:not(.hidden)');
-            const totalCards = visibleAssets.length;
-
-            // Calculate how many cards can fit in viewport
-            const viewportWidth = document.querySelector('.assets-viewport').offsetWidth;
-            visibleCards = Math.floor(viewportWidth / cardWidth);
-            if (visibleCards < 1) visibleCards = 1;
-
-            // Calculate maximum scroll needed
-            maxScroll = Math.max(0, (totalCards - visibleCards) * cardWidth);
-
-            updateScrollButtons();
-            updatePaginationDots();
-        }
-
-        function scrollAssets(direction) {
-            if (direction === 'left' && currentScroll > 0) {
-                currentScroll = Math.max(0, currentScroll - cardWidth);
-            } else if (direction === 'right' && currentScroll < maxScroll) {
-                currentScroll = Math.min(maxScroll, currentScroll + cardWidth);
+                minPriceValue.textContent = formatCurrency(minVal);
+                maxPriceValue.textContent = formatCurrency(maxVal);
+                filterAssets();
             }
 
-            if (assetsGrid) {
+            if (minPriceSlider && maxPriceSlider) {
+                minPriceSlider.addEventListener('input', updatePriceRange);
+                maxPriceSlider.addEventListener('input', updatePriceRange);
+                updatePriceRange();
+            }
+
+            function calculateMaxScroll() {
+                const visibleAssets = document.querySelectorAll('.asset-card:not(.hidden)');
+                const totalCards = visibleAssets.length;
+                const viewportWidth = document.querySelector('.assets-viewport').offsetWidth;
+                visibleCards = Math.max(1, Math.floor(viewportWidth / cardWidth));
+                assetsGrid.style.width = `${totalCards * cardWidth}px`;
+
+                maxScroll = Math.max(0, (totalCards - visibleCards) * cardWidth);
+                if (currentScroll > maxScroll) currentScroll = maxScroll;
+
+                applyTransform();
+                updateScrollButtons();
+                renderPaginationDots();
+            }
+
+            function applyTransform() {
                 assetsGrid.style.transform = `translateX(-${currentScroll}px)`;
             }
-            updateScrollButtons();
-            updatePaginationDots();
-        }
 
-        if (scrollLeftBtn && scrollRightBtn) {
-            scrollLeftBtn.addEventListener('click', () => scrollAssets('left'));
-            scrollRightBtn.addEventListener('click', () => scrollAssets('right'));
-        }
+            function scrollAssets(direction) {
+                if (direction === 'left' && currentScroll > 0) {
+                    currentScroll = Math.max(0, currentScroll - cardWidth);
+                } else if (direction === 'right' && currentScroll < maxScroll) {
+                    currentScroll = Math.min(maxScroll, currentScroll + cardWidth);
+                }
+                applyTransform();
+                updateScrollButtons();
+                renderPaginationDots();
+            }
 
-        function updateScrollButtons() {
             if (scrollLeftBtn && scrollRightBtn) {
+                scrollLeftBtn.addEventListener('click', () => scrollAssets('left'));
+                scrollRightBtn.addEventListener('click', () => scrollAssets('right'));
+            }
+
+            function updateScrollButtons() {
+                if (!scrollLeftBtn || !scrollRightBtn) return;
                 scrollLeftBtn.disabled = currentScroll <= 0;
                 scrollRightBtn.disabled = currentScroll >= maxScroll;
+                
+                const visibleCount = document.querySelectorAll('.asset-card:not(.hidden)').length;
+                if (visibleCount <= visibleCards) {
+                    scrollLeftBtn.style.display = 'none';
+                    scrollRightBtn.style.display = 'none';
+                } else {
+                    scrollLeftBtn.style.display = 'flex';
+                    scrollRightBtn.style.display = 'flex';
+                }
             }
-        }
 
-        function updatePaginationDots() {
-            const dotsContainer = document.getElementById('paginationDots');
-            if (!dotsContainer) return;
+            function renderPaginationDots() {
+                if (!paginationDotsContainer) return;
+                paginationDotsContainer.innerHTML = '';
+                const visibleCount = document.querySelectorAll('.asset-card:not(.hidden)').length;
+                const totalPages = Math.max(1, Math.ceil(visibleCount / visibleCards));
+                const currentPage = Math.floor(currentScroll / (cardWidth * visibleCards));
 
-            const totalVisibleCards = document.querySelectorAll('.asset-card:not(.hidden)').length;
-            const totalPages = Math.max(1, Math.ceil(totalVisibleCards / visibleCards));
-            const currentPage = Math.floor(currentScroll / (cardWidth * visibleCards));
-
-            // Clear existing dots
-            dotsContainer.innerHTML = '';
-
-            // Create new dots
-            for (let i = 0; i < totalPages; i++) {
-                const dot = document.createElement('div');
-                dot.className = `dot ${i === currentPage ? 'active' : ''}`;
-                dot.addEventListener('click', () => {
-                    currentScroll = i * cardWidth * visibleCards;
-                    if (currentScroll > maxScroll) currentScroll = maxScroll;
-                    if (assetsGrid) {
-                        assetsGrid.style.transform = `translateX(-${currentScroll}px)`;
-                    }
-                    updateScrollButtons();
-                    updatePaginationDots();
-                });
-                dotsContainer.appendChild(dot);
+                for (let i = 0; i < totalPages; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = `dot ${i === currentPage ? 'active' : ''}`;
+                    dot.addEventListener('click', () => {
+                        currentScroll = i * cardWidth * visibleCards;
+                        if (currentScroll > maxScroll) currentScroll = maxScroll;
+                        applyTransform();
+                        updateScrollButtons();
+                        renderPaginationDots();
+                    });
+                    paginationDotsContainer.appendChild(dot);
+                }
             }
-        }
 
-               // Update these variables at the top of the script
-        let currentScroll = 0;
-        let maxScroll = 0;
-        let cardWidth = 315; // 300px + 15px gap
-        let visibleCards = 2; // Changed from 3 to 2
+            // Filtering
+            function matchesPropertyType(cardType, selectedType) {
+                if (!cardType) return false;
+                cardType = cardType.toLowerCase();
+                selectedType = selectedType.toLowerCase();
 
-        // Update the filterAssets function to fix property type filtering
-        function filterAssets() {
-            const selectedPropertyType = document.querySelector('input[name="propertyType"]:checked')?.value || 'all';
-            const minPrice = minPriceSlider ? parseInt(minPriceSlider.value) : 0;
-            const maxPrice = maxPriceSlider ? parseInt(maxPriceSlider.value) : 10000000;
+                if (selectedType === 'all') return true;
+                if (cardType.includes(selectedType)) return true;
 
-            const allCards = document.querySelectorAll('.asset-card');
-            let visibleCount = 0;
+                if (selectedType === 'land' && (cardType.includes('land') || cardType.includes('plot'))) return true;
+                if (selectedType === 'apartment' && (cardType.includes('apartment') || cardType.includes('flat'))) return true;
+                if (selectedType === 'commercial' && cardType.includes('commercial')) return true;
 
-            allCards.forEach(card => {
-                const cardType = card.getAttribute('data-type')?.toLowerCase() || '';
-                const cardPrice = parseInt(card.getAttribute('data-price')) || 0;
+                return false;
+            }
 
-                let showCard = true;
+            function filterAssets() {
+                const selectedPropertyType = document.querySelector('input[name="propertyType"]:checked')?.value || 'all';
+                const minPrice = minPriceSlider ? Number(minPriceSlider.value) : 0;
+                const maxPrice = maxPriceSlider ? Number(maxPriceSlider.value) : Number.MAX_SAFE_INTEGER;
 
-                // Filter by property type
-                if (selectedPropertyType !== 'all') {
-                    const normalizedSelectedType = selectedPropertyType.toLowerCase();
-                    const normalizedCardType = cardType.toLowerCase();
+                const allCards = document.querySelectorAll('.asset-card');
+                let visibleCount = 0;
 
-                    // Check for exact match
-                    if (normalizedCardType !== normalizedSelectedType) {
+                allCards.forEach(card => {
+                    const cardType = (card.getAttribute('data-type') || '').toLowerCase();
+                    const cardPrice = Number(card.getAttribute('data-price')) || 0;
+
+                    let showCard = true;
+
+                    if (!matchesPropertyType(cardType, selectedPropertyType)) {
                         showCard = false;
                     }
-                }
 
-                // Filter by price range
-                if (cardPrice < minPrice || cardPrice > maxPrice) {
-                    showCard = false;
-                }
-
-                if (showCard) {
-                    card.classList.remove('hidden');
-                    visibleCount++;
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-
-            // Reset scroll position and recalculate
-            currentScroll = 0;
-            if (assetsGrid) {
-                assetsGrid.style.transform = `translateX(0px)`;
-            }
-
-            // Handle no results case
-            handleNoResults(visibleCount);
-
-            // Recalculate scroll parameters
-            calculateMaxScroll();
-        }
-
-        function handleNoResults(visibleCount) {
-            const assetsViewport = document.querySelector('.assets-viewport');
-            const scrollArrows = document.querySelectorAll('.scroll-arrow');
-            const paginationDots = document.querySelector('.pagination-dots');
-
-            let noResultsMsg = document.getElementById('noResults');
-
-            if (visibleCount === 0) {
-                if (!noResultsMsg) {
-                    noResultsMsg = document.createElement('div');
-                    noResultsMsg.id = 'noResults';
-                    noResultsMsg.className = 'text-center py-5';
-                    noResultsMsg.innerHTML = `
-                        <i class="bi bi-search" style="font-size: 3rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem;"></i>
-                        <h4 style="color: rgba(255,255,255,0.8);">No Properties Found</h4>
-                        <p style="color: rgba(255,255,255,0.6);">Try adjusting your filters to see more results.</p>
-                    `;
-                    if (assetsViewport) {
-                        assetsViewport.appendChild(noResultsMsg);
+                    if (cardPrice < minPrice || cardPrice > maxPrice) {
+                        showCard = false;
                     }
-                }
-                scrollArrows.forEach(arrow => arrow.style.display = 'none');
-                if (paginationDots) paginationDots.style.display = 'none';
-            } else {
-                if (noResultsMsg) {
-                    noResultsMsg.remove();
-                }
-                scrollArrows.forEach(arrow => arrow.style.display = 'flex');
-                if (paginationDots) paginationDots.style.display = 'flex';
+
+                    if (showCard) {
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+                currentScroll = 0;
+                applyTransform();
+
+                handleNoResults(visibleCount);
+                calculateMaxScroll();
             }
-        }
 
-        // Add event listeners for property type filters
-        function initializeFilters() {
-            const propertyTypeRadios = document.querySelectorAll('input[name="propertyType"]');
-            propertyTypeRadios.forEach(radio => {
-                radio.addEventListener('change', filterAssets);
-            });
-        }
+            function handleNoResults(visibleCount) {
+                const assetsViewport = document.querySelector('.assets-viewport');
+                const paginationDots = document.querySelector('.pagination-dots');
+                let noResultsMsg = document.getElementById('noResults');
 
-        // Handle window resize
-        function handleResize() {
-            calculateMaxScroll();
-        }
-
-        window.addEventListener('resize', handleResize);
-
-        // Initialize everything when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeFilters();
-            calculateMaxScroll();
-            updateScrollButtons();
-
-            // Initial filter to ensure everything is displayed correctly
-            setTimeout(filterAssets, 100);
-        });
-
-        // Touch/swipe support for mobile
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        if (assetsGrid) {
-            assetsGrid.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-            });
-
-            assetsGrid.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            });
-        }
-
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            const diff = touchStartX - touchEndX;
-
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    // Swipe left - scroll right
-                    scrollAssets('right');
+                if (visibleCount === 0) {
+                    if (!noResultsMsg) {
+                        noResultsMsg = document.createElement('div');
+                        noResultsMsg.id = 'noResults';
+                        noResultsMsg.className = 'text-center py-5';
+                        noResultsMsg.innerHTML = `\n                            <i class="bi bi-search" style="font-size: 3rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem;"></i>\n                            <h4 style="color: rgba(255,255,255,0.8);">No Properties Found</h4>\n                            <p style="color: rgba(255,255,255,0.6);">Try adjusting your filters to see more results.</p>\n                        `;
+                        if (assetsViewport) assetsViewport.appendChild(noResultsMsg);
+                    }
+                    if (paginationDots) paginationDots.style.display = 'none';
                 } else {
-                    // Swipe right - scroll left
-                    scrollAssets('left');
+                    if (noResultsMsg) noResultsMsg.remove();
+                    if (paginationDots) paginationDots.style.display = 'flex';
                 }
             }
-        }
 
+            function initializeFilters() {
+                const propertyTypeRadios = document.querySelectorAll('input[name="propertyType"]');
+                propertyTypeRadios.forEach(radio => radio.addEventListener('change', filterAssets));
+            }
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    scrollAssets('left');
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    scrollAssets('right');
+                }
+            });
+
+            let touchStartX = 0;
+            let touchEndX = 0;
+            assetsGrid.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+            assetsGrid.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); });
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) scrollAssets('right'); else scrollAssets('left');
+                }
+            }
+            window.addEventListener('resize', function () { calculateMaxScroll(); });
+
+            initializeFilters();
+            setTimeout(() => {
+                calculateMaxScroll();
+                filterAssets();
+            }, 120);
+        });
     </script>
 </body>
 </html>
