@@ -5,6 +5,7 @@ using SocietyMng.Configurations;
 using SocietyMng.Data;
 using SocietyMng.Data.Entities;
 using SocietyMng.Services.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace SocietyMng.Services
 {
@@ -49,13 +50,27 @@ namespace SocietyMng.Services
             if (user == null)
                 return false;
 
+            var emailRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9._%+-]+@[a-zA-Z]+\.com$");
+            if (!emailRegex.IsMatch(profile.Email))
+            {
+                return false;
+            }
+            var phoneRegex = new Regex(@"^(?!0+$)\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$");
+            if (!string.IsNullOrEmpty(profile.PhoneNumber) && !phoneRegex.IsMatch(profile.PhoneNumber))
+            {
+                return false;
+            }
             user.Email = profile.Email;
             user.PhoneNumber = profile.PhoneNumber;
             if (!string.IsNullOrEmpty(profile.NewPassword))
             {
+                if (BCrypt.Net.BCrypt.Verify(profile.NewPassword, user.PasswordHash))
+                {
+                    return false;
+                }
+
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(profile.NewPassword);
             }
-
             try
             {
                 await _context.SaveChangesAsync();
