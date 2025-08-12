@@ -43,7 +43,7 @@
             background-color: white;
             border-radius: 10px;
             padding: 1.5rem;
-            margin-top: 80px;
+            margin-top: 110px;
             display: flex;
             flex-wrap: wrap;
             gap: 1.5rem;
@@ -67,7 +67,7 @@
         .property-title {
             font-family: 'Julius Sans One', sans-serif;
             font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .property-price {
@@ -119,9 +119,11 @@
 
         <div class="property-details">
             <h3 class="property-title">House # @Model.Id, @Model.Block?.Description</h3>
-            <p>@Model.Description</p>
+            <br />
+            <br />
             <p><strong>Type:</strong> @Model.PropertyType?.Description</p>
-            <br /><br />
+            <br /><br /><br />
+            <p>@Model.Description</p>
             <p><strong>Status:</strong> @Model.Status?.Code</p>
             <div class="property-price">Price: @Model.Price.ToString("N2")</div>
 
