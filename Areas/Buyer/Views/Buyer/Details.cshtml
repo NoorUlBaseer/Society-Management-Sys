@@ -123,7 +123,7 @@
             <p><strong>Type:</strong> @Model.PropertyType?.Description</p>
             <br /><br />
             <p><strong>Status:</strong> @Model.Status?.Code</p>
-            <div class="property-price">Price: @Model.Price.ToString("C")</div>
+            <div class="property-price">Price: @Model.Price.ToString("N2")</div>
 
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal">
                 Book Now
@@ -141,7 +141,7 @@
                 <div class="modal-body">
                     <p>Are you sure you want to book this property?</p>
                     <p><strong>House # @Model.Id, @Model.Block?.Description</strong></p>
-                    <p>Price: @Model.Price.ToString("C")</p>
+                    <p>Price: @Model.Price.ToString("N2")</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -157,26 +157,6 @@
 
     @section Scripts {
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-        @* <script>
-            $(document).ready(function() {
-                $('#bookingForm').on('submit', function(e) {
-                    e.preventDefault(); 
-                    var form = $(this);
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: 'POST',
-                        data: form.serialize(),
-                        success: function(response) {
-                            window.location.href = '@Url.Action("MyBookings", "Buyer", new { area = "Buyer" })';
-                        },
-                        error: function(xhr) {
-                            alert('Error booking property: ' + xhr.responseText);
-                        }
-                    });
-                });
-            });
-        </script> *@
     }
 </body>
 </html>

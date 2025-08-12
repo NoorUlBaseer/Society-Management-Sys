@@ -84,7 +84,7 @@
         .main-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 0rem;
             position: relative;
             z-index: 2;
         }
@@ -94,7 +94,7 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 15px;
-            padding: 1.5rem;
+            padding:1.5rem;
             height: fit-content;
             position: sticky;
             top: 100px;
@@ -187,8 +187,6 @@
         .assets-container {
             position: relative;
         }
-
-        /* Fixed: Change to 2x2 grid layout */
         .assets-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -203,10 +201,10 @@
             border-radius: 12px;
             overflow: hidden;
             display: flex;
-            flex-direction: row; /* Changed from column to row */
+            flex-direction: row; 
             transition: transform 0.2s ease;
             cursor: pointer;
-            height: 280px; /* Fixed height for consistent grid */
+            height: 280px;
         }
 
             .asset-card:hover {
@@ -219,22 +217,22 @@
             }
 
         .asset-image {
-            width: 40%; /* Image takes 40% of card width */
-            height: 100%; /* Full height of card */
+            width: 50%; 
+            height: 100%; 
             object-fit: cover;
-            flex-shrink: 0; /* Prevent image from shrinking */
+            flex-shrink: 0; 
         }
 
         .asset-content {
             padding: 1rem;
-            flex: 1; /* Takes remaining 60% of width */
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         .asset-title {
-            font-size: 1rem; /* Slightly larger for horizontal layout */
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: #333;
@@ -242,7 +240,7 @@
         }
 
         .asset-location {
-            font-size: 0.85rem; /* Slightly larger for better readability */
+            font-size: 0.85rem; 
             color: #666;
             margin-bottom: 0.8rem;
             display: flex;
@@ -256,7 +254,7 @@
 
         .asset-details {
             display: flex;
-            flex-direction: column; /* Stack specs and price vertically */
+            flex-direction: column;
             gap: 0.8rem;
             margin-top: auto;
         }
@@ -264,9 +262,9 @@
         .asset-specs {
             display: flex;
             gap: 1rem;
-            font-size: 0.8rem; /* Slightly larger for better readability */
+            font-size: 0.8rem; 
             color: #666;
-            flex-wrap: wrap; /* Allow wrapping if needed */
+            flex-wrap: wrap; 
         }
 
         .asset-spec {
@@ -276,16 +274,16 @@
         }
 
         .asset-price {
-            font-size: 1.1rem; /* Slightly larger for emphasis */
+            font-size: 1.1rem; 
             font-weight: 700;
             color: #4a7c59;
-            align-self: flex-start; /* Align to start instead of stretching */
+            align-self: flex-start; 
         }
 
         .asset-badge {
             position: absolute;
             top: 0.8rem;
-            left: 0.8rem; /* Moved to left side over the image */
+            left: 0.8rem; 
             background: rgba(74,124,89,0.9);
             color: white;
             padding: 0.2rem 0.6rem;
@@ -421,7 +419,7 @@
                                    min="@ViewBag.MinPrice"
                                    max="@ViewBag.MaxPrice"
                                    value="@ViewBag.MinPrice"
-                                   step="@(Math.Max(100000, (ViewBag.MaxPrice - ViewBag.MinPrice) / 100))">
+                                   step="@(Math.Max(10000, (ViewBag.MaxPrice - ViewBag.MinPrice) / 100))">
                             <input type="range" class="range-input" id="maxPrice"
                                    min="@ViewBag.MinPrice"
                                    max="@ViewBag.MaxPrice"
