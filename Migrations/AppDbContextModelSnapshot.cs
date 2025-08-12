@@ -74,7 +74,7 @@ namespace SocietyMng.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Assets");
+                    b.ToTable("Assets", (string)null);
                 });
 
             modelBuilder.Entity("SocietyMng.Data.Entities.Booking", b =>
@@ -107,7 +107,7 @@ namespace SocietyMng.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("SocietyMng.Data.Entities.Complaint", b =>
@@ -149,7 +149,7 @@ namespace SocietyMng.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Complaints");
+                    b.ToTable("Complaints", (string)null);
                 });
 
             modelBuilder.Entity("SocietyMng.Data.Entities.SystemCode", b =>
@@ -170,7 +170,7 @@ namespace SocietyMng.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SystemCodes");
+                    b.ToTable("SystemCodes", (string)null);
 
                     b.HasData(
                         new
@@ -228,7 +228,7 @@ namespace SocietyMng.Migrations
 
                     b.HasIndex("SystemCodeId");
 
-                    b.ToTable("SystemCodeItems");
+                    b.ToTable("SystemCodeItems", (string)null);
 
                     b.HasData(
                         new
@@ -252,6 +252,15 @@ namespace SocietyMng.Migrations
                         new
                         {
                             Id = 3,
+                            Code = "Sales",
+                            Description = "Society Sales",
+                            IsActive = true,
+                            SortOrder = 3,
+                            SystemCodeId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
                             Code = "BLOCK_A",
                             Description = "Block A",
                             IsActive = true,
@@ -260,7 +269,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 5,
                             Code = "BLOCK_B",
                             Description = "Block B",
                             IsActive = true,
@@ -269,7 +278,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 6,
                             Code = "BLOCK_C",
                             Description = "Block C",
                             IsActive = true,
@@ -278,7 +287,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 7,
                             Code = "BLOCK_D",
                             Description = "Block D",
                             IsActive = true,
@@ -287,7 +296,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 8,
                             Code = "APARTMENT",
                             Description = "Apartment",
                             IsActive = true,
@@ -296,7 +305,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 9,
                             Code = "COMMERCIAL",
                             Description = "Commercial",
                             IsActive = true,
@@ -305,7 +314,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 9,
+                            Id = 10,
                             Code = "LAND",
                             Description = "Land/Plot",
                             IsActive = true,
@@ -314,7 +323,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 10,
+                            Id = 11,
                             Code = "AVAILABLE",
                             Description = "Available",
                             IsActive = true,
@@ -323,7 +332,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 11,
+                            Id = 12,
                             Code = "BOOKED",
                             Description = "Booked",
                             IsActive = true,
@@ -332,7 +341,7 @@ namespace SocietyMng.Migrations
                         },
                         new
                         {
-                            Id = 12,
+                            Id = 13,
                             Code = "SOLD",
                             Description = "Sold",
                             IsActive = true,
@@ -382,7 +391,7 @@ namespace SocietyMng.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
