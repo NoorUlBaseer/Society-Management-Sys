@@ -384,7 +384,7 @@ namespace SocietyMng.Services
             var totalAssets = await _context.Assets.CountAsync();
 
             var bookedAssets = await _context.Bookings
-                .Where(b => b.Status != "Cancelled")
+                .Where(b => b.Status != "Cancelled" && b.Status != "Processed")
                 .Select(b => b.AssetId)
                 .Distinct()
                 .CountAsync();
