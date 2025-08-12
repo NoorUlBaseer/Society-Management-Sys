@@ -419,12 +419,12 @@
                                    min="@ViewBag.MinPrice"
                                    max="@ViewBag.MaxPrice"
                                    value="@ViewBag.MinPrice"
-                                   step="@(Math.Max(10000, (ViewBag.MaxPrice - ViewBag.MinPrice) / 100))">
+                                   step="@(Math.Max(100000, (ViewBag.MaxPrice - ViewBag.MinPrice) / 10000))">
                             <input type="range" class="range-input" id="maxPrice"
                                    min="@ViewBag.MinPrice"
                                    max="@ViewBag.MaxPrice"
                                    value="@ViewBag.MaxPrice"
-                                   step="@(Math.Max(100000, (ViewBag.MaxPrice - ViewBag.MinPrice) / 100))">
+                                   step="@(Math.Max(100000, (ViewBag.MaxPrice - ViewBag.MinPrice) / 10000))">
                         </div>
                         <div class="range-values">
                             <span id="minPriceValue">Rs. @ViewBag.MinPrice?.ToString("N0")</span>

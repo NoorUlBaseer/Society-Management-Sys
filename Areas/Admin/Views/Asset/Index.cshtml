@@ -56,16 +56,6 @@
                     </select>
                 </div>
 
-                <div class="d-flex align-items-center gap-2">
-                    <label class="fw-bold text-black-50 m-0" for="propertyTypeFilter">Filter by:</label>
-                    <select id="propertyTypeFilter" class="form-select form-select-sm border-0 px-5 bg-transparent" style="width: auto; box-shadow: none;">
-                        <option value="">All</option>
-                        <option value="Apartment">Apartment</option>
-                        <option value="Commercial">Commercial</option>
-                        <option value="Land/Plot">Land / Plot</option>
-                    </select>
-                </div>
-
             </div>
         </div>
 
@@ -229,15 +219,13 @@
                 columnDefs: [
                     {
                         orderable: false,
-                        targets: [0, 6] // # column and Actions column
+                        targets: [0, 6]
                     },
                     {
-                        // Price column - extract numeric value from data-order attribute
                         targets: 2,
                         type: 'num'
                     },
                     {
-                        // Date column - use data-order attribute (ticks) for sorting
                         targets: 5,
                         type: 'num'
                     }
@@ -254,9 +242,9 @@
                     search: "",
                     searchPlaceholder: "Search assets..."
                 },
-                // Custom sorting for data-order attributes
+                
                 createdRow: function(row, data, dataIndex) {
-                    // Price column
+                   
                     var priceCell = $(row).find('td:eq(2)');
                     var priceValue = priceCell.attr('data-order');
                     if (priceValue) {
@@ -272,11 +260,9 @@
                 }
             });
 
-            // Custom sorting implementation
             $('#sortSelect').on('change', function () {
                 const val = $(this).val();
                 if (!val) {
-                    // Clear all sorting
                     table.order([]).draw();
                     return;
                 }
@@ -298,17 +284,16 @@
             searchLabel.remove();
 
             // Property type filter
-            $('#propertyTypeFilter').on('change', function () {
-                var selected = $(this).val();
+            // $('#propertyTypeFilter').on('change', function () {
+            //     var selected = $(this).val();
 
-                if (selected === "") {
-                    table.column(3).search('').draw();
-                } else {
-                    table.column(3).search(selected, false, false).draw();
-                }
-            });
+            //     if (selected === "") {
+            //         table.column(3).search('').draw();
+            //     } else {
+            //         table.column(3).search(selected, false, false).draw();
+            //     }
+            // });
 
-            // Hide original DataTable elements
             $('#assetTable_filter').hide();
             $('#assetTable_paginate').appendTo('#assetTable_wrapper');
         });
@@ -375,7 +360,6 @@
             const assetId = $(this).data('asset-id');
             $('#modalDeleteAssetId').val(assetId);
 
-            // Find the form inside the modal to submit
             deleteAssetForm = $('#modalDeleteAssetId').closest('form');
 
             const modal = new bootstrap.Modal(document.getElementById('deleteAssetConfirmModal'));
