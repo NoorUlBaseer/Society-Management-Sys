@@ -7,7 +7,7 @@ namespace SocietyMng.Services.Interfaces
     {
         Task<Profile> GetProfileAsync(int userId);
         Task<bool> UpdateProfileAsync(Profile profile);
-        Task<bool> DeleteAccountAsync(int userId);
+        Task<bool> DeleteAccountAsync(int userId, string password);
         Task<List<Asset>> GetAllAssetsAsync();
         Task<Asset> GetAssetByIdAsync(int assetId);
         Task<BookingResult> BookAssetAsync(int userId, int assetId);

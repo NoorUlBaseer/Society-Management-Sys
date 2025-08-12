@@ -88,21 +88,46 @@ namespace SocietyMng.Areas.Buyer.Controllers
 
             return RedirectToAction("Profile");
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteAccount()
+        public async Task<IActionResult> DeleteAccount(string password, string confirmText)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var success = await _buyerService.DeleteAccountAsync(userId);
-
-            if (success)
+            if (string.IsNullOrEmpty(password))
             {
-                return RedirectToAction("Landing", "Auth", new { area = "" });
+                TempData["Error"] = "Password is required to delete account";
+                return RedirectToAction("Profile");
             }
-            else
+
+            if (string.IsNullOrEmpty(confirmText) || !confirmText.Equals("Confirm", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Error"] = "Failed to delete account";
+                TempData["Error"] = "Please type 'Confirm' to delete your account";
+                return RedirectToAction("Profile");
+            }
+
+            try
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                _logger.LogInformation("User {UserId} attempting to delete account", userId);
+
+                var success = await _buyerService.DeleteAccountAsync(userId, password);
+
+                if (success)
+                {
+                    _logger.LogInformation("Account successfully deleted for user {UserId}", userId);
+                    TempData["Success"] = "Account deleted successfully";
+                    return RedirectToAction("Landing", "Auth", new { area = "" });
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to delete account for user {UserId} - likely invalid password", userId);
+                    TempData["Error"] = "Failed to delete account. Please check your password and try again.";
+                    return RedirectToAction("Profile");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception occurred while deleting account");
+                TempData["Error"] = "An unexpected error occurred while deleting your account. Please try again.";
                 return RedirectToAction("Profile");
             }
         }

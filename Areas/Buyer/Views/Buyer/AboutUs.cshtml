@@ -23,26 +23,21 @@
                 </p>
             </div>
         </div>
-
-        <!-- Image Column -->
         <div class="col-lg-5 order-lg-2 order-1 mb-4 mb-lg-0">
             <img src="~/images/img_Aboutus.jpg" alt="CivicNest Community" class="img-fluid about-image rounded-lg">
         </div>
     </div>
 
-    <!-- Years of Excellence Section (now below both columns) -->
-    <div class="row mt-5">
-        <div class="col-12">
+    <div class="full-width-section mt-5">
+        <div class="container">
             <div class="years-of-excellence text-center py-4">
                 <h3 class="mb-3">25 Years of Excellence</h3>
                 <p class="mb-0 excellence-text">
-                    Building secure, connected communities with trust and innovation since 1999.
+                    Building secure, connected communities with trust and innovation since 2025.
                 </p>
             </div>
         </div>
     </div>
-</div>
-
 <style>
     .about-page {
         padding: 80px 20px;
@@ -84,15 +79,23 @@
         color: white;
     }
 
-    .years-of-excellence {
-        background: black;
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        max-width: 800px;
-        margin: 0 auto;
-    }
+        .full-width-section {
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            background: black;
+        }
+
+        .years-of-excellence {
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
         .years-of-excellence h3 {
             font-size: 1.8rem;
@@ -135,6 +138,10 @@
         .about-image {
             min-height: 300px;
             margin-bottom: 30px;
+        }
+
+        .years-of-excellence {
+            padding: 30px 15px;
         }
     }
 </style>

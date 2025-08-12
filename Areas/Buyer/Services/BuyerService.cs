@@ -82,21 +82,79 @@ namespace SocietyMng.Services
             }
         }
 
-        public async Task<bool> DeleteAccountAsync(int userId)
+        public async Task<bool> DeleteAccountAsync(int userId, string password)
         {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                return false;
-
-            _context.Users.Remove(user);
-
             try
             {
-                await _context.SaveChangesAsync();
-                return true;
+                _logger.LogInformation("Attempting to delete account for user {UserId}", userId);
+
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    _logger.LogWarning("User {UserId} not found for account deletion", userId);
+                    return false;
+                }
+
+                // password check
+                if (string.IsNullOrEmpty(password) || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                {
+                    _logger.LogWarning("Invalid password provided for user {UserId} account deletion", userId);
+                    return false;
+                }
+
+                //Entity Framework's retry strategy
+                var strategy = _context.Database.CreateExecutionStrategy();
+                return await strategy.ExecuteAsync(async () =>
+                {
+                    using var transaction = await _context.Database.BeginTransactionAsync();
+                    try
+                    {
+                        var pendingBookings = await _context.Bookings
+                            .Include(b => b.Asset)
+                            .Where(b => b.UserId == userId && b.Status == "Pending")
+                            .ToListAsync();
+
+                        if (pendingBookings.Any())
+                        {
+                            _logger.LogInformation("Cancelling {Count} pending bookings for user {UserId}", pendingBookings.Count, userId);
+
+                            var availableStatus = await _context.SystemCodeItems
+                                .Include(sci => sci.SystemCode)
+                                .Where(sci => sci.SystemCode.Code == "Asset_Status" &&
+                                             sci.Code.ToUpper() == _appSetting.Asset_Status.AVAILABLE.ToUpper())
+                                .FirstOrDefaultAsync();
+
+                            if (availableStatus != null)
+                            {
+                                foreach (var booking in pendingBookings)
+                                {
+                                    booking.Status = "Cancelled";
+                                    if (booking.Asset != null)
+                                    {
+                                        booking.Asset.StatusId = availableStatus.Id;
+                                    }
+                                }
+                            }
+                        }
+                        _context.Users.Remove(user);
+
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
+                        _logger.LogInformation("Successfully deleted account for user {UserId}", userId);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        _logger.LogError(ex, "Error occurred while deleting account for user {UserId}", userId);
+                        return false;
+                    }
+                });
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Unexpected error in DeleteAccountAsync for user {UserId}", userId);
                 return false;
             }
         }

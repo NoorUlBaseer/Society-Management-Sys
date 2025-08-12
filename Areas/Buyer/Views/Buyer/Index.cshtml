@@ -188,26 +188,20 @@
             position: relative;
         }
 
-        .assets-grid {
-            display: flex;
-            gap: 15px;
-            transition: transform 0.3s ease;
-            margin-bottom: 3rem;
-            white-space: nowrap;
+        ..assets-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
         }
 
         .asset-card {
-            background: rgba(255,255,255,0.95);
-            border-radius: 15px;
+            background: #f5f5f5;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            color: #333;
-            min-width: 300px;
-            flex-shrink: 0;
-            display: inline-block;
-            vertical-align: top;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease;
         }
 
             .asset-card:hover {
@@ -221,9 +215,8 @@
 
         .asset-image {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
 
         .asset-content {
