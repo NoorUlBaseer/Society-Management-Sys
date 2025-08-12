@@ -96,9 +96,12 @@
         }
 
         .no-bookings {
+            color: white;
+            font-family: 'Julius Sans One', sans-serif;
             text-align: center;
-            margin-top: 60px;
+            margin-top: 100px;
         }
+       
 
             .no-bookings i {
                 font-size: 3rem;
@@ -127,9 +130,6 @@
                 <i class="bi bi-calendar-x"></i>
                 <h4>No Bookings Found</h4>
                 <p>You haven't made any bookings yet.</p>
-                <a asp-area="Buyer" asp-controller="Buyer" asp-action="Index" class="btn btn-light">
-                    <i class="bi bi-search"></i> Browse Available Assets
-                </a>
             </div>
         }
         else
