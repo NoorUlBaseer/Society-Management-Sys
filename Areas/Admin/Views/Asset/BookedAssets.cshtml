@@ -9,7 +9,7 @@
     <div class="container">
         @if (TempData["SuccessMessage"] != null)
         {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
                 @TempData["SuccessMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -17,7 +17,7 @@
 
         @if (TempData["ErrorMessage"] != null)
         {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorAlert">
                 @TempData["ErrorMessage"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -42,7 +42,7 @@
                             </select>
                         </div>
 
-                        <div class="d-flex align-items-center gap-2">
+                        @* <div class="d-flex align-items-center gap-2">
                             <label class="fw-bold text-black-50 m-0" for="statusFilter">Filter by:</label>
                             <select id="statusFilter" class="form-select form-select-sm border-0 px-4 bg-transparent" style="width: auto; box-shadow: none;">
                                 <option value="">All</option>
@@ -50,7 +50,7 @@
                                 <option value="Confirmed">Confirmed</option>
                                 <option value="Rejected">Rejected</option>
                             </select>
-                        </div>
+                        </div> *@
                     </div>
                 </div>
 
@@ -262,6 +262,22 @@
 
 @section Scripts {
     <script>
+                $(document).ready(function() {
+            const successAlert = $('#successAlert');
+            const errorAlert = $('#errorAlert');
+
+            if (successAlert.length) {
+                setTimeout(function() {
+                    successAlert.alert('close');
+                }, 4000);
+            }
+
+            if (errorAlert.length) {
+                setTimeout(function() {
+                    errorAlert.alert('close');
+                }, 4000);
+            }
+        });
         $(document).ready(function () {
             const table = $('#bookingTable').DataTable({
                 paging: true,
