@@ -33,6 +33,11 @@
             z-index: 1000;
         }
 
+		    .navbar-brand img {
+                max-width: 300px;
+                height: auto;
+            }
+
             .navbar .btn-nav {
                 border-radius: 20px;
                 margin: 0 5px;
@@ -68,7 +73,11 @@
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand text-white " href="@Url.Action("Dashboard", "Buyer", new { area = "Buyer" })">CIVICNEST</a>
+            @* <a class="navbar-brand text-white " href="@Url.Action("Dashboard", "Buyer", new { area = "Buyer" })">CIVICNEST</a> *@
+            <a class="navbar-brand" href="@Url.Action("Dashboard", "Buyer", new { area = "Buyer" })">
+                <img src="~/images/logo.png" alt="CivicNest Logo" />
+            </a>
+
             <div class="ms-auto">
                 <a href="@Url.Action("AboutUs", "Buyer", new { area = "Buyer" })" class="btn btn-nav">About</a>
 

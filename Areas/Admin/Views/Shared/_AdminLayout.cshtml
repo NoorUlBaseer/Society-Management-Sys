@@ -46,6 +46,15 @@
                 transition: opacity 0.3s;
             }
 
+            .sidebar img {
+                max-width: 250px;
+                height: auto;
+                margin-bottom: 10px;
+				margin-left: 15px;
+				margin-top: 25px;
+                margin-bottom: 20px;
+			}
+
             .sidebar.collapsed h2 {
                 opacity: 0;
             }
@@ -219,7 +228,8 @@
             <i class="bi bi-list"></i>
         </button>
 
-        <h2>CIVICNEST</h2>
+        @* <h2>CIVICNEST</h2> *@
+        <img src="~/images/logo.png" alt="CivicNest Logo" />
 
         <a href="@Url.Action("Dashboard", "Admin", new { area = "Admin" })"
            class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">

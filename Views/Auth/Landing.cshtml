@@ -31,11 +31,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 4em;
-            letter-spacing: 2px;
-            font-family: 'Julius Sans One', sans-serif;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
+
+            #splashText img {
+                width: 500px;
+                height: auto;
+                display: block;
+            }
 
             #splashText.hide {
                 opacity: 0;
@@ -53,6 +56,12 @@
             left: 50%;
             transform: translate(-50%, 30%);
         }
+
+            #chooseContent img {
+                max-width: 500px; 
+                height: auto;
+                margin-bottom: 10px;
+            }
 
             #chooseContent.show {
                 opacity: 1;
@@ -89,10 +98,15 @@
     </style>
 </head>
 <body>
-    <div id="splashText">CIVICNEST</div>
+    @* <div id="splashText">CIVICNEST</div> *@
+    <div id="splashText">
+        <img src="~/images/logo.png" alt="CivicNest Logo" />
+    </div>
 
     <div id="chooseContent">
-        <h1>CIVICNEST</h1>
+        @* <h1>CIVICNEST</h1> *@
+        <img src="~/images/logo.png" alt="CivicNest Logo" />
+
         <p>Your gateway to buying plots and homes with confidence.</p>
 
         <div class="button-row">

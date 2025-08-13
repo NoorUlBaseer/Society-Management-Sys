@@ -22,13 +22,19 @@
             font-family: 'Kokoro', sans-serif !important;
         }
 
-        h1, .display-4 {
+        h1{
             font-family: 'Julius Sans One', sans-serif !important;
             font-size: 2rem;
         }
 
+        .display-4 img {
+            max-width: 500px; 
+            height: auto;
+            margin-bottom: 10px;
+        }
+
         .lead {
-            font-size: 1rem;
+            font-size: 1.5rem;
         }
 
         .left-pane {
@@ -131,7 +137,9 @@
             <div class="col-md-6 left-pane">
                 <div class="left-side-wrapper">
                     <div class="items">
-                        <h1 class="display-4">CivicNest</h1>
+                        @* <h1 class="display-4">CivicNest</h1> *@
+                        <img class="display-4" src="~/images/logo.png" alt="CivicNest Logo" />
+
                         <p class="lead">Welcome back! Please login to your account.</p>
                     </div>
                     <div class="login-container">
